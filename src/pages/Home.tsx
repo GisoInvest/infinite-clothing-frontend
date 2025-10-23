@@ -7,6 +7,7 @@ import { trpc } from '@/lib/trpc';
 import { Loader2, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { toast } from 'sonner';
+import Particles from '@/components/Particles';
 
 export default function Home() {
   const { data: featuredProducts, isLoading } = trpc.products.getFeatured.useQuery();
@@ -30,6 +31,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden cyber-grid">
+        <Particles />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
         <div className="container relative z-10 text-center">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 glow-text">
