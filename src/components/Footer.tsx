@@ -18,7 +18,7 @@ export default function Footer() {
             {/* Social Media Links */}
             <div className="flex gap-4">
               <a
-                href="https://www.instagram.com/infiniteclothingstore"
+                href="https://www.instagram.com/infinitec107hing2024?igsh=MWZ3OTh0cW10Z2liZA=="
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors group"
@@ -27,7 +27,7 @@ export default function Footer() {
                 <Instagram className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
               </a>
               <a
-                href="https://www.tiktok.com/@infiniteclothingstore"
+                href="https://www.tiktok.com/@infinitec107hing?_t=ZN-90nksRpDjQk&_r=1"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors group"
@@ -43,7 +43,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="https://www.facebook.com/infiniteclothingstore"
+                href="https://www.facebook.com/profile.php?id=61582679607721"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors group"
