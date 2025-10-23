@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: infinite-clothing-backend
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: pnpm install
+    startCommand: pnpm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: VITE_APP_TITLE
+        value: INFINITE C107HING
+      - key: OAUTH_SERVER_URL
+        value: https://api.manus.im
+      - key: VITE_OAUTH_PORTAL_URL
+        value: https://portal.manus.im
+      # The following need to be added manually in Render dashboard:
+      # - DATABASE_URL (from TiDB Cloud)
+      # - STRIPE_SECRET_KEY (from Stripe)
+      # - VITE_STRIPE_PUBLISHABLE_KEY (from Stripe)
+      # - SENDGRID_API_KEY (from SendGrid)
+      # - SENDGRID_FROM_EMAIL (verified email in SendGrid)
+      # - VITE_APP_ID (from Manus)
+      # - OWNER_OPEN_ID (from Manus)
+      # - OWNER_NAME (your name)
+      # - BUILT_IN_FORGE_API_URL (from Manus)
+      # - BUILT_IN_FORGE_API_KEY (from Manus)
+
