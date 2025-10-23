@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,179 @@ export async function getUser(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Product operations
+export async function createProduct(product: InsertProduct): Promise<Product> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(products).values(product);
+  const insertedId = Number(result[0].insertId);
+  
+  const newProduct = await db.select().from(products).where(eq(products.id, insertedId)).limit(1);
+  return newProduct[0];
+}
+
+export async function updateProduct(id: number, updates: Partial<InsertProduct>): Promise<Product | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(products).set(updates).where(eq(products.id, id));
+  
+  const updated = await db.select().from(products).where(eq(products.id, id)).limit(1);
+  return updated.length > 0 ? updated[0] : undefined;
+}
+
+export async function deleteProduct(id: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.delete(products).where(eq(products.id, id));
+  return result[0].affectedRows > 0;
+}
+
+export async function getProduct(id: number): Promise<Product | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.select().from(products).where(eq(products.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAllProducts(filters?: {
+  category?: string;
+  subcategory?: string;
+  active?: boolean;
+}): Promise<Product[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  let query = db.select().from(products);
+  
+  const conditions = [];
+  if (filters?.category) {
+    conditions.push(eq(products.category, filters.category as any));
+  }
+  if (filters?.subcategory) {
+    conditions.push(eq(products.subcategory, filters.subcategory));
+  }
+  if (filters?.active !== undefined) {
+    conditions.push(eq(products.active, filters.active));
+  }
+
+  if (conditions.length > 0) {
+    query = query.where(and(...conditions)) as any;
+  }
+
+  return await query.orderBy(desc(products.createdAt));
+}
+
+export async function getFeaturedProducts(): Promise<Product[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db.select().from(products)
+    .where(and(eq(products.featured, true), eq(products.active, true)))
+    .orderBy(desc(products.createdAt))
+    .limit(8);
+}
+
+// Order operations
+export async function createOrder(order: InsertOrder): Promise<Order> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(orders).values(order);
+  const insertedId = Number(result[0].insertId);
+  
+  const newOrder = await db.select().from(orders).where(eq(orders.id, insertedId)).limit(1);
+  return newOrder[0];
+}
+
+export async function updateOrder(id: number, updates: Partial<InsertOrder>): Promise<Order | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(orders).set(updates).where(eq(orders.id, id));
+  
+  const updated = await db.select().from(orders).where(eq(orders.id, id)).limit(1);
+  return updated.length > 0 ? updated[0] : undefined;
+}
+
+export async function getOrder(id: number): Promise<Order | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.select().from(orders).where(eq(orders.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getOrderByNumber(orderNumber: string): Promise<Order | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.select().from(orders).where(eq(orders.orderNumber, orderNumber)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAllOrders(): Promise<Order[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db.select().from(orders).orderBy(desc(orders.createdAt));
+}
+
+export async function getOrdersByEmail(email: string): Promise<Order[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db.select().from(orders)
+    .where(eq(orders.customerEmail, email))
+    .orderBy(desc(orders.createdAt));
+}
+
+// Audio track operations
+export async function createAudioTrack(track: InsertAudioTrack): Promise<AudioTrack> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(audioTracks).values(track);
+  const insertedId = Number(result[0].insertId);
+  
+  const newTrack = await db.select().from(audioTracks).where(eq(audioTracks.id, insertedId)).limit(1);
+  return newTrack[0];
+}
+
+export async function updateAudioTrack(id: number, updates: Partial<InsertAudioTrack>): Promise<AudioTrack | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(audioTracks).set(updates).where(eq(audioTracks.id, id));
+  
+  const updated = await db.select().from(audioTracks).where(eq(audioTracks.id, id)).limit(1);
+  return updated.length > 0 ? updated[0] : undefined;
+}
+
+export async function deleteAudioTrack(id: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.delete(audioTracks).where(eq(audioTracks.id, id));
+  return result[0].affectedRows > 0;
+}
+
+export async function getActiveAudioTracks(): Promise<AudioTrack[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db.select().from(audioTracks)
+    .where(eq(audioTracks.active, true))
+    .orderBy(audioTracks.order);
+}
+
+export async function getAllAudioTracks(): Promise<AudioTrack[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db.select().from(audioTracks).orderBy(audioTracks.order);
+}
+

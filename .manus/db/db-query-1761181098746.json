@@ -1,0 +1,9 @@
+{
+  "query": "DROP TABLE IF EXISTS audioTracks; CREATE TABLE audioTracks (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, url TEXT NOT NULL, active BOOLEAN NOT NULL DEFAULT TRUE, `order` INT NOT NULL DEFAULT 0, createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2AMhEi8cqa88xW3.root --database 2ikumxMtkpq6y45BuCae8B --execute DROP TABLE IF EXISTS audioTracks; CREATE TABLE audioTracks (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, url TEXT NOT NULL, active BOOLEAN NOT NULL DEFAULT TRUE, `order` INT NOT NULL DEFAULT 0, createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 469
+}
