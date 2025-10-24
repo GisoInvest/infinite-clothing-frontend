@@ -64,7 +64,7 @@ export default function Navigation() {
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
-            {/* User menu */}
+            {/* User menu - Login temporarily disabled */}
             {isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -77,26 +77,30 @@ export default function Navigation() {
                     <span className="text-sm text-muted-foreground">{user.email}</span>
                   </DropdownMenuItem>
                   {user.role === 'admin' && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin">
-                        <a className="w-full">Admin Dashboard</a>
-                      </Link>
-                    </DropdownMenuItem>
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin/products">
+                          <a className="w-full">Products</a>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin/orders">
+                          <a className="w-full">Orders</a>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin/audio">
+                          <a className="w-full">Audio</a>
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
                   )}
                   <DropdownMenuItem onClick={() => logout()}>
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => window.location.href = getLoginUrl()}
-              >
-                Login
-              </Button>
-            )}
+            ) : null}
 
             {/* Cart */}
             <Link href="/cart">
