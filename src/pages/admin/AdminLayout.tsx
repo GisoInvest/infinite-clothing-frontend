@@ -1,37 +1,61 @@
 import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/_core/hooks/useAuth';
 import { Package, ShoppingCart, Music, Home, LogOut } from 'lucide-react';
-import { getLoginUrl } from '@/const';
+import { useEffect, useState } from 'react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const { user, isAuthenticated, logout } = useAuth();
   const [location] = useLocation();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Redirect if not admin
-  if (!isAuthenticated) {
-    window.location.href = getLoginUrl();
-    return null;
-  }
+  useEffect(() => {
+    // Check if admin is logged in
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/admin/check', {
+          credentials: 'include',
+        });
+        setIsAuthenticated(response.ok);
+      } catch (error) {
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
 
-  if (user?.role !== 'admin') {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      window.location.href = '/admin/login';
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
-          <p className="text-muted-foreground mb-6">You don't have permission to access this page.</p>
-          <Link href="/">
-            <a>
-              <Button>Back to Home</Button>
-            </a>
-          </Link>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto"></div>
+          <p className="mt-4 text-gray-400">Loading...</p>
         </div>
       </div>
     );
+  }
+
+  // Redirect if not authenticated
+  if (!isAuthenticated) {
+    window.location.href = '/admin/login';
+    return null;
   }
 
   const navItems = [
@@ -87,13 +111,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
         <div className="p-4 border-t border-primary/20">
           <div className="mb-3 px-2">
-            <p className="text-sm font-medium">{user.name}</p>
-            <p className="text-xs text-muted-foreground">{user.email}</p>
+            <p className="text-sm font-medium">Administrator</p>
+            <p className="text-xs text-muted-foreground">admin@infiniteclothingstore.co.uk</p>
           </div>
           <Button
             variant="outline"
             className="w-full justify-start"
-            onClick={() => logout()}
+            onClick={handleLogout}
           >
             <LogOut className="mr-2 h-5 w-5" />
             Logout
