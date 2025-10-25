@@ -28,7 +28,7 @@ export default function AdminOrders() {
 
   const handleStatusChange = async (orderId: number, status: string) => {
     try {
-      await updateOrderStatus.mutateAsync({ id: orderId, status });
+      await updateOrderStatus.mutateAsync({ id: orderId, status: status as any });
       toast.success('Order status updated');
       refetch();
     } catch (error) {

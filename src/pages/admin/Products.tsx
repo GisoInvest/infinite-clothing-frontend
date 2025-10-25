@@ -20,7 +20,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { trpc } from '@/lib/trpc';
-import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminProducts() {
@@ -37,28 +37,86 @@ export default function AdminProducts() {
     videos: '',
     featured: false,
   });
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const { data: products, isLoading, refetch } = trpc.products.getAll.useQuery({});
   const createProduct = trpc.products.create.useMutation();
   const updateProduct = trpc.products.update.useMutation();
   const deleteProduct = trpc.products.delete.useMutation();
+  const uploadImage = trpc.products.uploadImage.useMutation();
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    
+    // Validate files
+    const validFiles = files.filter(file => {
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+      if (!validTypes.includes(file.type)) {
+        toast.error(`${file.name}: Invalid file type. Please use JPG, PNG, WEBP, or GIF`);
+        return false;
+      }
+      
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`${file.name}: File size must be less than 5MB`);
+        return false;
+      }
+      
+      return true;
+    });
+
+    setSelectedImages(prev => [...prev, ...validFiles]);
+  };
+
+  const removeImage = (index: number) => {
+    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const productData = {
-      name: formData.name,
-      description: formData.description,
-      price: Math.round(parseFloat(formData.price) * 100), // Convert to cents
-      stock: parseInt(formData.stock),
-      category: formData.category as any,
-      subcategory: formData.subcategory,
-      images: formData.images ? formData.images.split(',').map(s => s.trim()) : [],
-      videos: formData.videos ? formData.videos.split(',').map(s => s.trim()) : [],
-      featured: formData.featured,
-    };
-
     try {
+      setIsUploading(true);
+      let imageUrls: string[] = [];
+
+      // Upload selected image files
+      if (selectedImages.length > 0) {
+        for (const file of selectedImages) {
+          const reader = new FileReader();
+          const fileData = await new Promise<string>((resolve, reject) => {
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+
+          const uploadResult = await uploadImage.mutateAsync({
+            fileName: file.name,
+            fileData: fileData,
+            contentType: file.type,
+          });
+
+          imageUrls.push(uploadResult.url);
+        }
+      }
+
+      // Add manually entered URLs
+      if (formData.images) {
+        const manualUrls = formData.images.split(',').map(s => s.trim()).filter(Boolean);
+        imageUrls = [...imageUrls, ...manualUrls];
+      }
+
+      const productData = {
+        name: formData.name,
+        description: formData.description,
+        price: Math.round(parseFloat(formData.price) * 100), // Convert to cents
+        stock: parseInt(formData.stock),
+        category: formData.category as any,
+        subcategory: formData.subcategory,
+        images: imageUrls,
+        videos: formData.videos ? formData.videos.split(',').map(s => s.trim()) : [],
+        featured: formData.featured,
+      };
+
       if (editingProduct) {
         await updateProduct.mutateAsync({ id: editingProduct.id, ...productData });
         toast.success('Product updated successfully');
@@ -73,6 +131,8 @@ export default function AdminProducts() {
     } catch (error) {
       toast.error('Failed to save product');
       console.error(error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -118,6 +178,7 @@ export default function AdminProducts() {
       videos: '',
       featured: false,
     });
+    setSelectedImages([]);
   };
 
   return (
@@ -213,6 +274,65 @@ export default function AdminProducts() {
                 </div>
 
                 <div>
+                  <Label htmlFor="imageFiles">Upload Product Images</Label>
+                  <div className="mt-2">
+                    <label
+                      htmlFor="imageFiles"
+                      className="flex items-center justify-center w-full px-4 py-6 border-2 border-dashed border-primary/30 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    >
+                      <div className="text-center">
+                        <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">
+                          Click to upload or drag and drop
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          JPG, PNG, WEBP, or GIF (max 5MB each)
+                        </p>
+                      </div>
+                    </label>
+                    <input
+                      id="imageFiles"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                      multiple
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </div>
+                  
+                  {selectedImages.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      <p className="text-sm font-medium">Selected images:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedImages.map((file, index) => (
+                          <div key={index} className="relative group">
+                            <div className="flex items-center gap-2 px-3 py-2 bg-primary/10 rounded-lg text-sm">
+                              <span className="truncate max-w-[150px]">{file.name}</span>
+                              <button
+                                type="button"
+                                onClick={() => removeImage(index)}
+                                className="text-destructive hover:text-destructive/80"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-muted" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or</span>
+                  </div>
+                </div>
+
+                <div>
                   <Label htmlFor="images">Image URLs (comma-separated)</Label>
                   <Textarea
                     id="images"
@@ -246,9 +366,9 @@ export default function AdminProducts() {
                 </div>
 
                 <div className="flex gap-4 pt-4">
-                  <Button type="submit" className="flex-1" disabled={createProduct.isPending || updateProduct.isPending}>
-                    {(createProduct.isPending || updateProduct.isPending) ? (
-                      <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Saving...</>
+                  <Button type="submit" className="flex-1" disabled={isUploading || createProduct.isPending || updateProduct.isPending}>
+                    {(isUploading || createProduct.isPending || updateProduct.isPending) ? (
+                      <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> {isUploading ? 'Uploading...' : 'Saving...'}</>
                     ) : (
                       editingProduct ? 'Update Product' : 'Create Product'
                     )}
@@ -277,6 +397,13 @@ export default function AdminProducts() {
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {product.images && product.images.length > 0 && (
+                    <img 
+                      src={product.images[0]} 
+                      alt={product.name}
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
+                  )}
                   <p className="text-sm text-muted-foreground line-clamp-2">
                     {product.description}
                   </p>

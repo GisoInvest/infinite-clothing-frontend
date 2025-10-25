@@ -12,28 +12,27 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { user, isAuthenticated, logout } = useAuth();
   const [location] = useLocation();
 
-  // TODO: Implement proper authentication
-  // Temporarily bypassed for admin access
-  // if (!isAuthenticated) {
-  //   window.location.href = getLoginUrl();
-  //   return null;
-  // }
+  // Redirect if not admin
+  if (!isAuthenticated) {
+    window.location.href = getLoginUrl();
+    return null;
+  }
 
-  // if (user?.role !== 'admin') {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center">
-  //       <div className="text-center">
-  //         <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
-  //         <p className="text-muted-foreground mb-6">You don't have permission to access this page.</p>
-  //         <Link href="/">
-  //           <a>
-  //             <Button>Back to Home</Button>
-  //           </a>
-  //         </Link>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (user?.role !== 'admin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
+          <p className="text-muted-foreground mb-6">You don't have permission to access this page.</p>
+          <Link href="/">
+            <a>
+              <Button>Back to Home</Button>
+            </a>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const navItems = [
     { path: '/admin/products', label: 'Products', icon: Package },
@@ -88,8 +87,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
         <div className="p-4 border-t border-primary/20">
           <div className="mb-3 px-2">
-            <p className="text-sm font-medium">{user?.name || 'Admin User'}</p>
-            <p className="text-xs text-muted-foreground">{user?.email || 'admin@infiniteclothingstore.co.uk'}</p>
+            <p className="text-sm font-medium">{user.name}</p>
+            <p className="text-xs text-muted-foreground">{user.email}</p>
           </div>
           <Button
             variant="outline"
