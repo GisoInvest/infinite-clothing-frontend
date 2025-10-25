@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { trpc } from '@/lib/trpc';
-import { Plus, Trash2, Loader2, Music } from 'lucide-react';
+import { Plus, Trash2, Loader2, Music, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminAudio() {
@@ -21,16 +21,77 @@ export default function AdminAudio() {
     title: '',
     url: '',
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const { data: tracks, isLoading, refetch } = trpc.audio.getAll.useQuery();
   const createTrack = trpc.audio.create.useMutation();
   const deleteTrack = trpc.audio.delete.useMutation();
+  const uploadAudio = trpc.audio.uploadFile.useMutation();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'];
+      if (!validTypes.includes(file.type) && !file.name.match(/\.(mp3|wav|ogg)$/i)) {
+        toast.error('Please select a valid audio file (MP3, WAV, or OGG)');
+        return;
+      }
+      
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('File size must be less than 10MB');
+        return;
+      }
+
+      setSelectedFile(file);
+      // Auto-fill title from filename if empty
+      if (!formData.title) {
+        const fileName = file.name.replace(/\.[^/.]+$/, ''); // Remove extension
+        setFormData({ ...formData, title: fileName });
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      await createTrack.mutateAsync(formData);
+      setIsUploading(true);
+      let audioUrl = formData.url;
+
+      // If file is selected, upload it first
+      if (selectedFile) {
+        // Convert file to base64
+        const reader = new FileReader();
+        const fileData = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(selectedFile);
+        });
+
+        // Upload file and get URL
+        const uploadResult = await uploadAudio.mutateAsync({
+          fileName: selectedFile.name,
+          fileData: fileData,
+          contentType: selectedFile.type || 'audio/mpeg',
+        });
+
+        audioUrl = uploadResult.url;
+      }
+
+      if (!audioUrl) {
+        toast.error('Please provide an audio file or URL');
+        return;
+      }
+
+      // Create the audio track
+      await createTrack.mutateAsync({
+        name: formData.title,
+        url: audioUrl,
+      });
+
       toast.success('Audio track added successfully');
       setIsDialogOpen(false);
       resetForm();
@@ -38,6 +99,8 @@ export default function AdminAudio() {
     } catch (error) {
       toast.error('Failed to add audio track');
       console.error(error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -59,6 +122,7 @@ export default function AdminAudio() {
       title: '',
       url: '',
     });
+    setSelectedFile(null);
   };
 
   return (
@@ -98,24 +162,66 @@ export default function AdminAudio() {
                 </div>
 
                 <div>
-                  <Label htmlFor="url">Audio URL *</Label>
+                  <Label htmlFor="file">Upload Audio File</Label>
+                  <div className="mt-2">
+                    <label
+                      htmlFor="file"
+                      className="flex items-center justify-center w-full px-4 py-6 border-2 border-dashed border-primary/30 rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+                    >
+                      <div className="text-center">
+                        <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                        {selectedFile ? (
+                          <p className="text-sm text-primary font-medium">{selectedFile.name}</p>
+                        ) : (
+                          <>
+                            <p className="text-sm text-muted-foreground">
+                              Click to upload or drag and drop
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              MP3, WAV, or OGG (max 10MB)
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </label>
+                    <input
+                      id="file"
+                      type="file"
+                      accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,.mp3,.wav,.ogg"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-muted" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or</span>
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="url">Audio URL</Label>
                   <Input
                     id="url"
                     type="url"
                     value={formData.url}
                     onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                     placeholder="https://example.com/audio.mp3"
-                    required
+                    disabled={!!selectedFile}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Supported formats: MP3, WAV, OGG
+                    {selectedFile ? 'Remove the file to enter a URL' : 'Supported formats: MP3, WAV, OGG'}
                   </p>
                 </div>
 
                 <div className="flex gap-4 pt-4">
-                  <Button type="submit" className="flex-1" disabled={createTrack.isPending}>
-                    {createTrack.isPending ? (
-                      <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Adding...</>
+                  <Button type="submit" className="flex-1" disabled={isUploading || createTrack.isPending}>
+                    {(isUploading || createTrack.isPending) ? (
+                      <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> {isUploading ? 'Uploading...' : 'Adding...'}</>
                     ) : (
                       'Add Track'
                     )}
@@ -140,7 +246,7 @@ export default function AdminAudio() {
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center">
                     <Music className="mr-2 h-5 w-5 text-primary" />
-                    {track.title}
+                    {track.name}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">

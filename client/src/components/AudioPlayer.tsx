@@ -14,6 +14,9 @@ export default function AudioPlayer() {
     const audio = audioRef.current;
     if (!audio || !tracks || tracks.length === 0) return;
 
+    // Set initial volume
+    audio.volume = 0.3;
+
     const handleEnded = () => {
       // Move to next track
       setCurrentTrackIndex((prev) => (prev + 1) % tracks.length);
@@ -67,7 +70,6 @@ export default function AudioPlayer() {
       <audio
         ref={audioRef}
         loop={false}
-        volume={0.3}
         preload="auto"
       />
     </div>

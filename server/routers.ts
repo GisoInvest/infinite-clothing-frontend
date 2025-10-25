@@ -117,6 +117,29 @@ export const appRouter = router({
         }
         return { success };
       }),
+
+    uploadImage: adminProcedure
+      .input(z.object({
+        fileName: z.string(),
+        fileData: z.string(), // base64 data URL
+        contentType: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const { storagePut } = await import('./storage');
+        
+        // Extract base64 data from data URL
+        const base64Data = input.fileData.split(',')[1];
+        const buffer = Buffer.from(base64Data, 'base64');
+        
+        // Generate unique filename
+        const timestamp = Date.now();
+        const ext = input.fileName.split('.').pop();
+        const key = `products/${timestamp}-${Math.random().toString(36).substring(7)}.${ext}`;
+        
+        // Upload to S3
+        const result = await storagePut(key, buffer, input.contentType);
+        return result;
+      }),
   }),
 
   payment: router({
@@ -312,6 +335,29 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Audio track not found' });
         }
         return { success };
+      }),
+
+    uploadFile: adminProcedure
+      .input(z.object({
+        fileName: z.string(),
+        fileData: z.string(), // base64 data URL
+        contentType: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const { storagePut } = await import('./storage');
+        
+        // Extract base64 data from data URL
+        const base64Data = input.fileData.split(',')[1];
+        const buffer = Buffer.from(base64Data, 'base64');
+        
+        // Generate unique filename
+        const timestamp = Date.now();
+        const ext = input.fileName.split('.').pop();
+        const key = `audio/${timestamp}-${Math.random().toString(36).substring(7)}.${ext}`;
+        
+        // Upload to S3
+        const result = await storagePut(key, buffer, input.contentType);
+        return result;
       }),
   }),
 });
