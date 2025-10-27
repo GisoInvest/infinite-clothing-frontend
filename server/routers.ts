@@ -78,6 +78,8 @@ export const appRouter = router({
         stock: z.number().int().default(0),
         images: z.array(z.string()).default([]),
         videos: z.array(z.string()).default([]),
+        colors: z.array(z.string()).default([]),
+        discount: z.number().int().min(0).max(100).default(0),
         featured: z.boolean().default(false),
         active: z.boolean().default(true),
       }))
@@ -96,6 +98,8 @@ export const appRouter = router({
         stock: z.number().int().optional(),
         images: z.array(z.string()).optional(),
         videos: z.array(z.string()).optional(),
+        colors: z.array(z.string()).optional(),
+        discount: z.number().int().min(0).max(100).optional(),
         featured: z.boolean().optional(),
         active: z.boolean().optional(),
       }))
