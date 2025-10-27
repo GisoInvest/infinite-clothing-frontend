@@ -65,3 +65,8 @@
 - [x] Site redirecting to portal.manus.im/app-auth instead of staying on domain (AudioPlayer using admin endpoint)
 - [ ] Product discounts in database were reset to 0 after schema update
 
+
+
+- [x] Remove login button from public navigation (breaks site with OAuth redirect)
+- [x] Fix admin page showing 404 error (created simple password-based admin login system)
+

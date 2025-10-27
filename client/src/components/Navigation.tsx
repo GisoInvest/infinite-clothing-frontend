@@ -88,15 +88,7 @@ export default function Navigation() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => window.location.href = getLoginUrl()}
-              >
-                Login
-              </Button>
-            )}
+            ) : null}
 
             {/* Cart */}
             <Link href="/cart">

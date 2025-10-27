@@ -1,37 +1,26 @@
 import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/_core/hooks/useAuth';
-import { Package, ShoppingCart, Music, Home, LogOut } from 'lucide-react';
-import { getLoginUrl } from '@/const';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { Package, ShoppingCart, Music, Home, LogOut, Loader2 } from 'lucide-react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const { user, isAuthenticated, logout } = useAuth();
   const [location] = useLocation();
+  const { isAuthenticated, isLoading, logout } = useAdminAuth();
 
-  // Redirect if not admin
-  if (!isAuthenticated) {
-    window.location.href = getLoginUrl();
-    return null;
-  }
-
-  if (user?.role !== 'admin') {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
-          <p className="text-muted-foreground mb-6">You don't have permission to access this page.</p>
-          <Link href="/">
-            <a>
-              <Button>Back to Home</Button>
-            </a>
-          </Link>
-        </div>
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
+  }
+
+  if (!isAuthenticated) {
+    return null;
   }
 
   const navItems = [
@@ -86,14 +75,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </nav>
 
         <div className="p-4 border-t border-primary/20">
-          <div className="mb-3 px-2">
-            <p className="text-sm font-medium">{user.name}</p>
-            <p className="text-xs text-muted-foreground">{user.email}</p>
-          </div>
           <Button
             variant="outline"
-            className="w-full justify-start"
-            onClick={() => logout()}
+            className="w-full justify-start text-destructive hover:text-destructive"
+            onClick={logout}
           >
             <LogOut className="mr-2 h-5 w-5" />
             Logout

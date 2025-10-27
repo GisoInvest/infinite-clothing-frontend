@@ -3,10 +3,12 @@ import express from "express";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
+import cookieParser from "cookie-parser";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import uploadRouter from "../upload";
+import adminAuthRouter from "../admin-auth";
 import { serveStatic, setupVite } from "./vite";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -34,10 +36,14 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  // Cookie parser for admin sessions
+  app.use(cookieParser());
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   // File upload endpoint
   app.use("/api/upload", uploadRouter);
+  // Admin authentication
+  app.use("/api/admin", adminAuthRouter);
   // tRPC API
   app.use(
     "/api/trpc",
