@@ -70,3 +70,7 @@
 - [x] Remove login button from public navigation (breaks site with OAuth redirect)
 - [x] Fix admin page showing 404 error (created simple password-based admin login system)
 
+
+
+- [x] Restore interactive 20% OFF Christmas promotional banner at top of website
+

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { getLoginUrl } from '@/const';
+import PromoBanner from './PromoBanner';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,7 +29,9 @@ export default function Navigation() {
   const isActive = (path: string) => location === path;
 
   return (
-    <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-primary/20 glow-border">
+    <>
+      <PromoBanner />
+      <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-primary/20 glow-border">
       <div className="container">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -147,6 +150,7 @@ export default function Navigation() {
         )}
       </div>
     </nav>
+    </>
   );
 }
 
