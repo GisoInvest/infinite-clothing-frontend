@@ -11,7 +11,7 @@ import { sendOrderConfirmationEmail, sendAdminOrderNotification } from "./email"
 // Admin-only procedure (simple cookie-based auth)
 const adminProcedure = publicProcedure.use(({ ctx, next }) => {
   const adminSession = ctx.req.cookies?.['admin_session'];
-  if (!adminSession || adminSession !== 'authenticated') {
+  if (!adminSession || adminSession !== 'admin_session_active') {
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Admin login required' });
   }
   return next({ ctx });

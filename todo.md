@@ -89,3 +89,7 @@
 
 - [x] Remove OAuth authentication completely and use only simple password-based admin system
 
+
+
+- [x] Fix "Failed to save product" error when updating products in admin panel (fixed session token mismatch)
+
