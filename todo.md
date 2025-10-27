@@ -83,3 +83,9 @@
 - [x] Add color field to admin product form (multiple colors)
 - [x] Add color selector to product detail page for customers
 
+
+
+## Critical Bug
+
+- [x] Remove OAuth authentication completely and use only simple password-based admin system
+

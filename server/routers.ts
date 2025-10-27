@@ -8,10 +8,11 @@ import * as db from "./db";
 import { createPaymentIntent, confirmPaymentIntent } from "./payment";
 import { sendOrderConfirmationEmail, sendAdminOrderNotification } from "./email";
 
-// Admin-only procedure
-const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
-    throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+// Admin-only procedure (simple cookie-based auth)
+const adminProcedure = publicProcedure.use(({ ctx, next }) => {
+  const adminSession = ctx.req.cookies?.['admin_session'];
+  if (!adminSession || adminSession !== 'authenticated') {
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Admin login required' });
   }
   return next({ ctx });
 });
