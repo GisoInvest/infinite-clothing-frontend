@@ -36,7 +36,11 @@ export default function AdminProducts() {
     images: '',
     videos: '',
     featured: false,
+    sizes: [] as string[],
+    discount: '0',
+    colors: [] as string[],
   });
+  const [colorInput, setColorInput] = useState('');
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -115,6 +119,9 @@ export default function AdminProducts() {
         images: imageUrls,
         videos: formData.videos ? formData.videos.split(',').map(s => s.trim()) : [],
         featured: formData.featured,
+        sizes: formData.sizes,
+        discount: parseInt(formData.discount) || 0,
+        colors: formData.colors,
       };
 
       if (editingProduct) {
@@ -148,6 +155,9 @@ export default function AdminProducts() {
       images: product.images?.join(', ') || '',
       videos: product.videos?.join(', ') || '',
       featured: product.featured,
+      sizes: product.sizes || [],
+      discount: product.discount?.toString() || '0',
+      colors: product.colors || [],
     });
     setIsDialogOpen(true);
   };
@@ -177,8 +187,12 @@ export default function AdminProducts() {
       images: '',
       videos: '',
       featured: false,
+      sizes: [],
+      discount: '0',
+      colors: [],
     });
     setSelectedImages([]);
+    setColorInput('');
   };
 
   return (
@@ -352,6 +366,95 @@ export default function AdminProducts() {
                     placeholder="https://example.com/video1.mp4"
                     rows={2}
                   />
+                </div>
+
+                {/* Size Selector */}
+                <div>
+                  <Label>Available Sizes</Label>
+                  <div className="grid grid-cols-5 gap-2 mt-2">
+                    {['S', 'M', 'L', 'XL', '2XL'].map((size) => (
+                      <div key={size} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={`size-${size}`}
+                          checked={formData.sizes.includes(size)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData({ ...formData, sizes: [...formData.sizes, size] });
+                            } else {
+                              setFormData({ ...formData, sizes: formData.sizes.filter(s => s !== size) });
+                            }
+                          }}
+                          className="rounded"
+                        />
+                        <Label htmlFor={`size-${size}`} className="cursor-pointer">{size}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Discount Field */}
+                <div>
+                  <Label htmlFor="discount">Discount (%)</Label>
+                  <Input
+                    id="discount"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formData.discount}
+                    onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
+                    placeholder="0"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Enter 0 for no discount, or 1-100 for percentage off</p>
+                </div>
+
+                {/* Color Field */}
+                <div>
+                  <Label htmlFor="colors">Available Colors</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      id="colorInput"
+                      value={colorInput}
+                      onChange={(e) => setColorInput(e.target.value)}
+                      placeholder="Enter color name (e.g., Black, White, Red)"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          if (colorInput.trim() && !formData.colors.includes(colorInput.trim())) {
+                            setFormData({ ...formData, colors: [...formData.colors, colorInput.trim()] });
+                            setColorInput('');
+                          }
+                        }
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (colorInput.trim() && !formData.colors.includes(colorInput.trim())) {
+                          setFormData({ ...formData, colors: [...formData.colors, colorInput.trim()] });
+                          setColorInput('');
+                        }
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </div>
+                  {formData.colors.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {formData.colors.map((color, index) => (
+                        <div key={index} className="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full text-sm">
+                          <span>{color}</span>
+                          <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, colors: formData.colors.filter((_, i) => i !== index) })}
+                            className="text-destructive hover:text-destructive/80"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center space-x-2">

@@ -17,6 +17,7 @@ export default function ProductDetail() {
   const productId = params?.id ? parseInt(params.id) : 0;
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>('');
+  const [selectedColor, setSelectedColor] = useState<string>('');
   
   const { data: product, isLoading } = trpc.products.getById.useQuery({ id: productId });
   const { addItem } = useCart();
@@ -27,6 +28,12 @@ export default function ProductDetail() {
     // Check if product has sizes and none is selected
     if (product.sizes && product.sizes.length > 0 && !selectedSize) {
       toast.error('Please select a size');
+      return;
+    }
+    
+    // Check if product has colors and none is selected
+    if (product.colors && product.colors.length > 0 && !selectedColor) {
+      toast.error('Please select a color');
       return;
     }
     
@@ -43,6 +50,7 @@ export default function ProductDetail() {
       category: product.category,
       subcategory: product.subcategory,
       size: selectedSize || undefined,
+      color: selectedColor || undefined,
       discount: product.discount || 0,
     });
     toast.success(`${product.name} added to cart!`);
@@ -190,6 +198,32 @@ export default function ProductDetail() {
                               className="flex items-center justify-center rounded-md border-2 border-primary/20 bg-transparent px-3 py-2 hover:bg-primary/10 hover:border-primary/50 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/20 cursor-pointer transition-all"
                             >
                               {size}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </RadioGroup>
+                  </div>
+                )}
+
+                {/* Color Selector */}
+                {product.colors && product.colors.length > 0 && (
+                  <div className="space-y-3">
+                    <Label className="text-base">Select Color *</Label>
+                    <RadioGroup value={selectedColor} onValueChange={setSelectedColor}>
+                      <div className="grid grid-cols-3 gap-2">
+                        {product.colors.map((color) => (
+                          <div key={color}>
+                            <RadioGroupItem
+                              value={color}
+                              id={`color-${color}`}
+                              className="peer sr-only"
+                            />
+                            <Label
+                              htmlFor={`color-${color}`}
+                              className="flex items-center justify-center rounded-md border-2 border-primary/20 bg-transparent px-4 py-3 hover:bg-primary/10 hover:border-primary/50 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/20 cursor-pointer transition-all"
+                            >
+                              {color}
                             </Label>
                           </div>
                         ))}

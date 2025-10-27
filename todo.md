@@ -74,3 +74,12 @@
 
 - [x] Restore interactive 20% OFF Christmas promotional banner at top of website
 
+
+
+## Admin Product Form Updates
+
+- [x] Add size selector to admin product form (S, M, L, XL, 2XL)
+- [x] Add discount field to admin product form (0-100%)
+- [x] Add color field to admin product form (multiple colors)
+- [x] Add color selector to product detail page for customers
+
