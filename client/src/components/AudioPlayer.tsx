@@ -8,7 +8,7 @@ export default function AudioPlayer() {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   
-  const { data: tracks } = trpc.audio.getAll.useQuery();
+  const { data: tracks } = trpc.audio.getActive.useQuery();
 
   useEffect(() => {
     const audio = audioRef.current;

@@ -57,3 +57,11 @@
 - [x] Change shipping cost from £5 to £3
 - [x] Remove VAT from checkout (set to £0)
 
+
+
+
+## Critical Bugs - URGENT
+
+- [x] Site redirecting to portal.manus.im/app-auth instead of staying on domain (AudioPlayer using admin endpoint)
+- [ ] Product discounts in database were reset to 0 after schema update
+
