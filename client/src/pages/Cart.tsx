@@ -45,8 +45,8 @@ export default function Cart() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              {items.map((item) => (
-                <Card key={item.productId} className="border-primary/20">
+              {items.map((item, index) => (
+                <Card key={`${item.productId}-${item.size || 'no-size'}-${index}`} className="border-primary/20">
                   <CardContent className="p-6">
                     <div className="flex gap-4">
                       {/* Product Image */}
@@ -67,9 +67,19 @@ export default function Cart() {
                       {/* Product Info */}
                       <div className="flex-1">
                         <h3 className="font-semibold text-lg mb-1">{item.productName}</h3>
-                        <p className="text-sm text-muted-foreground mb-3">
+                        <p className="text-sm text-muted-foreground mb-2">
                           {item.category} • {item.subcategory}
                         </p>
+                        {item.size && (
+                          <p className="text-sm text-muted-foreground mb-2">
+                            Size: <span className="font-semibold text-foreground">{item.size}</span>
+                          </p>
+                        )}
+                        {item.discount && item.discount > 0 && (
+                          <p className="text-xs text-destructive font-semibold mb-2">
+                            {item.discount}% OFF Applied
+                          </p>
+                        )}
                         <p className="text-xl font-bold text-primary">
                           £{(item.price / 100).toFixed(2)}
                         </p>

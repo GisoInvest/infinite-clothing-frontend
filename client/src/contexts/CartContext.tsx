@@ -8,6 +8,9 @@ export interface CartItem {
   image?: string;
   category: string;
   subcategory: string;
+  size?: string;
+  color?: string;
+  discount?: number;
 }
 
 interface CartContextType {
@@ -34,7 +37,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
     setItems(current => {
-      const existingIndex = current.findIndex(i => i.productId === item.productId);
+      // Check if same product with same size already exists
+      const existingIndex = current.findIndex(i => 
+        i.productId === item.productId && i.size === item.size
+      );
       if (existingIndex >= 0) {
         const updated = [...current];
         updated[existingIndex].quantity += item.quantity || 1;

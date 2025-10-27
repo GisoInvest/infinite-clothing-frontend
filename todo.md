@@ -47,3 +47,13 @@
 
 - [x] Second product fails to add (added colors and discount fields to Zod validation schema in routers.ts)
 
+
+
+## New Issues to Fix
+
+- [x] Cart shows original price instead of discounted price (discount not applied during checkout)
+- [x] Add size selector to product detail page (S, M, L, XL, 2XL)
+- [x] Show selected size in cart and checkout
+- [x] Change shipping cost from £5 to £3
+- [x] Remove VAT from checkout (set to £0)
+

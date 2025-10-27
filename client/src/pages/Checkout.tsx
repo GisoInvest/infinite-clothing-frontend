@@ -118,8 +118,8 @@ export default function Checkout() {
     });
   };
 
-  const shipping = 500; // £5.00 flat rate
-  const tax = Math.round(subtotal * 0.2); // 20% VAT
+  const shipping = 300; // £3.00 flat rate
+  const tax = 0; // No VAT charged
   const total = subtotal + shipping + tax;
 
   const handleCreatePayment = async () => {
@@ -313,10 +313,10 @@ export default function Checkout() {
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {items.map((item) => (
-                    <div key={item.productId} className="flex justify-between text-sm">
+                  {items.map((item, index) => (
+                    <div key={`${item.productId}-${item.size || 'no-size'}-${index}`} className="flex justify-between text-sm">
                       <span>
-                        {item.productName} x {item.quantity}
+                        {item.productName} {item.size && `(${item.size})`} x {item.quantity}
                       </span>
                       <span>£{((item.price * item.quantity) / 100).toFixed(2)}</span>
                     </div>
@@ -330,10 +330,7 @@ export default function Checkout() {
                       <span>Shipping</span>
                       <span>£{(shipping / 100).toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span>VAT (20%)</span>
-                      <span>£{(tax / 100).toFixed(2)}</span>
-                    </div>
+                    {/* VAT removed - no longer charged */}
                     <div className="flex justify-between text-lg font-bold text-primary border-t border-primary/20 pt-2">
                       <span>Total</span>
                       <span>£{(total / 100).toFixed(2)}</span>
