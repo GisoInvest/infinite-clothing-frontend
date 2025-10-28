@@ -420,9 +420,13 @@ export default function AdminProducts() {
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
                           e.preventDefault();
-                          if (colorInput.trim() && !formData.colors.includes(colorInput.trim())) {
-                            setFormData({ ...formData, colors: [...formData.colors, colorInput.trim()] });
-                            setColorInput('');
+                          if (colorInput.trim()) {
+                            // Split by comma and add each color separately
+                            const newColors = colorInput.split(',').map(c => c.trim()).filter(c => c && !formData.colors.includes(c));
+                            if (newColors.length > 0) {
+                              setFormData({ ...formData, colors: [...formData.colors, ...newColors] });
+                              setColorInput('');
+                            }
                           }
                         }
                       }}
@@ -430,9 +434,13 @@ export default function AdminProducts() {
                     <Button
                       type="button"
                       onClick={() => {
-                        if (colorInput.trim() && !formData.colors.includes(colorInput.trim())) {
-                          setFormData({ ...formData, colors: [...formData.colors, colorInput.trim()] });
-                          setColorInput('');
+                        if (colorInput.trim()) {
+                          // Split by comma and add each color separately
+                          const newColors = colorInput.split(',').map(c => c.trim()).filter(c => c && !formData.colors.includes(c));
+                          if (newColors.length > 0) {
+                            setFormData({ ...formData, colors: [...formData.colors, ...newColors] });
+                            setColorInput('');
+                          }
                         }
                       }}
                     >

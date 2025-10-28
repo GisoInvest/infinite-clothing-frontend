@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, name, colors, sizes FROM products WHERE name LIKE '%Lagos%' LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2AMhEi8cqa88xW3.root --database 2ikumxMtkpq6y45BuCae8B --execute SELECT id, name, colors, sizes FROM products WHERE name LIKE '%Lagos%' LIMIT 1;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Infinite Lagos Heavyweight Vintage T-Shirt",
+      "colors": "[\"Light Apricot, Gray Green, White, Dark Gray, Black\"]",
+      "sizes": "[\"S\", \"M\", \"L\", \"XL\", \"2XL\"]"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcolors\tsizes\n1\tInfinite Lagos Heavyweight Vintage T-Shirt\t[\"Light Apricot, Gray Green, White, Dark Gray, Black\"]\t[\"S\", \"M\", \"L\", \"XL\", \"2XL\"]\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

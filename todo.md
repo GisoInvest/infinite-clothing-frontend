@@ -97,3 +97,7 @@
 
 - [x] Update color selector on product detail page to show individual selectable buttons instead of all colors in one box (added JSON parsing in db.ts)
 
+
+
+- [x] Colors still displaying together in one box instead of individual selectable buttons (fixed database data and added comma-split logic to admin panel)
+

@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE products SET colors = '[\"Light Apricot\", \"Gray Green\", \"White\", \"Dark Gray\", \"Black\"]' WHERE name LIKE '%Lagos%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2AMhEi8cqa88xW3.root --database 2ikumxMtkpq6y45BuCae8B --execute UPDATE products SET colors = '[\"Light Apricot\", \"Gray Green\", \"White\", \"Dark Gray\", \"Black\"]' WHERE name LIKE '%Lagos%';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 59
+}
