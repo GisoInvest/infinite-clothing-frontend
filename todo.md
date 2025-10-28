@@ -93,3 +93,7 @@
 
 - [x] Fix "Failed to save product" error when updating products in admin panel (fixed session token mismatch)
 
+
+
+- [x] Update color selector on product detail page to show individual selectable buttons instead of all colors in one box (added JSON parsing in db.ts)
+

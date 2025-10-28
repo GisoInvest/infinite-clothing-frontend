@@ -124,7 +124,17 @@ export async function getProduct(id: number): Promise<Product | undefined> {
   if (!db) throw new Error("Database not available");
 
   const result = await db.select().from(products).where(eq(products.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  if (result.length === 0) return undefined;
+  
+  const product = result[0];
+  // Ensure JSON fields are parsed as arrays
+  return {
+    ...product,
+    colors: typeof product.colors === 'string' ? JSON.parse(product.colors) : product.colors,
+    sizes: typeof product.sizes === 'string' ? JSON.parse(product.sizes) : product.sizes,
+    images: typeof product.images === 'string' ? JSON.parse(product.images) : product.images,
+    videos: typeof product.videos === 'string' ? JSON.parse(product.videos) : product.videos,
+  };
 }
 
 export async function getAllProducts(filters?: {
@@ -152,17 +162,35 @@ export async function getAllProducts(filters?: {
     query = query.where(and(...conditions)) as any;
   }
 
-  return await query.orderBy(desc(products.createdAt));
+  const results = await query.orderBy(desc(products.createdAt));
+  
+  // Ensure JSON fields are parsed as arrays
+  return results.map(product => ({
+    ...product,
+    colors: typeof product.colors === 'string' ? JSON.parse(product.colors) : product.colors,
+    sizes: typeof product.sizes === 'string' ? JSON.parse(product.sizes) : product.sizes,
+    images: typeof product.images === 'string' ? JSON.parse(product.images) : product.images,
+    videos: typeof product.videos === 'string' ? JSON.parse(product.videos) : product.videos,
+  }));
 }
 
 export async function getFeaturedProducts(): Promise<Product[]> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  return await db.select().from(products)
+  const results = await db.select().from(products)
     .where(and(eq(products.featured, true), eq(products.active, true)))
     .orderBy(desc(products.createdAt))
     .limit(8);
+  
+  // Ensure JSON fields are parsed as arrays
+  return results.map(product => ({
+    ...product,
+    colors: typeof product.colors === 'string' ? JSON.parse(product.colors) : product.colors,
+    sizes: typeof product.sizes === 'string' ? JSON.parse(product.sizes) : product.sizes,
+    images: typeof product.images === 'string' ? JSON.parse(product.images) : product.images,
+    videos: typeof product.videos === 'string' ? JSON.parse(product.videos) : product.videos,
+  }));
 }
 
 // Order operations
