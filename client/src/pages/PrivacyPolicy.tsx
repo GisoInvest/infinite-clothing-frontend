@@ -113,8 +113,7 @@ export default function PrivacyPolicy() {
                 If you have any questions about this Privacy Policy or our data practices, please contact us at:
               </p>
               <p className="text-primary mt-3">
-                Email: privacy@infiniteclothingstore.co.uk<br />
-                Address: INF!NITE C107HING, United Kingdom
+                Email: infiniteclothings2024@gmail.com
               </p>
             </section>
           </div>

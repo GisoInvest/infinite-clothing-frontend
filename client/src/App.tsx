@@ -17,6 +17,7 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import ProductDetail from "./pages/ProductDetail";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ReturnPolicy from "./pages/ReturnPolicy";
+import ContactUs from "./pages/ContactUs";
 import AudioPlayer from "./components/AudioPlayer";
 import AdminLogin from "./pages/admin/Login";
 import AdminProducts from "./pages/admin/Products";
@@ -39,6 +40,7 @@ function Router() {
       <Route path="/product/:id" component={ProductDetail} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/return-policy" component={ReturnPolicy} />
+      <Route path="/contact" component={ContactUs} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />

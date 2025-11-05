@@ -61,6 +61,11 @@ export default function Footer() {
                   <a className="text-muted-foreground hover:text-primary transition-colors">Return Policy</a>
                 </Link>
               </li>
+              <li>
+                <Link href="/contact">
+                  <a className="text-muted-foreground hover:text-primary transition-colors">Contact Us</a>
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

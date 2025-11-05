@@ -30,3 +30,14 @@
 - [x] Implement particle system with floating/moving particles
 - [x] Add glow effects to particles
 - [x] Ensure particles don't interfere with content readability
+
+
+## Contact Information Updates
+
+- [x] Update Return Policy page email to info@infiniteclothingstore.co.uk
+- [x] Add phone number +447403139086 to Return Policy page
+- [x] Remove address from Return Policy page
+- [x] Update Privacy Policy page email to infiniteclothings2024@gmail.com
+- [x] Remove address from Privacy Policy page
+- [x] Create new Contact Us page with info@infiniteclothingstore.co.uk
+- [x] Add Contact Us link to navigation

@@ -54,7 +54,7 @@ export default function ReturnPolicy() {
                 <div>
                   <h3 className="text-xl font-semibold text-foreground mb-2">Step 1: Contact Us</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Email us at returns@infiniteclothingstore.co.uk with your order number and the item(s) you wish to return. We'll provide you with a return authorization and instructions.
+                    Email us at info@infiniteclothingstore.co.uk with your order number and the item(s) you wish to return. We'll provide you with a return authorization and instructions.
                   </p>
                 </div>
                 <div>
@@ -104,7 +104,7 @@ export default function ReturnPolicy() {
             <section>
               <h2 className="text-2xl font-bold text-primary mb-4">Damaged or Defective Items</h2>
               <p className="text-muted-foreground leading-relaxed">
-                If you receive a damaged or defective item, please contact us immediately at support@infiniteclothingstore.co.uk with photos of the damage. We will arrange for a replacement or full refund at no cost to you.
+                If you receive a damaged or defective item, please contact us immediately at info@infiniteclothingstore.co.uk with photos of the damage. We will arrange for a replacement or full refund at no cost to you.
               </p>
             </section>
 
@@ -117,7 +117,7 @@ export default function ReturnPolicy() {
                 <li>Check your bank account again</li>
                 <li>Contact your credit card company (it may take time for the refund to post)</li>
                 <li>Contact your bank (processing times vary)</li>
-                <li>If you've done all of this and still haven't received your refund, contact us at returns@infiniteclothingstore.co.uk</li>
+                <li>If you've done all of this and still haven't received your refund, contact us at info@infiniteclothingstore.co.uk</li>
               </ul>
             </section>
 
@@ -127,9 +127,8 @@ export default function ReturnPolicy() {
                 If you have any questions about our return policy, please contact us:
               </p>
               <p className="text-primary mt-3">
-                Email: returns@infiniteclothingstore.co.uk<br />
-                Phone: +44 (0) XXX XXX XXXX<br />
-                Address: INF!NITE C107HING, United Kingdom
+                Email: info@infiniteclothingstore.co.uk<br />
+                Phone: +447403139086
               </p>
             </section>
           </div>
