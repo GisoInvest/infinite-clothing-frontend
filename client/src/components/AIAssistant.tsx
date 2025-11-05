@@ -76,17 +76,18 @@ export default function AIAssistant() {
     scrollToBottom();
   }, [messages]);
 
-  // Show welcome message on first visit - FIXED AUTO-POPUP
+  // Show welcome message on first visit - AUTO-POPUP FIXED
   useEffect(() => {
     if (welcomeData && !hasShownWelcome) {
-      const hasVisited = localStorage.getItem('ai_assistant_visited');
+      // Check session storage (resets on browser close) instead of localStorage
+      const hasSeenThisSession = sessionStorage.getItem('aria_greeted');
       
-      if (!hasVisited) {
+      if (!hasSeenThisSession) {
         // Store welcome message
         welcomeMessageRef.current = welcomeData.message;
         
-        // First time visitor - AUTO POPUP
-        setTimeout(() => {
+        // AUTO POPUP - Show to every new session
+        const popupTimer = setTimeout(() => {
           setIsOpen(true);
           const welcomeMsg: Message = {
             role: 'assistant',
@@ -95,21 +96,25 @@ export default function AIAssistant() {
           };
           setMessages([welcomeMsg]);
           
-          // Try to speak after a short delay to ensure popup is visible
-          setTimeout(() => {
-            if (welcomeData.shouldSpeak && voiceEnabled && voiceReady) {
+          // Try to speak after popup is visible
+          const speakTimer = setTimeout(() => {
+            if (welcomeData.shouldSpeak && voiceEnabled) {
               speakMessage(welcomeData.message);
             }
-          }, 500);
+          }, 800);
           
-          localStorage.setItem('ai_assistant_visited', 'true');
+          sessionStorage.setItem('aria_greeted', 'true');
           setHasShownWelcome(true);
-        }, 1500); // Reduced delay for faster popup
+          
+          return () => clearTimeout(speakTimer);
+        }, 2000); // 2 second delay
+        
+        return () => clearTimeout(popupTimer);
       } else {
         setHasShownWelcome(true);
       }
     }
-  }, [welcomeData, hasShownWelcome, voiceEnabled, voiceReady]);
+  }, [welcomeData, hasShownWelcome, voiceEnabled]);
 
   // Retry speaking welcome message when voice becomes ready
   useEffect(() => {
@@ -274,8 +279,8 @@ export default function AIAssistant() {
             </div>
           </div>
 
-          {/* Notification badge */}
-          {!hasShownWelcome && (
+          {/* Notification badge - shows if not greeted this session */}
+          {!sessionStorage.getItem('aria_greeted') && (
             <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-bounce" />
           )}
         </div>
