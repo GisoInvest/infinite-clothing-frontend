@@ -19,6 +19,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ReturnPolicy from "./pages/ReturnPolicy";
 import ContactUs from "./pages/ContactUs";
 import AudioPlayer from "./components/AudioPlayer";
+import AIAssistant from "./components/AIAssistant";
 import AdminLogin from "./pages/admin/Login";
 import AdminProducts from "./pages/admin/Products";
 import AdminOrders from "./pages/admin/Orders";
@@ -65,6 +66,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <AudioPlayer />
+            <AIAssistant />
             <Router />
           </TooltipProvider>
         </CartProvider>

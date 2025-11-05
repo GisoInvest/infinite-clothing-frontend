@@ -41,3 +41,17 @@
 - [x] Remove address from Privacy Policy page
 - [x] Create new Contact Us page with info@infiniteclothingstore.co.uk
 - [x] Add Contact Us link to navigation
+
+
+## AI Assistant Implementation
+
+- [x] Create backend tRPC endpoint for AI chat with LLM integration
+- [x] Add product knowledge and policy information to AI context
+- [x] Build frontend AI chat component with animated avatar
+- [x] Implement text-to-speech for female voice
+- [x] Add welcome animation that triggers on first visit
+- [x] Create minimizable chat interface (bottom-right)
+- [x] Add cyberpunk styling with neon glow effects
+- [x] Implement chat history and conversation context
+- [x] Add voice playback controls (pause/resume)
+- [x] Test AI responses for accuracy and helpfulness

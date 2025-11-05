@@ -7,6 +7,7 @@ import { TRPCError } from "@trpc/server";
 import * as db from "./db";
 import { createPaymentIntent, confirmPaymentIntent } from "./payment";
 import { sendOrderConfirmationEmail, sendAdminOrderNotification } from "./email";
+import { assistantRouter } from "./routers/assistant";
 
 // Admin-only procedure (simple cookie-based auth)
 const adminProcedure = publicProcedure.use(({ ctx, next }) => {
@@ -19,6 +20,7 @@ const adminProcedure = publicProcedure.use(({ ctx, next }) => {
 
 export const appRouter = router({
   system: systemRouter,
+  assistant: assistantRouter,
 
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
