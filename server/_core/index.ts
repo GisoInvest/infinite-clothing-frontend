@@ -9,6 +9,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import uploadRouter from "../upload";
 import adminAuthRouter from "../admin-auth";
+import { generateSitemap } from "../sitemap";
 import { serveStatic, setupVite } from "./vite";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -44,6 +45,8 @@ async function startServer() {
   app.use("/api/upload", uploadRouter);
   // Admin authentication
   app.use("/api/admin", adminAuthRouter);
+  // Sitemap generation
+  app.get("/sitemap.xml", generateSitemap);
   // tRPC API
   app.use(
     "/api/trpc",

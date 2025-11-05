@@ -11,6 +11,8 @@ import { useCart } from '@/contexts/CartContext';
 import { Loader2, ShoppingBag, ChevronLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import PriceDisplay from '@/components/PriceDisplay';
+import SEO from '@/components/SEO';
+import { ProductStructuredData, BreadcrumbStructuredData } from '@/components/StructuredData';
 
 export default function ProductDetail() {
   const [, params] = useRoute('/product/:id');
@@ -56,6 +58,9 @@ export default function ProductDetail() {
     toast.success(`${product.name} added to cart!`);
   };
 
+  const productUrl = `https://infiniteclothingstore.co.uk/product/${productId}`;
+  const finalPrice = product?.discount ? (product.price * (1 - product.discount / 100)).toFixed(2) : product?.price.toFixed(2);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -94,6 +99,24 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title={product.name}
+        description={product.description}
+        keywords={`${product.name}, ${product.category}, streetwear, ${product.subcategory || ''}`}
+        image={product.images?.[0]}
+        url={productUrl}
+        type="product"
+        price={finalPrice}
+        availability={product.stock > 0 ? 'in stock' : 'out of stock'}
+      />
+      <ProductStructuredData product={product} />
+      <BreadcrumbStructuredData
+        items={[
+          { name: 'Home', url: 'https://infiniteclothingstore.co.uk' },
+          { name: product.category, url: `https://infiniteclothingstore.co.uk/${product.category}` },
+          { name: product.name, url: productUrl },
+        ]}
+      />
       <Navigation />
 
       <div className="flex-1 py-12">

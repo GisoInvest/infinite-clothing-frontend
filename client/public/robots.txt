@@ -1,0 +1,15 @@
+# robots.txt for INF!NITE C107HING
+# https://infiniteclothingstore.co.uk/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /cart
+Disallow: /checkout
+
+# Sitemap
+Sitemap: https://infiniteclothingstore.co.uk/sitemap.xml
+
+# Crawl-delay for all bots
+Crawl-delay: 1

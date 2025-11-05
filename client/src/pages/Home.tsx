@@ -7,6 +7,8 @@ import { trpc } from '@/lib/trpc';
 import { Loader2, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { toast } from 'sonner';
+import SEO from '@/components/SEO';
+import { OrganizationStructuredData } from '@/components/StructuredData';
 
 export default function Home() {
   const { data: featuredProducts, isLoading } = trpc.products.getFeatured.useQuery();
@@ -26,6 +28,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO />
+      <OrganizationStructuredData />
       <Navigation />
 
       {/* Hero Section */}
