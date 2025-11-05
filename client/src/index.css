@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -182,18 +182,41 @@
     text-shadow: 0 0 10px rgba(0, 229, 255, 0.8),
                  0 0 20px rgba(0, 229, 255, 0.6),
                  0 0 30px rgba(0, 229, 255, 0.4);
+    transition: text-shadow 0.3s ease;
+  }
+
+  .glow-text:hover {
+    text-shadow: 0 0 15px rgba(0, 229, 255, 1),
+                 0 0 30px rgba(0, 229, 255, 0.8),
+                 0 0 45px rgba(0, 229, 255, 0.6);
   }
 
   .glow-box {
     box-shadow: 0 0 10px rgba(0, 229, 255, 0.3),
                 0 0 20px rgba(0, 229, 255, 0.2),
                 0 0 30px rgba(0, 229, 255, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .glow-box:hover {
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.5),
+                0 0 30px rgba(0, 229, 255, 0.4),
+                0 0 45px rgba(0, 229, 255, 0.3);
+    transform: translateY(-2px);
   }
 
   .glow-border {
     border: 1px solid rgba(0, 229, 255, 0.5);
     box-shadow: 0 0 10px rgba(0, 229, 255, 0.3),
                 inset 0 0 10px rgba(0, 229, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .glow-border:hover {
+    border-color: rgba(0, 229, 255, 0.8);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5),
+                inset 0 0 15px rgba(0, 229, 255, 0.2);
+    transform: translateY(-4px);
   }
 
   .cyber-grid {
@@ -201,5 +224,151 @@
       linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
     background-size: 50px 50px;
+    animation: grid-move 20s linear infinite;
+  }
+
+  @keyframes grid-move {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 50px 50px;
+    }
+  }
+
+  /* Tron-style Christmas Banner Effects */
+  .tron-banner {
+    background: linear-gradient(
+      135deg,
+      #00ff41 0%,
+      #00e5ff 25%,
+      #ff00ff 50%,
+      #00e5ff 75%,
+      #00ff41 100%
+    );
+    background-size: 400% 400%;
+    animation: tron-gradient 8s ease infinite;
+    position: relative;
+  }
+
+  @keyframes tron-gradient {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .tron-scanlines {
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    animation: scanlines 8s linear infinite;
+  }
+
+  @keyframes scanlines {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(4px);
+    }
+  }
+
+  .tron-border-glow {
+    border-top: 2px solid rgba(255, 255, 255, 0.8);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 
+      inset 0 0 20px rgba(255, 255, 255, 0.3),
+      0 0 20px rgba(0, 229, 255, 0.5);
+  }
+
+  .tron-flicker {
+    animation: flicker 3s infinite alternate;
+    text-shadow: 
+      0 0 5px rgba(255, 255, 255, 1),
+      0 0 10px rgba(0, 255, 65, 0.8),
+      0 0 20px rgba(0, 229, 255, 0.6),
+      0 0 30px rgba(255, 0, 255, 0.4);
+  }
+
+  @keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+      opacity: 1;
+      text-shadow: 
+        0 0 5px rgba(255, 255, 255, 1),
+        0 0 10px rgba(0, 255, 65, 0.8),
+        0 0 20px rgba(0, 229, 255, 0.6),
+        0 0 30px rgba(255, 0, 255, 0.4);
+    }
+    20%, 24%, 55% {
+      opacity: 0.85;
+      text-shadow: 
+        0 0 3px rgba(255, 255, 255, 0.8),
+        0 0 7px rgba(0, 255, 65, 0.6),
+        0 0 15px rgba(0, 229, 255, 0.4),
+        0 0 20px rgba(255, 0, 255, 0.3);
+    }
+    22% {
+      opacity: 0.7;
+      text-shadow: 
+        0 0 2px rgba(255, 255, 255, 0.6),
+        0 0 5px rgba(0, 255, 65, 0.4),
+        0 0 10px rgba(0, 229, 255, 0.3),
+        0 0 15px rgba(255, 0, 255, 0.2);
+    }
+  }
+
+  .tron-sweep {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 100%
+    );
+    animation: sweep 4s linear infinite;
+  }
+
+  @keyframes sweep {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Enhanced interactive card effects */
+  .interactive-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .interactive-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+      0 0 20px rgba(0, 229, 255, 0.4),
+      0 10px 40px rgba(0, 0, 0, 0.3),
+      inset 0 0 15px rgba(0, 229, 255, 0.1);
+  }
+
+  /* Pulsing glow animation */
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.3),
+                  0 0 20px rgba(0, 229, 255, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.5),
+                  0 0 40px rgba(0, 229, 255, 0.3);
+    }
   }
 }

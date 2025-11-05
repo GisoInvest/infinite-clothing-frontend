@@ -36,23 +36,23 @@ export default function Home() {
       <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden cyber-grid">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
         <div className="container relative z-10 text-center">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 glow-text">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 glow-text animate-fade-in">
             INF!NITE C107HING
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto animate-fade-in-up">
             Redefining modern streetwear with purpose-driven designs that inspire confidence, creativity, and individuality.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up">
             <Link href="/men">
               <a>
-                <Button size="lg" className="glow-box text-lg px-8">
+                <Button size="lg" className="glow-box pulse-glow text-lg px-8">
                   Shop Men
                 </Button>
               </a>
             </Link>
             <Link href="/women">
               <a>
-                <Button size="lg" variant="outline" className="text-lg px-8">
+                <Button size="lg" variant="outline" className="text-lg px-8 glow-border">
                   Shop Women
                 </Button>
               </a>
@@ -65,10 +65,10 @@ export default function Home() {
       <section className="py-20 bg-card/50">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 animate-fade-in">
               Wear What <span className="text-primary glow-text">Moves You</span>
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className="text-lg text-muted-foreground leading-relaxed animate-fade-in-up">
               Every piece blends bold expression with comfort. We believe fashion is more than fabric—it's a statement of who you are and what you stand for. Our designs push boundaries while keeping you comfortable in your own skin.
             </p>
           </div>
@@ -96,22 +96,24 @@ export default function Home() {
               {featuredProducts.map((product) => (
                 <Card
                   key={product.id}
-                  className="group overflow-hidden border-primary/20 hover:border-primary/50 transition-all duration-300 glow-border"
+                  className="group overflow-hidden border-primary/20 hover:border-primary/50 transition-all duration-300 interactive-card"
                 >
                   <Link href={`/product/${product.id}`}>
                     <a>
-                      <div className="aspect-square overflow-hidden bg-muted">
+                      <div className="aspect-square overflow-hidden bg-muted relative">
                         {product.images && product.images.length > 0 ? (
                           <img
                             src={product.images[0]}
                             alt={product.name}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <ShoppingBag className="h-20 w-20 text-muted-foreground" />
                           </div>
                         )}
+                        {/* Hover overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
                     </a>
                   </Link>
@@ -127,7 +129,7 @@ export default function Home() {
                       {product.description}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold text-primary">
+                      <span className="text-xl font-bold text-primary glow-text">
                         £{(product.price / 100).toFixed(2)}
                       </span>
                       <Button
@@ -170,10 +172,10 @@ export default function Home() {
             ].map((category) => (
               <Link key={category.path} href={category.path}>
                 <a>
-                  <Card className="group overflow-hidden border-primary/20 hover:border-primary/50 transition-all duration-300 glow-border h-48 flex items-center justify-center relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Card className="group overflow-hidden border-primary/20 hover:border-primary/50 transition-all duration-300 interactive-card h-48 flex items-center justify-center relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="relative z-10 text-center">
-                      <h3 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">
+                      <h3 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors glow-text">
                         {category.name}
                       </h3>
                       <p className="text-muted-foreground">{category.desc}</p>
@@ -190,4 +192,3 @@ export default function Home() {
     </div>
   );
 }
-

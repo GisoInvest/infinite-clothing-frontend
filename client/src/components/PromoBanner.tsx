@@ -8,21 +8,32 @@ export default function PromoBanner() {
   if (!isVisible) return null;
 
   return (
-    <div className="relative bg-gradient-to-r from-red-600 via-green-600 to-red-600 text-white py-3 px-4 text-center animate-pulse">
-      <div className="container mx-auto flex items-center justify-center gap-2">
-        <span className="text-sm md:text-base font-bold">
+    <div className="relative overflow-hidden tron-banner">
+      {/* Animated background scanlines */}
+      <div className="absolute inset-0 tron-scanlines opacity-20" />
+      
+      {/* Glowing border effect */}
+      <div className="absolute inset-0 tron-border-glow" />
+      
+      {/* Main content */}
+      <div className="relative container mx-auto flex items-center justify-center gap-2 py-3 px-4">
+        <span className="text-sm md:text-base font-bold text-white tron-flicker">
           🎄 20% OFF ALL ITEMS - CHRISTMAS SALE! 🎄
         </span>
       </div>
+      
+      {/* Close button */}
       <Button
         variant="ghost"
         size="icon"
-        className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 text-white hover:bg-white/20"
+        className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 text-white hover:bg-white/20 z-10"
         onClick={() => setIsVisible(false)}
       >
         <X className="h-4 w-4" />
       </Button>
+      
+      {/* Animated light sweep */}
+      <div className="absolute inset-0 tron-sweep pointer-events-none" />
     </div>
   );
 }
-
