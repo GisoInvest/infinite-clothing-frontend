@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { publicProcedure, router } from "../_core/trpc";
 import { invokeLLM } from "../_core/llm";
+import { getAllProducts } from "../db";
 
 const ASSISTANT_SYSTEM_PROMPT = `You are Aria, the AI shopping assistant for INF!NITE C107HING, a cutting-edge streetwear brand. You have a friendly, knowledgeable, and slightly edgy personality that matches the brand's cyberpunk aesthetic.
 
@@ -41,7 +42,10 @@ WELCOME MESSAGE (use on first interaction):
 
 When answering questions:
 - Be specific and helpful
-- If asked about a product, describe its style and appeal
+- **IMPORTANT: When asked about products or recommendations, ONLY suggest items from the CURRENT PRODUCT CATALOG below**
+- Never recommend products that aren't in the catalog
+- Mention specific product names, prices, and details from the catalog
+- If asked about a product not in the catalog, politely say it's not currently available
 - For policy questions, refer to the key policies above
 - For contact requests, provide the contact information
 - If you don't know something specific, be honest and suggest contacting support
@@ -67,9 +71,22 @@ export const assistantRouter = router({
     )
     .mutation(async ({ input }) => {
       try {
+        // Fetch current product catalog
+        let productCatalog = "";
+        try {
+          const products = await getAllProducts({ active: true });
+          if (products && products.length > 0) {
+            productCatalog = `\n\nCURRENT PRODUCT CATALOG:\n${products.map(p => 
+              `- ${p.name} (£${(p.price / 100).toFixed(2)})${p.discount > 0 ? ` - ${p.discount}% OFF!` : ''} - ${p.category} - ${p.description || 'Bold streetwear piece'} - Available in: ${Array.isArray(p.sizes) ? p.sizes.join(', ') : 'Multiple sizes'} - Colors: ${Array.isArray(p.colors) ? p.colors.join(', ') : 'Various colors'}`
+            ).join('\n')}`;
+          }
+        } catch (err) {
+          console.warn('[AI Assistant] Could not fetch products:', err);
+        }
+
         // Build conversation history for context
         const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
-          { role: "system", content: ASSISTANT_SYSTEM_PROMPT },
+          { role: "system", content: ASSISTANT_SYSTEM_PROMPT + productCatalog },
         ];
 
         // Add conversation history (limit to last 10 messages for context)
