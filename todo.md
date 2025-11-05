@@ -22,3 +22,11 @@
 - [x] Implement neon glow effect on Christmas banner
 - [x] Add cyberpunk billboard styling to sale banner
 - [x] Test all animations across different browsers
+
+
+## Neon Particle Effect Animation
+
+- [x] Add animated neon particles to homepage background
+- [x] Implement particle system with floating/moving particles
+- [x] Add glow effects to particles
+- [x] Ensure particles don't interfere with content readability
