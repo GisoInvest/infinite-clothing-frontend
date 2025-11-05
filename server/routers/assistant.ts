@@ -87,10 +87,13 @@ export const assistantRouter = router({
           content: input.message,
         });
 
-        // Call LLM
-        const response = await invokeLLM({
-          messages,
-        });
+        // Call LLM with timeout for mobile
+        const response = await Promise.race([
+          invokeLLM({ messages }),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Request timeout')), 15000)
+          )
+        ]) as Awaited<ReturnType<typeof invokeLLM>>;
 
         const assistantMessage = response.choices[0]?.message?.content || "I'm sorry, I didn't catch that. Could you rephrase your question?";
 
@@ -100,7 +103,10 @@ export const assistantRouter = router({
         };
       } catch (error) {
         console.error("[AI Assistant] Error:", error);
-        throw new Error("Sorry, I'm having trouble connecting right now. Please try again in a moment or contact support at info@infiniteclothingstore.co.uk");
+        const errorMessage = error instanceof Error && error.message === 'Request timeout'
+          ? "Sorry, the connection is slow. Please try a shorter question or contact us at info@infiniteclothingstore.co.uk"
+          : "Sorry, I'm having trouble connecting right now. Please try again in a moment or contact support at info@infiniteclothingstore.co.uk";
+        throw new Error(errorMessage);
       }
     }),
 

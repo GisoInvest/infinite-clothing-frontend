@@ -20,10 +20,12 @@ export default function AIAssistant() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [hasShownWelcome, setHasShownWelcome] = useState(false);
+  const [voiceReady, setVoiceReady] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const [voicesLoaded, setVoicesLoaded] = useState(false);
+  const welcomeMessageRef = useRef<string>('');
   
   // Load voices on component mount
   useEffect(() => {
@@ -33,18 +35,36 @@ export default function AIAssistant() {
         const voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
           setVoicesLoaded(true);
-          console.log('Available voices:', voices.map(v => v.name));
+          console.log('Available voices:', voices.map(v => `${v.name} (${v.lang})`));
         }
       };
       
       loadVoices();
       window.speechSynthesis.onvoiceschanged = loadVoices;
+      
+      // Enable voice after user interaction
+      const enableVoice = () => {
+        setVoiceReady(true);
+        document.removeEventListener('click', enableVoice);
+        document.removeEventListener('touchstart', enableVoice);
+      };
+      
+      document.addEventListener('click', enableVoice, { once: true });
+      document.addEventListener('touchstart', enableVoice, { once: true });
     }
   }, []);
   
-  const chatMutation = trpc.assistant.chat.useMutation();
+  const chatMutation = trpc.assistant.chat.useMutation({
+    onError: (error) => {
+      console.error('Chat error:', error);
+      toast.error('Failed to get response. Please check your connection.');
+    },
+  });
+  
   const { data: welcomeData } = trpc.assistant.getWelcomeMessage.useQuery(undefined, {
     enabled: !hasShownWelcome,
+    retry: 3,
+    retryDelay: 1000,
   });
 
   // Auto-scroll to bottom of messages
@@ -56,13 +76,16 @@ export default function AIAssistant() {
     scrollToBottom();
   }, [messages]);
 
-  // Show welcome message on first visit
+  // Show welcome message on first visit - FIXED AUTO-POPUP
   useEffect(() => {
     if (welcomeData && !hasShownWelcome) {
       const hasVisited = localStorage.getItem('ai_assistant_visited');
       
       if (!hasVisited) {
-        // First time visitor
+        // Store welcome message
+        welcomeMessageRef.current = welcomeData.message;
+        
+        // First time visitor - AUTO POPUP
         setTimeout(() => {
           setIsOpen(true);
           const welcomeMsg: Message = {
@@ -72,18 +95,32 @@ export default function AIAssistant() {
           };
           setMessages([welcomeMsg]);
           
-          if (welcomeData.shouldSpeak && voiceEnabled) {
-            speakMessage(welcomeData.message);
-          }
+          // Try to speak after a short delay to ensure popup is visible
+          setTimeout(() => {
+            if (welcomeData.shouldSpeak && voiceEnabled && voiceReady) {
+              speakMessage(welcomeData.message);
+            }
+          }, 500);
           
           localStorage.setItem('ai_assistant_visited', 'true');
           setHasShownWelcome(true);
-        }, 2000); // Show after 2 seconds
+        }, 1500); // Reduced delay for faster popup
       } else {
         setHasShownWelcome(true);
       }
     }
-  }, [welcomeData, hasShownWelcome, voiceEnabled]);
+  }, [welcomeData, hasShownWelcome, voiceEnabled, voiceReady]);
+
+  // Retry speaking welcome message when voice becomes ready
+  useEffect(() => {
+    if (voiceReady && isOpen && messages.length === 1 && welcomeMessageRef.current && !isSpeaking) {
+      // User just interacted, try speaking the welcome message
+      setTimeout(() => {
+        speakMessage(welcomeMessageRef.current);
+        welcomeMessageRef.current = ''; // Clear so we don't repeat
+      }, 300);
+    }
+  }, [voiceReady, isOpen, messages.length, isSpeaking]);
 
   // Text-to-speech function with female voice priority
   const speakMessage = (text: string) => {
@@ -128,7 +165,7 @@ export default function AIAssistant() {
     if (!femaleVoice) {
       femaleVoice = voices.find(voice => 
         voice.name.toLowerCase().includes('f') || 
-        voice.gender === 'female'
+        (voice as any).gender === 'female'
       );
     }
 
@@ -145,10 +182,19 @@ export default function AIAssistant() {
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    utterance.onerror = (e) => {
+      console.error('Speech error:', e);
+      setIsSpeaking(false);
+    };
 
     speechSynthesisRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
+    
+    try {
+      window.speechSynthesis.speak(utterance);
+    } catch (error) {
+      console.error('Failed to speak:', error);
+      setIsSpeaking(false);
+    }
   };
 
   const stopSpeaking = () => {
@@ -164,7 +210,7 @@ export default function AIAssistant() {
   };
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || chatMutation.isPending) return;
 
     const userMessage: Message = {
       role: 'user',
@@ -189,12 +235,12 @@ export default function AIAssistant() {
 
       setMessages(prev => [...prev, assistantMessage]);
 
-      if (voiceEnabled) {
+      if (voiceEnabled && voiceReady) {
         speakMessage(response.message);
       }
     } catch (error) {
-      toast.error('Failed to get response. Please try again.');
-      console.error('Chat error:', error);
+      // Error already handled by mutation onError
+      console.error('Message send error:', error);
     }
   };
 
@@ -205,10 +251,15 @@ export default function AIAssistant() {
     }
   };
 
+  const handleOpen = () => {
+    setIsOpen(true);
+    setVoiceReady(true); // User clicked, voice is now ready
+  };
+
   if (!isOpen) {
     return (
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpen}
         className="fixed bottom-6 right-6 z-50 group"
         aria-label="Open AI Assistant"
       >
