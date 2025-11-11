@@ -6,7 +6,7 @@ import { Calendar, Eye, Tag, ArrowLeft, Share2, Facebook, Instagram } from "luci
 import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import 'react-quill/dist/quill.snow.css';
+
 
 export default function BlogPost() {
   const [, params] = useRoute("/blog/:slug");
@@ -81,7 +81,7 @@ export default function BlogPost() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
+      <Navigation />
       
       <main className="flex-1">
         {/* Back Button */}

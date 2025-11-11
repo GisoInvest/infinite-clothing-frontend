@@ -9,8 +9,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { Plus, Edit, Trash2, Eye, FileText, Image as ImageIcon, Save, X } from "lucide-react";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import { useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
+import Placeholder from '@tiptap/extension-placeholder';
 import SocialMediaCopy from "@/components/SocialMediaCopy";
 
 export default function AdminBlog() {
@@ -31,6 +34,26 @@ export default function AdminBlog() {
   });
   const [tagInput, setTagInput] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Link.configure({ openOnClick: false }),
+      Image,
+      Placeholder.configure({ placeholder: 'Write your blog content here...' }),
+    ],
+    content: formData.content,
+    onUpdate: ({ editor }) => {
+      setFormData(prev => ({ ...prev, content: editor.getHTML() }));
+    },
+  });
+
+  // Update editor content when editing a post
+  useEffect(() => {
+    if (editor && formData.content !== editor.getHTML()) {
+      editor.commands.setContent(formData.content);
+    }
+  }, [editingPost]);
 
   const { data: posts, refetch } = trpc.blog.getAllAdmin.useQuery();
   const createMutation = trpc.blog.create.useMutation({
@@ -84,6 +107,7 @@ export default function AdminBlog() {
       metaKeywords: "",
     });
     setEditingPost(null);
+    editor?.commands.clearContent();
   };
 
   const handleEdit = (post: any) => {
@@ -180,16 +204,7 @@ export default function AdminBlog() {
     }
   }, [formData.title, editingPost]);
 
-  const quillModules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'align': [] }],
-      ['link', 'image'],
-      ['clean']
-    ],
-  };
+
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -258,14 +273,46 @@ export default function AdminBlog() {
                 {/* Content Editor */}
                 <div className="space-y-2">
                   <Label>Content *</Label>
-                  <div className="bg-white text-black rounded-md">
-                    <ReactQuill
-                      theme="snow"
-                      value={formData.content}
-                      onChange={(value) => setFormData({ ...formData, content: value })}
-                      modules={quillModules}
-                      className="min-h-[300px]"
-                    />
+                  <div className="border rounded-lg overflow-hidden">
+                    <div className="bg-muted p-2 border-b flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editor?.chain().focus().toggleBold().run()}
+                        className={editor?.isActive('bold') ? 'bg-accent' : ''}
+                      >
+                        Bold
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editor?.chain().focus().toggleItalic().run()}
+                        className={editor?.isActive('italic') ? 'bg-accent' : ''}
+                      >
+                        Italic
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
+                        className={editor?.isActive('heading', { level: 2 }) ? 'bg-accent' : ''}
+                      >
+                        H2
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editor?.chain().focus().toggleBulletList().run()}
+                        className={editor?.isActive('bulletList') ? 'bg-accent' : ''}
+                      >
+                        List
+                      </Button>
+                    </div>
+                    <EditorContent editor={editor} className="min-h-[300px] prose prose-sm max-w-none p-4" />
                   </div>
                 </div>
 
