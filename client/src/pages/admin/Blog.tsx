@@ -148,21 +148,34 @@ export default function AdminBlog() {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
 
+    // Remove scheduledFor from formData as it's not in the backend schema
+    const { scheduledFor, ...formDataWithoutScheduledFor } = formData;
+    
     const postData = {
-      ...formData,
+      ...formDataWithoutScheduledFor,
       slug,
       authorId: 1, // TODO: Get from logged-in admin user
       authorName: "Admin", // TODO: Get from logged-in admin user
-      publishedAt: formData.status === 'published' ? new Date() : undefined,
-      scheduledFor: formData.status === 'scheduled' && formData.scheduledFor 
-        ? new Date(formData.scheduledFor) 
+      publishedAt: formData.status === 'scheduled' && formData.scheduledFor
+        ? new Date(formData.scheduledFor)
+        : formData.status === 'published' 
+        ? new Date() 
         : undefined,
     };
+    
+    console.log('=== Blog Post Data ===');
+    console.log('postData:', JSON.stringify(postData, null, 2));
 
-    if (editingPost) {
-      await updateMutation.mutateAsync({ id: editingPost.id, ...postData });
-    } else {
-      await createMutation.mutateAsync(postData);
+    try {
+      if (editingPost) {
+        await updateMutation.mutateAsync({ id: editingPost.id, ...postData });
+      } else {
+        await createMutation.mutateAsync(postData);
+      }
+    } catch (error) {
+      console.error('=== Blog Post Creation Error ===');
+      console.error('Error:', error);
+      console.error('Error message:', error instanceof Error ? error.message : String(error));
     }
   };
 

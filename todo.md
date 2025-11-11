@@ -183,3 +183,13 @@
   - [x] Show post count per category
   - [x] Add category navigation to blog pages
   - [x] Style with cyberpunk theme
+
+
+## Bug Fixes
+
+- [x] Fix blog post creation error when clicking Create Post button
+  - [x] Investigate error in browser console (500 Internal Server Error)
+  - [x] Found root cause: blogPosts table didn't exist in database
+  - [x] Created blogPosts table manually with correct schema
+  - [x] Added Blog link to admin navigation sidebar
+  - [x] Test fix and verify post creation works successfully
