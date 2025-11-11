@@ -303,6 +303,10 @@ export const appRouter = router({
       return await db.getActiveAudioTracks();
     }),
 
+    getMusicEnabled: publicProcedure.query(async () => {
+      return await db.getBackgroundMusicEnabled();
+    }),
+
     // Admin endpoints
     getAll: adminProcedure.query(async () => {
       return await db.getAllAudioTracks();
@@ -344,6 +348,13 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Audio track not found' });
         }
         return { success };
+      }),
+
+    setMusicEnabled: adminProcedure
+      .input(z.object({ enabled: z.boolean() }))
+      .mutation(async ({ input }) => {
+        await db.setBackgroundMusicEnabled(input.enabled);
+        return { success: true, enabled: input.enabled };
       }),
 
     uploadFile: adminProcedure

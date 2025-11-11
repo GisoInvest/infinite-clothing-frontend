@@ -9,6 +9,9 @@ export default function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
   
   const { data: tracks } = trpc.audio.getActive.useQuery();
+  const { data: globalMusicEnabled } = trpc.audio.getMusicEnabled.useQuery(undefined, {
+    refetchInterval: 3000, // Poll every 3 seconds for global music state
+  });
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -36,6 +39,22 @@ export default function AudioPlayer() {
       audio.play().catch(console.error);
     }
   }, [currentTrackIndex, tracks]);
+
+  // Sync with global music state from admin
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !tracks || tracks.length === 0) return;
+
+    if (globalMusicEnabled && !isPlaying) {
+      // Admin enabled music globally - start playing
+      audio.play().catch(console.error);
+      setIsPlaying(true);
+    } else if (!globalMusicEnabled && isPlaying) {
+      // Admin disabled music globally - stop playing
+      audio.pause();
+      setIsPlaying(false);
+    }
+  }, [globalMusicEnabled, tracks]);
 
   const togglePlay = () => {
     const audio = audioRef.current;

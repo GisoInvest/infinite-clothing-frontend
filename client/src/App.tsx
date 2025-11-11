@@ -24,6 +24,7 @@ import AdminLogin from "./pages/admin/Login";
 import AdminProducts from "./pages/admin/Products";
 import AdminOrders from "./pages/admin/Orders";
 import AdminAudio from "./pages/admin/Audio";
+import AdminSettings from "./pages/AdminSettings";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -46,6 +47,7 @@ function Router() {
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />
       <Route path="/admin/audio" component={AdminAudio} />
+      <Route path="/admin/settings" component={AdminSettings} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

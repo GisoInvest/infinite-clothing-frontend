@@ -92,3 +92,24 @@
 - [x] Ensure 20% discount is applied correctly in cart calculations
 - [x] Replace "Add to Cart" with "View Details" on listing pages
 - [x] Force customers to select size/color from product detail page
+
+
+## New Feature Requests
+
+- [x] Global background music control from admin panel
+  - [x] Create database table for music settings (playing/stopped state)
+  - [x] Add admin UI to control music playback globally
+  - [x] Implement real-time music state sync across all website visitors
+  - [x] Add music player component that responds to global state
+
+- [x] Update Aria AI assistant avatar
+  - [x] Generate female cyberpunk character image
+  - [x] Replace robot icon with new avatar
+  - [x] Update avatar in all Aria components
+
+- [x] Enhance Aria AI personality and conversation skills
+  - [x] Train Aria to handle general conversations beyond product queries
+  - [x] Add knowledge about mental health support
+  - [x] Add creativity and individuality promotion
+  - [x] Add confidence building and selflessness themes
+  - [x] Update system prompt with new personality traits

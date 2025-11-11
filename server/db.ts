@@ -1,6 +1,6 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack } from "../drizzle/schema";
+import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -293,3 +293,30 @@ export async function getAllAudioTracks(): Promise<AudioTrack[]> {
   return await db.select().from(audioTracks).orderBy(audioTracks.order);
 }
 
+
+// Site settings operations
+export async function getSiteSetting(key: string): Promise<string | null> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
+  return result.length > 0 ? result[0].value : null;
+}
+
+export async function setSiteSetting(key: string, value: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.insert(siteSettings)
+    .values({ key, value })
+    .onDuplicateKeyUpdate({ set: { value, updatedAt: sql`CURRENT_TIMESTAMP` } });
+}
+
+export async function getBackgroundMusicEnabled(): Promise<boolean> {
+  const value = await getSiteSetting('background_music_enabled');
+  return value === 'true';
+}
+
+export async function setBackgroundMusicEnabled(enabled: boolean): Promise<void> {
+  await setSiteSetting('background_music_enabled', enabled ? 'true' : 'false');
+}

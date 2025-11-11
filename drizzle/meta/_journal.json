@@ -15,6 +15,13 @@
       "when": 1761602139495,
       "tag": "0001_mean_blazing_skull",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1762833489382,
+      "tag": "0002_next_rick_jones",
+      "breakpoints": true
     }
   ]
 }

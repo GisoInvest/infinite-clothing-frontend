@@ -115,3 +115,16 @@ export const audioTracks = mysqlTable("audioTracks", {
 export type AudioTrack = typeof audioTracks.$inferSelect;
 export type InsertAudioTrack = typeof audioTracks.$inferInsert;
 
+/**
+ * Site settings for global configuration
+ */
+export const siteSettings = mysqlTable("siteSettings", {
+  id: int("id").autoincrement().primaryKey(),
+  key: varchar("key", { length: 100 }).notNull().unique(), // e.g., "background_music_enabled"
+  value: text("value").notNull(), // JSON string for complex values
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SiteSetting = typeof siteSettings.$inferSelect;
+export type InsertSiteSetting = typeof siteSettings.$inferInsert;
+

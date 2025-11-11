@@ -274,8 +274,12 @@ export default function AIAssistant() {
           
           {/* Avatar */}
           <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-primary via-cyan-400 to-primary p-1 glow-box">
-            <div className="w-full h-full rounded-full bg-card flex items-center justify-center">
-              <div className="text-2xl">🤖</div>
+            <div className="w-full h-full rounded-full overflow-hidden">
+              <img 
+                src="/aria-avatar.png" 
+                alt="Aria AI Assistant" 
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
 
@@ -292,8 +296,12 @@ export default function AIAssistant() {
     return (
       <div className="fixed bottom-6 right-6 z-50">
         <Card className="bg-card/95 backdrop-blur-sm border-primary/30 p-4 flex items-center gap-3 glow-box">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-cyan-400 flex items-center justify-center">
-            <span className="text-lg">🤖</span>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-cyan-400 p-0.5 overflow-hidden">
+            <img 
+              src="/aria-avatar.png" 
+              alt="Aria AI Assistant" 
+              className="w-full h-full object-cover rounded-full"
+            />
           </div>
           <span className="text-sm font-medium">Aria - AI Assistant</span>
           <Button
