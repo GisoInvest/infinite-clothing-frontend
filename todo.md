@@ -161,3 +161,25 @@
 - [x] Fix React Quill compatibility issue with React 19
 - [x] Replace with React 19 compatible rich text editor (Tiptap)
 - [x] Test blog post creation and editing functionality
+
+
+## Blog Enhancement Features
+
+- [x] Add image upload to blog editor
+  - [x] Integrate S3 storage for blog images
+  - [x] Add image upload button in Tiptap editor toolbar
+  - [x] Show upload progress indicator
+  - [x] Add image preview in editor
+
+- [x] Implement blog post scheduling
+  - [x] Add date/time picker to blog editor
+  - [x] Show scheduled posts in admin panel
+  - [x] Add visual indicator for scheduled vs published posts
+  - [ ] Auto-publish posts at scheduled time (requires cron job)
+
+- [x] Create blog categories page
+  - [x] Design category listing page
+  - [x] Add category filter functionality
+  - [x] Show post count per category
+  - [x] Add category navigation to blog pages
+  - [x] Style with cyberpunk theme

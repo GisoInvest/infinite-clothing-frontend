@@ -28,12 +28,15 @@ export default function AdminBlog() {
     category: "",
     tags: [] as string[],
     status: "draft" as "draft" | "published" | "scheduled",
+    scheduledFor: "",
     metaTitle: "",
     metaDescription: "",
     metaKeywords: "",
   });
   const [tagInput, setTagInput] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const editorImageInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingEditorImage, setIsUploadingEditorImage] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -102,6 +105,7 @@ export default function AdminBlog() {
       category: "",
       tags: [],
       status: "draft",
+      scheduledFor: "",
       metaTitle: "",
       metaDescription: "",
       metaKeywords: "",
@@ -112,6 +116,7 @@ export default function AdminBlog() {
 
   const handleEdit = (post: any) => {
     setEditingPost(post);
+    const scheduledDate = post.scheduledFor ? new Date(post.scheduledFor).toISOString().slice(0, 16) : "";
     setFormData({
       title: post.title,
       slug: post.slug,
@@ -121,6 +126,7 @@ export default function AdminBlog() {
       category: post.category || "",
       tags: post.tags || [],
       status: post.status,
+      scheduledFor: scheduledDate,
       metaTitle: post.metaTitle || "",
       metaDescription: post.metaDescription || "",
       metaKeywords: post.metaKeywords || "",
@@ -148,6 +154,9 @@ export default function AdminBlog() {
       authorId: 1, // TODO: Get from logged-in admin user
       authorName: "Admin", // TODO: Get from logged-in admin user
       publishedAt: formData.status === 'published' ? new Date() : undefined,
+      scheduledFor: formData.status === 'scheduled' && formData.scheduledFor 
+        ? new Date(formData.scheduledFor) 
+        : undefined,
     };
 
     if (editingPost) {
@@ -174,10 +183,47 @@ export default function AdminBlog() {
           fileData: reader.result as string,
           contentType: file.type,
         });
-        setFormData({ ...formData, coverImage: result.url });
+        setFormData(prev => ({ ...prev, coverImage: result.url }));
         toast.success("Image uploaded successfully");
       } catch (error: any) {
         toast.error(`Failed to upload image: ${error.message}`);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleEditorImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be less than 5MB");
+      return;
+    }
+
+    setIsUploadingEditorImage(true);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const result = await uploadImageMutation.mutateAsync({
+          fileName: file.name,
+          fileData: reader.result as string,
+          contentType: file.type,
+        });
+        
+        // Insert image into editor at current cursor position
+        if (editor) {
+          editor.chain().focus().setImage({ src: result.url }).run();
+        }
+        
+        toast.success("Image inserted into editor");
+      } catch (error: any) {
+        toast.error(`Failed to upload image: ${error.message}`);
+      } finally {
+        setIsUploadingEditorImage(false);
+        if (editorImageInputRef.current) {
+          editorImageInputRef.current.value = '';
+        }
       }
     };
     reader.readAsDataURL(file);
@@ -311,6 +357,23 @@ export default function AdminBlog() {
                       >
                         List
                       </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => editorImageInputRef.current?.click()}
+                        disabled={isUploadingEditorImage}
+                      >
+                        <ImageIcon className="w-4 h-4 mr-1" />
+                        {isUploadingEditorImage ? 'Uploading...' : 'Image'}
+                      </Button>
+                      <input
+                        ref={editorImageInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleEditorImageUpload}
+                        className="hidden"
+                      />
                     </div>
                     <EditorContent editor={editor} className="min-h-[300px] prose prose-sm max-w-none p-4" />
                   </div>
@@ -379,6 +442,24 @@ export default function AdminBlog() {
                     </Select>
                   </div>
                 </div>
+
+                {/* Scheduled Date/Time */}
+                {formData.status === 'scheduled' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="scheduledFor">Schedule For</Label>
+                    <Input
+                      id="scheduledFor"
+                      type="datetime-local"
+                      value={formData.scheduledFor}
+                      onChange={(e) => setFormData({ ...formData, scheduledFor: e.target.value })}
+                      min={new Date().toISOString().slice(0, 16)}
+                      required
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Post will be automatically published at the scheduled time
+                    </p>
+                  </div>
+                )}
 
                 {/* Tags */}
                 <div className="space-y-2">
@@ -489,11 +570,13 @@ export default function AdminBlog() {
                         {post.excerpt || "No excerpt"}
                       </p>
                       <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
-                        <span>Status: <span className="text-primary">{post.status}</span></span>
+                        <span>Status: <span className={post.status === 'scheduled' ? 'text-yellow-500' : 'text-primary'}>{post.status}</span></span>
                         <span>Category: {post.category || "None"}</span>
                         <span>Views: {post.viewCount}</span>
                         <span>
-                          {post.publishedAt
+                          {post.status === 'scheduled' && post.scheduledFor
+                            ? `Scheduled: ${new Date(post.scheduledFor).toLocaleString()}`
+                            : post.publishedAt
                             ? new Date(post.publishedAt).toLocaleDateString()
                             : "Not published"}
                         </span>

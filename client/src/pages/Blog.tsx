@@ -62,7 +62,14 @@ export default function Blog() {
               />
             </div>
             
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap items-center">
+              <Link href="/blog/categories">
+                <Button variant="outline" size="sm">
+                  <Tag className="w-4 h-4 mr-2" />
+                  Browse Categories
+                </Button>
+              </Link>
+              <div className="h-6 w-px bg-border" />
               <Button
                 variant={selectedCategory === null ? "default" : "outline"}
                 onClick={() => setSelectedCategory(null)}

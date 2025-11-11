@@ -28,6 +28,7 @@ import AdminSettings from "./pages/AdminSettings";
 import AdminBlog from "./pages/admin/Blog";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import BlogCategories from "./pages/BlogCategories";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -47,6 +48,7 @@ function Router() {
       <Route path="/return-policy" component={ReturnPolicy} />
       <Route path="/contact" component={ContactUs} />
       <Route path="/blog" component={Blog} />
+      <Route path="/blog/categories" component={BlogCategories} />
       <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/products" component={AdminProducts} />
