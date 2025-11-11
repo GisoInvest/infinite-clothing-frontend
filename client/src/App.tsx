@@ -25,6 +25,9 @@ import AdminProducts from "./pages/admin/Products";
 import AdminOrders from "./pages/admin/Orders";
 import AdminAudio from "./pages/admin/Audio";
 import AdminSettings from "./pages/AdminSettings";
+import AdminBlog from "./pages/admin/Blog";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -43,11 +46,14 @@ function Router() {
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/return-policy" component={ReturnPolicy} />
       <Route path="/contact" component={ContactUs} />
+      <Route path="/blog" component={Blog} />
+      <Route path="/blog/:slug" component={BlogPost} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/products" component={AdminProducts} />
       <Route path="/admin/orders" component={AdminOrders} />
       <Route path="/admin/audio" component={AdminAudio} />
       <Route path="/admin/settings" component={AdminSettings} />
+      <Route path="/admin/blog" component={AdminBlog} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

@@ -380,6 +380,133 @@ export const appRouter = router({
         return result;
       }),
   }),
+
+  blog: router({ 
+    // Public endpoints
+    getAll: publicProcedure.query(async () => {
+      return await db.getPublishedBlogPosts();
+    }),
+
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const post = await db.getBlogPostBySlug(input.slug);
+        if (!post || post.status !== 'published') {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Blog post not found' });
+        }
+        // Increment view count
+        await db.incrementBlogPostViews(post.id);
+        return post;
+      }),
+
+    getByCategory: publicProcedure
+      .input(z.object({ category: z.string() }))
+      .query(async ({ input }) => {
+        return await db.getBlogPostsByCategory(input.category);
+      }),
+
+    // Admin endpoints
+    getAllAdmin: adminProcedure.query(async () => {
+      return await db.getAllBlogPosts();
+    }),
+
+    getById: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const post = await db.getBlogPost(input.id);
+        if (!post) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Blog post not found' });
+        }
+        return post;
+      }),
+
+    create: adminProcedure
+      .input(z.object({
+        title: z.string(),
+        slug: z.string(),
+        excerpt: z.string().optional(),
+        content: z.string(),
+        coverImage: z.string().optional(),
+        images: z.array(z.string()).default([]),
+        category: z.string().optional(),
+        tags: z.array(z.string()).default([]),
+        authorId: z.number(),
+        authorName: z.string(),
+        status: z.enum(['draft', 'published', 'scheduled']).default('draft'),
+        publishedAt: z.date().optional(),
+        metaTitle: z.string().optional(),
+        metaDescription: z.string().optional(),
+        metaKeywords: z.string().optional(),
+        facebookPost: z.string().optional(),
+        instagramPost: z.string().optional(),
+        tiktokPost: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createBlogPost(input);
+      }),
+
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().optional(),
+        slug: z.string().optional(),
+        excerpt: z.string().optional(),
+        content: z.string().optional(),
+        coverImage: z.string().optional(),
+        images: z.array(z.string()).optional(),
+        category: z.string().optional(),
+        tags: z.array(z.string()).optional(),
+        status: z.enum(['draft', 'published', 'scheduled']).optional(),
+        publishedAt: z.date().optional(),
+        metaTitle: z.string().optional(),
+        metaDescription: z.string().optional(),
+        metaKeywords: z.string().optional(),
+        facebookPost: z.string().optional(),
+        instagramPost: z.string().optional(),
+        tiktokPost: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        const post = await db.updateBlogPost(id, updates);
+        if (!post) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Blog post not found' });
+        }
+        return post;
+      }),
+
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const success = await db.deleteBlogPost(input.id);
+        if (!success) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Blog post not found' });
+        }
+        return { success };
+      }),
+
+    uploadImage: adminProcedure
+      .input(z.object({
+        fileName: z.string(),
+        fileData: z.string(), // base64 data URL
+        contentType: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const { storagePut } = await import('./storage');
+        
+        // Extract base64 data from data URL
+        const base64Data = input.fileData.split(',')[1];
+        const buffer = Buffer.from(base64Data, 'base64');
+        
+        // Generate unique filename
+        const timestamp = Date.now();
+        const ext = input.fileName.split('.').pop();
+        const key = `blog/${timestamp}-${Math.random().toString(36).substring(7)}.${ext}`;
+        
+        // Upload to S3
+        const result = await storagePut(key, buffer, input.contentType);
+        return result;
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -1,6 +1,6 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting } from "../drizzle/schema";
+import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting, blogPosts, BlogPost, InsertBlogPost } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -319,4 +319,90 @@ export async function getBackgroundMusicEnabled(): Promise<boolean> {
 
 export async function setBackgroundMusicEnabled(enabled: boolean): Promise<void> {
   await setSiteSetting('background_music_enabled', enabled ? 'true' : 'false');
+}
+
+// Blog post operations
+export async function createBlogPost(post: InsertBlogPost): Promise<BlogPost> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(blogPosts).values(post);
+  const insertedId = Number(result[0].insertId);
+  
+  const newPost = await db.select().from(blogPosts).where(eq(blogPosts.id, insertedId)).limit(1);
+  return newPost[0];
+}
+
+export async function updateBlogPost(id: number, updates: Partial<InsertBlogPost>): Promise<BlogPost | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(blogPosts).set(updates).where(eq(blogPosts.id, id));
+  
+  const updated = await db.select().from(blogPosts).where(eq(blogPosts.id, id)).limit(1);
+  return updated.length > 0 ? updated[0] : undefined;
+}
+
+export async function deleteBlogPost(id: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.delete(blogPosts).where(eq(blogPosts.id, id));
+  return result[0].affectedRows > 0;
+}
+
+export async function getBlogPost(id: number): Promise<BlogPost | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.select().from(blogPosts).where(eq(blogPosts.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAllBlogPosts(): Promise<BlogPost[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db.select().from(blogPosts).orderBy(desc(blogPosts.createdAt));
+}
+
+export async function getPublishedBlogPosts(): Promise<BlogPost[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db.select().from(blogPosts)
+    .where(and(
+      eq(blogPosts.status, 'published'),
+      sql`${blogPosts.publishedAt} <= NOW()`
+    ))
+    .orderBy(desc(blogPosts.publishedAt));
+}
+
+export async function getBlogPostsByCategory(category: string): Promise<BlogPost[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db.select().from(blogPosts)
+    .where(and(
+      eq(blogPosts.category, category),
+      eq(blogPosts.status, 'published')
+    ))
+    .orderBy(desc(blogPosts.publishedAt));
+}
+
+export async function incrementBlogPostViews(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(blogPosts)
+    .set({ viewCount: sql`${blogPosts.viewCount} + 1` })
+    .where(eq(blogPosts.id, id));
 }

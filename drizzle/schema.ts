@@ -128,3 +128,35 @@ export const siteSettings = mysqlTable("siteSettings", {
 export type SiteSetting = typeof siteSettings.$inferSelect;
 export type InsertSiteSetting = typeof siteSettings.$inferInsert;
 
+/**
+ * Blog posts table for content management
+ */
+export const blogPosts = mysqlTable("blogPosts", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(), // URL-friendly version of title
+  excerpt: text("excerpt"), // Short summary for listing pages
+  content: text("content").notNull(), // Full blog post content (HTML)
+  coverImage: text("coverImage"), // Main image URL
+  images: json("images").$type<string[]>().default([]), // Additional images
+  category: varchar("category", { length: 100 }), // e.g., "Fashion Tips", "New Arrivals", "Style Guide"
+  tags: json("tags").$type<string[]>().default([]), // e.g., ["streetwear", "cyberpunk", "winter"]
+  authorId: int("authorId").notNull(), // Reference to users table
+  authorName: varchar("authorName", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["draft", "published", "scheduled"]).default("draft").notNull(),
+  publishedAt: timestamp("publishedAt"), // When the post was/will be published
+  viewCount: int("viewCount").default(0).notNull(),
+  // SEO fields
+  metaTitle: varchar("metaTitle", { length: 255 }),
+  metaDescription: text("metaDescription"),
+  metaKeywords: text("metaKeywords"),
+  // Social media formatted content
+  facebookPost: text("facebookPost"), // Pre-formatted for Facebook
+  instagramPost: text("instagramPost"), // Pre-formatted for Instagram with hashtags
+  tiktokPost: text("tiktokPost"), // Pre-formatted for TikTok
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BlogPost = typeof blogPosts.$inferSelect;
+export type InsertBlogPost = typeof blogPosts.$inferInsert;
