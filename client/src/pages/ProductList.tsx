@@ -136,17 +136,17 @@ export default function ProductList({ category, title, subcategories }: ProductL
                         <span className="text-xl font-bold text-primary">
                           £{(product.price / 100).toFixed(2)}
                         </span>
-                        <Button
-                          size="sm"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleAddToCart(product);
-                          }}
-                          className="glow-box"
-                          disabled={product.stock <= 0}
-                        >
-                          {product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
-                        </Button>
+                        <Link href={`/product/${product.id}`}>
+                          <a>
+                            <Button
+                              size="sm"
+                              className="glow-box"
+                              disabled={product.stock <= 0}
+                            >
+                              {product.stock <= 0 ? 'Out of Stock' : 'View Details'}
+                            </Button>
+                          </a>
+                        </Link>
                       </div>
                     </CardContent>
                   </Card>

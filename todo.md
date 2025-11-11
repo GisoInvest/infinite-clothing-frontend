@@ -84,3 +84,11 @@
 - [x] Enable Aria to recommend actual products by name and price
 - [x] Allow Aria to answer questions about specific products
 - [x] Test product recommendations with real queries
+
+
+## Cart & Discount Fixes (Critical)
+
+- [x] Prevent adding products to cart without selecting size and color
+- [x] Ensure 20% discount is applied correctly in cart calculations
+- [x] Replace "Add to Cart" with "View Details" on listing pages
+- [x] Force customers to select size/color from product detail page

@@ -134,16 +134,16 @@ export default function Home() {
                       <span className="text-xl font-bold text-primary glow-text">
                         £{(product.price / 100).toFixed(2)}
                       </span>
-                      <Button
-                        size="sm"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleAddToCart(product);
-                        }}
-                        className="glow-box"
-                      >
-                        Add to Cart
-                      </Button>
+                      <Link href={`/product/${product.id}`}>
+                        <a>
+                          <Button
+                            size="sm"
+                            className="glow-box"
+                          >
+                            View Details
+                          </Button>
+                        </a>
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>
