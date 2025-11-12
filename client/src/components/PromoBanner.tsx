@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import CountdownTimer from './CountdownTimer';
 
 export default function PromoBanner() {
   const [isVisible, setIsVisible] = useState(true);
@@ -16,10 +17,14 @@ export default function PromoBanner() {
       <div className="absolute inset-0 tron-border-glow" />
       
       {/* Main content */}
-      <div className="relative container mx-auto flex items-center justify-center gap-2 py-3 px-4">
+      <div className="relative container mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 py-3 px-4">
         <span className="text-sm md:text-base font-bold text-white tron-flicker">
           🎄 20% OFF ALL ITEMS - CHRISTMAS SALE! 🎄
         </span>
+        <CountdownTimer 
+          targetDate={new Date('2025-12-25T23:59:59')}
+          onComplete={() => setIsVisible(false)}
+        />
       </div>
       
       {/* Close button */}

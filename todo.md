@@ -247,3 +247,20 @@
   - [ ] Subscriber list management (future enhancement)
   - [x] Campaign scheduling
   - [ ] Track email open rates and clicks (future enhancement)
+
+
+## Homepage Engagement Features
+
+- [x] Countdown timer for Christmas sale
+  - [x] Create countdown timer component
+  - [x] Set end date to December 25, 2025
+  - [x] Add to sale banner in homepage
+  - [x] Style with cyberpunk theme
+
+- [x] First-time visitor popup
+  - [x] Create popup component with email capture
+  - [x] Add 10% off incentive
+  - [x] Trigger after 8 seconds
+  - [x] Add exit intent trigger
+  - [x] Integrate with newsletter subscription API
+  - [x] Style with cyberpunk theme

@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import SEO from '@/components/SEO';
 import { OrganizationStructuredData } from '@/components/StructuredData';
 import NeonParticles from '@/components/NeonParticles';
+import WelcomePopup from '@/components/WelcomePopup';
 
 export default function Home() {
   const { data: featuredProducts, isLoading } = trpc.products.getFeatured.useQuery();
@@ -32,6 +33,7 @@ export default function Home() {
       <NeonParticles />
       <SEO />
       <OrganizationStructuredData />
+      <WelcomePopup />
       <Navigation />
 
       {/* Hero Section */}
