@@ -507,6 +507,165 @@ export const appRouter = router({
         return result;
       }),
   }),
+
+  // Product reviews
+  reviews: router({
+    // Public endpoints
+    getByProduct: publicProcedure
+      .input(z.object({ productId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getProductReviews(input.productId);
+      }),
+
+    getAverageRating: publicProcedure
+      .input(z.object({ productId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getProductAverageRating(input.productId);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        productId: z.number(),
+        rating: z.number().min(1).max(5),
+        title: z.string().optional(),
+        comment: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const review = await db.createProductReview({
+          ...input,
+          userId: ctx.user.id,
+          userName: ctx.user.name || 'Anonymous',
+          userEmail: ctx.user.email || undefined,
+          verifiedPurchase: false, // TODO: Check if user actually purchased this product
+          status: 'approved',
+        });
+        return review;
+      }),
+
+    markHelpful: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.incrementReviewHelpful(input.id);
+        return { success: true };
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        // TODO: Add check to ensure user can only delete their own reviews
+        const success = await db.deleteProductReview(input.id);
+        if (!success) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Review not found' });
+        }
+        return { success };
+      }),
+  }),
+
+  // Newsletter subscription
+  newsletter: router({
+    subscribe: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        name: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        // Check if already subscribed
+        const existing = await db.getNewsletterSubscriberByEmail(input.email);
+        if (existing) {
+          if (existing.status === 'active') {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Email already subscribed' });
+          }
+          if (existing.status === 'unsubscribed') {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Email previously unsubscribed. Please contact support.' });
+          }
+        }
+
+        // Generate confirmation token
+        const confirmationToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+        
+        const subscriber = await db.createNewsletterSubscriber({
+          email: input.email,
+          name: input.name,
+          confirmationToken,
+          status: 'active', // For now, skip email confirmation
+          confirmedAt: new Date(),
+        });
+
+        // Send welcome email
+        const { sendWelcomeEmail } = await import('./sendgrid');
+        await sendWelcomeEmail(input.email, input.name);
+        
+        return { success: true, message: 'Successfully subscribed to newsletter!' };
+      }),
+
+    unsubscribe: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        const success = await db.unsubscribeNewsletter(input.email);
+        if (!success) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Email not found' });
+        }
+        return { success: true, message: 'Successfully unsubscribed' };
+      }),
+
+    confirm: publicProcedure
+      .input(z.object({ token: z.string() }))
+      .mutation(async ({ input }) => {
+        const success = await db.confirmNewsletterSubscription(input.token);
+        if (!success) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Invalid confirmation token' });
+        }
+        return { success: true, message: 'Email confirmed!' };
+      }),
+  }),
+
+  // Email campaigns (admin only)
+  emailCampaigns: router({
+    getAll: adminProcedure.query(async () => {
+      return await db.getAllEmailCampaigns();
+    }),
+
+    create: adminProcedure
+      .input(z.object({
+        name: z.string(),
+        subject: z.string(),
+        content: z.string(),
+        type: z.enum(['newsletter', 'promotion', 'blog_notification', 'welcome']),
+        scheduledFor: z.date().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const campaign = await db.createEmailCampaign({
+          ...input,
+          status: input.scheduledFor ? 'scheduled' : 'draft',
+        });
+        return campaign;
+      }),
+
+    send: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const { sendPromotionalEmail } = await import('./sendgrid');
+        const subscribers = await db.getActiveNewsletterSubscribers();
+        const campaigns = await db.getAllEmailCampaigns();
+        const campaign = campaigns.find(c => c.id === input.id);
+        
+        if (!campaign) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Campaign not found' });
+        }
+        
+        // Send emails to all active subscribers
+        const emails = subscribers.map(s => s.email);
+        await sendPromotionalEmail(emails, {
+          subject: campaign.subject,
+          content: campaign.content,
+        });
+        
+        // Mark as sent
+        await db.markCampaignAsSent(input.id, subscribers.length);
+        
+        return { success: true, recipientCount: subscribers.length };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

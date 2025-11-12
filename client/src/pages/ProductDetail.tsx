@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import PriceDisplay from '@/components/PriceDisplay';
 import SEO from '@/components/SEO';
 import { ProductStructuredData, BreadcrumbStructuredData } from '@/components/StructuredData';
+import ProductReviews from '@/components/ProductReviews';
 
 export default function ProductDetail() {
   const [, params] = useRoute('/product/:id');
@@ -285,6 +286,11 @@ export default function ProductDetail() {
                 </ul>
               </div>
             </div>
+          </div>
+
+          {/* Product Reviews Section */}
+          <div className="container mt-16">
+            <ProductReviews productId={product.id} />
           </div>
         </div>
       </div>

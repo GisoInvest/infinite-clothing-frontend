@@ -8,6 +8,7 @@ import { trpc } from '@/lib/trpc';
 import { Loader2, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { toast } from 'sonner';
+import StarRating from '@/components/StarRating';
 import {
   Select,
   SelectContent,
@@ -132,6 +133,9 @@ export default function ProductList({ category, title, subcategories }: ProductL
                       <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                         {product.description}
                       </p>
+                      <div className="mb-3">
+                        <StarRating rating={product.averageRating || 0} size={16} />
+                      </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xl font-bold text-primary">
                           £{(product.price / 100).toFixed(2)}

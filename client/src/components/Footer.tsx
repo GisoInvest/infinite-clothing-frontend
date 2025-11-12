@@ -1,4 +1,70 @@
+import { useState } from 'react';
 import { Link } from 'wouter';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { trpc } from '@/lib/trpc';
+import { toast } from 'sonner';
+import { Loader2, Mail } from 'lucide-react';
+
+function NewsletterForm() {
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  
+  const subscribe = trpc.newsletter.subscribe.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setEmail('');
+      setName('');
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to subscribe');
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      toast.error('Please enter your email');
+      return;
+    }
+    subscribe.mutate({ email: email.trim(), name: name.trim() || undefined });
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto text-center">
+      <div className="flex items-center justify-center gap-2 mb-3">
+        <Mail className="h-5 w-5 text-primary" />
+        <h3 className="font-semibold text-primary text-lg">Subscribe to Our Newsletter</h3>
+      </div>
+      <p className="text-sm text-muted-foreground mb-6">
+        Get the latest updates on new products, exclusive offers, and style tips delivered to your inbox.
+      </p>
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+        <Input
+          type="text"
+          placeholder="Your name (optional)"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="flex-1"
+          disabled={subscribe.isPending}
+        />
+        <Input
+          type="email"
+          placeholder="Your email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="flex-1"
+          required
+          disabled={subscribe.isPending}
+        />
+        <Button type="submit" className="glow-box" disabled={subscribe.isPending}>
+          {subscribe.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Subscribe
+        </Button>
+      </form>
+    </div>
+  );
+}
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -73,6 +139,11 @@ export default function Footer() {
               </li>
             </ul>
           </div>
+        </div>
+
+        {/* Newsletter Subscription */}
+        <div className="border-t border-primary/20 mt-8 pt-8">
+          <NewsletterForm />
         </div>
 
         {/* Social Media */}

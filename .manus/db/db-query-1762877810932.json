@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `emailCampaigns` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `subject` varchar(255) NOT NULL,\n  `content` text NOT NULL,\n  `type` enum('newsletter', 'promotion', 'blog_notification', 'welcome') NOT NULL,\n  `status` enum('draft', 'scheduled', 'sent') NOT NULL DEFAULT 'draft',\n  `scheduledFor` timestamp NULL,\n  `sentAt` timestamp NULL,\n  `recipientCount` int NOT NULL DEFAULT 0,\n  `openCount` int NOT NULL DEFAULT 0,\n  `clickCount` int NOT NULL DEFAULT 0,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `emailCampaigns_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2AMhEi8cqa88xW3.root --database 2ikumxMtkpq6y45BuCae8B --execute CREATE TABLE IF NOT EXISTS `emailCampaigns` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `subject` varchar(255) NOT NULL,\n  `content` text NOT NULL,\n  `type` enum('newsletter', 'promotion', 'blog_notification', 'welcome') NOT NULL,\n  `status` enum('draft', 'scheduled', 'sent') NOT NULL DEFAULT 'draft',\n  `scheduledFor` timestamp NULL,\n  `sentAt` timestamp NULL,\n  `recipientCount` int NOT NULL DEFAULT 0,\n  `openCount` int NOT NULL DEFAULT 0,\n  `clickCount` int NOT NULL DEFAULT 0,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `emailCampaigns_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 212
+}

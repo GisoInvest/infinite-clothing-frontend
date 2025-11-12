@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
-import { Package, ShoppingCart, Music, Home, LogOut, Loader2, FileText } from 'lucide-react';
+import { Package, ShoppingCart, Music, Home, LogOut, Loader2, FileText, Mail } from 'lucide-react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -27,6 +27,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { path: '/admin/products', label: 'Products', icon: Package },
     { path: '/admin/orders', label: 'Orders', icon: ShoppingCart },
     { path: '/admin/blog', label: 'Blog', icon: FileText },
+    { path: '/admin/email-campaigns', label: 'Email Campaigns', icon: Mail },
     { path: '/admin/audio', label: 'Audio Tracks', icon: Music },
   ];
 

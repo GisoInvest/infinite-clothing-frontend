@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `productReviews` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `productId` int NOT NULL,\n  `userId` int NOT NULL,\n  `userName` varchar(255) NOT NULL,\n  `userEmail` varchar(320),\n  `rating` int NOT NULL,\n  `title` varchar(255),\n  `comment` text NOT NULL,\n  `verifiedPurchase` boolean NOT NULL DEFAULT false,\n  `helpfulCount` int NOT NULL DEFAULT 0,\n  `status` enum('pending', 'approved', 'rejected') NOT NULL DEFAULT 'approved',\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `productReviews_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2AMhEi8cqa88xW3.root --database 2ikumxMtkpq6y45BuCae8B --execute CREATE TABLE IF NOT EXISTS `productReviews` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `productId` int NOT NULL,\n  `userId` int NOT NULL,\n  `userName` varchar(255) NOT NULL,\n  `userEmail` varchar(320),\n  `rating` int NOT NULL,\n  `title` varchar(255),\n  `comment` text NOT NULL,\n  `verifiedPurchase` boolean NOT NULL DEFAULT false,\n  `helpfulCount` int NOT NULL DEFAULT 0,\n  `status` enum('pending', 'approved', 'rejected') NOT NULL DEFAULT 'approved',\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `productReviews_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 219
+}

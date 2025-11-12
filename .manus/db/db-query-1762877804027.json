@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `newsletterSubscribers` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `email` varchar(320) NOT NULL,\n  `name` varchar(255),\n  `status` enum('pending', 'active', 'unsubscribed') NOT NULL DEFAULT 'pending',\n  `confirmationToken` varchar(64),\n  `subscribedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `confirmedAt` timestamp NULL,\n  `unsubscribedAt` timestamp NULL,\n  CONSTRAINT `newsletterSubscribers_id` PRIMARY KEY(`id`),\n  CONSTRAINT `newsletterSubscribers_email_unique` UNIQUE(`email`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2AMhEi8cqa88xW3.root --database 2ikumxMtkpq6y45BuCae8B --execute CREATE TABLE IF NOT EXISTS `newsletterSubscribers` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `email` varchar(320) NOT NULL,\n  `name` varchar(255),\n  `status` enum('pending', 'active', 'unsubscribed') NOT NULL DEFAULT 'pending',\n  `confirmationToken` varchar(64),\n  `subscribedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `confirmedAt` timestamp NULL,\n  `unsubscribedAt` timestamp NULL,\n  CONSTRAINT `newsletterSubscribers_id` PRIMARY KEY(`id`),\n  CONSTRAINT `newsletterSubscribers_email_unique` UNIQUE(`email`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 211
+}

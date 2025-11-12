@@ -29,6 +29,13 @@
       "when": 1762839645105,
       "tag": "0003_sturdy_ironclad",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1762906769664,
+      "tag": "0004_square_catseye",
+      "breakpoints": true
     }
   ]
 }

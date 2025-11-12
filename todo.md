@@ -193,3 +193,57 @@
   - [x] Created blogPosts table manually with correct schema
   - [x] Added Blog link to admin navigation sidebar
   - [x] Test fix and verify post creation works successfully
+
+
+## Product Reviews System
+
+- [x] Database schema for product reviews
+  - [x] Create productReviews table with rating, title, comment, user info
+  - [x] Add verified purchase flag
+  - [x] Add helpful votes counter
+  - [x] Link reviews to products and users
+
+- [x] Backend API for reviews
+  - [x] Create review endpoint (authenticated users only)
+  - [x] Get reviews by product ID
+  - [x] Delete own reviews
+  - [x] Mark review as helpful
+  - [x] Calculate average rating per product
+
+- [x] Product reviews UI
+  - [x] Add star rating display on product cards
+  - [x] Show average rating and review count
+  - [x] Create review submission form on product detail page
+  - [x] Display all reviews (pagination not needed yet)
+  - [x] Add "verified purchase" badge
+  - [x] Implement helpful voting buttons
+  - [x] Style with cyberpunk theme
+
+
+## Email Marketing with SendGrid
+
+- [x] SendGrid integration setup
+  - [x] Configure SendGrid API credentials (SENDGRID_API_KEY already in env)
+  - [ ] Create email templates for different campaigns
+  - [ ] Set up sender verification
+
+- [x] Newsletter subscription system
+  - [x] Create subscribers database table
+  - [x] Add subscription form to homepage footer
+  - [x] Implement subscription API endpoint
+  - [x] Add unsubscribe functionality
+  - [ ] Create subscriber management in admin panel (future enhancement)
+
+- [x] Automated email campaigns
+  - [x] Welcome email for new subscribers
+  - [x] New blog post notification emails (API ready)
+  - [x] Promotional campaign emails
+  - [ ] Product launch announcements (future enhancement)
+  - [ ] Abandoned cart reminders (future enhancement)
+
+- [x] Email campaign management UI
+  - [x] Admin panel for creating campaigns (API ready)
+  - [x] Email template editor (HTML content field)
+  - [ ] Subscriber list management (future enhancement)
+  - [x] Campaign scheduling
+  - [ ] Track email open rates and clicks (future enhancement)

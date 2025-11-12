@@ -1,6 +1,6 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting, blogPosts, BlogPost, InsertBlogPost } from "../drizzle/schema";
+import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting, blogPosts, BlogPost, InsertBlogPost, productReviews, ProductReview, InsertProductReview, newsletterSubscribers, NewsletterSubscriber, InsertNewsletterSubscriber, emailCampaigns, EmailCampaign, InsertEmailCampaign } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -405,4 +405,149 @@ export async function incrementBlogPostViews(id: number): Promise<void> {
   await db.update(blogPosts)
     .set({ viewCount: sql`${blogPosts.viewCount} + 1` })
     .where(eq(blogPosts.id, id));
+}
+
+// Product review operations
+export async function createProductReview(review: InsertProductReview): Promise<ProductReview> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(productReviews).values(review);
+  const insertedId = Number(result[0].insertId);
+  
+  const newReview = await db.select().from(productReviews).where(eq(productReviews.id, insertedId)).limit(1);
+  return newReview[0];
+}
+
+export async function getProductReviews(productId: number): Promise<ProductReview[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db.select().from(productReviews)
+    .where(and(
+      eq(productReviews.productId, productId),
+      eq(productReviews.status, "approved")
+    ))
+    .orderBy(desc(productReviews.createdAt));
+}
+
+export async function getProductAverageRating(productId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const reviews = await db.select().from(productReviews)
+    .where(and(
+      eq(productReviews.productId, productId),
+      eq(productReviews.status, "approved")
+    ));
+
+  if (reviews.length === 0) return 0;
+  
+  const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+  return Math.round((sum / reviews.length) * 10) / 10; // Round to 1 decimal
+}
+
+export async function incrementReviewHelpful(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(productReviews)
+    .set({ helpfulCount: sql`${productReviews.helpfulCount} + 1` })
+    .where(eq(productReviews.id, id));
+}
+
+export async function deleteProductReview(id: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.delete(productReviews).where(eq(productReviews.id, id));
+  return result[0].affectedRows > 0;
+}
+
+// Newsletter subscriber operations
+export async function createNewsletterSubscriber(subscriber: InsertNewsletterSubscriber): Promise<NewsletterSubscriber> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(newsletterSubscribers).values(subscriber);
+  const insertedId = Number(result[0].insertId);
+  
+  const newSubscriber = await db.select().from(newsletterSubscribers).where(eq(newsletterSubscribers.id, insertedId)).limit(1);
+  return newSubscriber[0];
+}
+
+export async function getNewsletterSubscriberByEmail(email: string): Promise<NewsletterSubscriber | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.select().from(newsletterSubscribers).where(eq(newsletterSubscribers.email, email)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function confirmNewsletterSubscription(token: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.update(newsletterSubscribers)
+    .set({ status: "active", confirmedAt: new Date() })
+    .where(eq(newsletterSubscribers.confirmationToken, token));
+  
+  return result[0].affectedRows > 0;
+}
+
+export async function unsubscribeNewsletter(email: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.update(newsletterSubscribers)
+    .set({ status: "unsubscribed", unsubscribedAt: new Date() })
+    .where(eq(newsletterSubscribers.email, email));
+  
+  return result[0].affectedRows > 0;
+}
+
+export async function getActiveNewsletterSubscribers(): Promise<NewsletterSubscriber[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db.select().from(newsletterSubscribers)
+    .where(eq(newsletterSubscribers.status, "active"));
+}
+
+// Email campaign operations
+export async function createEmailCampaign(campaign: InsertEmailCampaign): Promise<EmailCampaign> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(emailCampaigns).values(campaign);
+  const insertedId = Number(result[0].insertId);
+  
+  const newCampaign = await db.select().from(emailCampaigns).where(eq(emailCampaigns.id, insertedId)).limit(1);
+  return newCampaign[0];
+}
+
+export async function updateEmailCampaign(id: number, updates: Partial<InsertEmailCampaign>): Promise<EmailCampaign | undefined> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(emailCampaigns).set(updates).where(eq(emailCampaigns.id, id));
+  
+  const updated = await db.select().from(emailCampaigns).where(eq(emailCampaigns.id, id)).limit(1);
+  return updated.length > 0 ? updated[0] : undefined;
+}
+
+export async function getAllEmailCampaigns(): Promise<EmailCampaign[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return await db.select().from(emailCampaigns).orderBy(desc(emailCampaigns.createdAt));
+}
+
+export async function markCampaignAsSent(id: number, recipientCount: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(emailCampaigns)
+    .set({ status: "sent", sentAt: new Date(), recipientCount })
+    .where(eq(emailCampaigns.id, id));
 }
