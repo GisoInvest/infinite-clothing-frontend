@@ -164,7 +164,7 @@ export default function Home() {
             </div>
           ) : featuredProducts && featuredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((product) => (
+              {featuredProducts.filter(p => p && p.id).map((product) => (
                 <Card
                   key={product.id}
                   className="group overflow-hidden border-primary/20 hover:border-primary/50 transition-all duration-300 interactive-card"
