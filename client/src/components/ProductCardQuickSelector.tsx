@@ -9,6 +9,7 @@ interface ProductCardQuickSelectorProps {
     id: number;
     name: string;
     price: number;
+    discount?: number;
     images: string[];
     sizes: string[];
     colors: string[];
@@ -33,10 +34,15 @@ export default function ProductCardQuickSelector({ product }: ProductCardQuickSe
       return;
     }
 
+    // Calculate final price with discount if available
+    const finalPrice = product.discount 
+      ? product.price * (1 - product.discount / 100)
+      : product.price;
+
     addItem({
       productId: product.id,
       productName: product.name,
-      price: product.price,
+      price: finalPrice,
       image: product.images?.[0],
       category: product.category,
       subcategory: product.subcategory,

@@ -397,3 +397,13 @@
 - [x] Remove all View Details buttons from product cards (hero section)
 - [x] Made hero product card fully clickable
 - [x] Fixed slug reference to use id instead
+
+
+## Display Product Discounts on Cards
+
+- [x] Show discounted price on product cards when discount field exists
+- [x] Display original price with strikethrough
+- [x] Show discount percentage badge
+- [x] Apply discounted price when adding to cart via Quick Add
+- [x] Update hero section to show discount
+- [x] Update Featured Collection cards to show discount

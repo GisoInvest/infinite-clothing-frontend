@@ -105,9 +105,25 @@ export default function Home() {
                           {featuredProducts[0].description}
                         </p>
                         <div className="flex items-center justify-between">
-                          <span className="text-3xl font-bold text-cyan-400">
-                            £{(featuredProducts[0].price / 100).toFixed(2)}
-                          </span>
+                          <div className="flex items-center gap-3">
+                            {featuredProducts[0].discount ? (
+                              <>
+                                <span className="text-2xl font-bold text-muted-foreground line-through">
+                                  £{(featuredProducts[0].price / 100).toFixed(2)}
+                                </span>
+                                <span className="text-3xl font-bold text-cyan-400">
+                                  £{((featuredProducts[0].price * (1 - featuredProducts[0].discount / 100)) / 100).toFixed(2)}
+                                </span>
+                                <span className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                  -{featuredProducts[0].discount}%
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-3xl font-bold text-cyan-400">
+                                £{(featuredProducts[0].price / 100).toFixed(2)}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </CardContent>
@@ -196,9 +212,25 @@ export default function Home() {
                     </p>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-xl font-bold text-primary glow-text">
-                          £{(product.price / 100).toFixed(2)}
-                        </span>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {product.discount ? (
+                            <>
+                              <span className="text-sm font-semibold text-muted-foreground line-through">
+                                £{(product.price / 100).toFixed(2)}
+                              </span>
+                              <span className="text-xl font-bold text-primary glow-text">
+                                £{((product.price * (1 - product.discount / 100)) / 100).toFixed(2)}
+                              </span>
+                              <span className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
+                                -{product.discount}%
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-xl font-bold text-primary glow-text">
+                              £{(product.price / 100).toFixed(2)}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       {/* Quick Add Selector */}
                       <ProductCardQuickSelector product={product} />
