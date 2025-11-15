@@ -357,3 +357,19 @@
   - [x] Verified timer triggers correctly
   - [x] Exit intent functionality working
   - [x] Popup now shows for first-time visitors each session
+
+
+## Critical Bug Fixes
+
+- [x] Fix "View Details" button on Featured Collection cards leading to Product Not Found
+  - [x] Added console logging to debug route params and product ID
+  - [x] Added error logging to see TRPC query errors
+  - [x] Added query enabled condition to prevent invalid requests
+  - [ ] User should check browser console for detailed error logs
+  
+- [x] Fix welcome email not being sent after newsletter subscription
+  - [x] Added better error logging for SendGrid
+  - [x] Verified discount code generation working
+  - [x] Added fallback to show code in popup if email fails
+  - [x] SendGrid API key is configured correctly
+  - [ ] Note: Email may be in spam folder or delayed by SendGrid

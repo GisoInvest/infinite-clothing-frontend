@@ -606,8 +606,15 @@ export const appRouter = router({
 
         // Send welcome email with discount code
         const { sendWelcomeEmail } = await import('./sendgrid');
-        await sendWelcomeEmail(input.email, input.name, discountCode);
+        const emailSent = await sendWelcomeEmail(input.email, input.name, discountCode);
         
+        if (!emailSent) {
+          console.error('[Newsletter] Failed to send welcome email to:', input.email);
+          // Still return success since subscription was created
+          return { success: true, message: 'Successfully subscribed! Your discount code is: ' + discountCode, discountCode };
+        }
+        
+        console.log('[Newsletter] Welcome email sent successfully to:', input.email);
         return { success: true, message: 'Successfully subscribed! Check your email for your discount code.', discountCode };
       }),
 

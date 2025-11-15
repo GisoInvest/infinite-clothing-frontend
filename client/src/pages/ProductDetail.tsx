@@ -22,7 +22,17 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   
-  const { data: product, isLoading } = trpc.products.getById.useQuery({ id: productId });
+  console.log('[ProductDetail] Route params:', params);
+  console.log('[ProductDetail] Product ID:', productId);
+  
+  const { data: product, isLoading, error } = trpc.products.getById.useQuery(
+    { id: productId },
+    { enabled: productId > 0 }
+  );
+  
+  console.log('[ProductDetail] Product data:', product);
+  console.log('[ProductDetail] Loading:', isLoading);
+  console.log('[ProductDetail] Error:', error);
   const { addItem } = useCart();
 
   const handleAddToCart = () => {

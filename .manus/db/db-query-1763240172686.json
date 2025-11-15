@@ -1,0 +1,28 @@
+{
+  "query": "SELECT * FROM products WHERE featured = true LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2AMhEi8cqa88xW3.root --database 2ikumxMtkpq6y45BuCae8B --execute SELECT * FROM products WHERE featured = true LIMIT 1",
+  "rows": [
+    {
+      "id": "150001",
+      "name": "INFINITE - 24 Essential Cropped Hoodie",
+      "description": "The INFINITE 24 Essential Cropped Hoodie blends bold design with effortless comfort. Featuring the signature “INFINITE EST. 2024” print, it’s made for confident self-expression and modern streetwear energy.",
+      "price": "3621",
+      "category": "women",
+      "subcategory": "Hoodies",
+      "stock": "999",
+      "images": "[\"https://forge.manus.ai/v1/storage/download/Q9afk3c8cZDSkFvZXVvG4W/products/1762911275921-uocibd.jpg\", \"https://forge.manus.ai/v1/storage/download/bowihA6zLXgsPbA82arrDp/products/1762911278226-l97d7g.png\", \"https://forge.manus.ai/v1/storage/download/WcERUpVQUwSUampbHjUEqL/products/1762911279968-3sbzhr.png\", \"https://forge.manus.ai/v1/storage/download/8mcxkMuQy4X56yEqN2bgMg/products/1762911283315-m2omta.png\", \"https://forge.manus.ai/v1/storage/download/McLKfxrARGBCrKE7f8jb55/products/1762911285616-ix2aqb.png\", \"https://forge.manus.ai/v1/storage/download/Ueb9EU75rhvXyd8FvPwPus/products/1762911289416-tgzwr.png\", \"https://forge.manus.ai/v1/storage/download/Jmxo26z2wirDRa5PHqrDyR/products/1762911292418-etu1feb.png\", \"https://forge.manus.ai/v1/storage/download/U734gAdJLdo4GGthKYipww/products/1762911296215-ieynp.png\", \"https://forge.manus.ai/v1/storage/download/9fi4xdtXjxTyjgY6UGprkd/products/1762911300416-m736v.png\"]",
+      "videos": "[]",
+      "featured": "1",
+      "active": "1",
+      "createdAt": "2025-11-12 01:35:01",
+      "updatedAt": "2025-11-12 01:35:01",
+      "colors": "[\"Flower Gray\", \"Charcoal Gray\", \"Dark Reddish Purple\", \"Black\"]",
+      "discount": "20",
+      "sizes": "[\"S\", \"M\", \"L\", \"XL\", \"2XL\"]"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tdescription\tprice\tcategory\tsubcategory\tstock\timages\tvideos\tfeatured\tactive\tcreatedAt\tupdatedAt\tcolors\tdiscount\tsizes\n150001\tINFINITE - 24 Essential Cropped Hoodie\tThe INFINITE 24 Essential Cropped Hoodie blends bold design with effortless comfort. Featuring the signature “INFINITE EST. 2024” print, it’s made for confident self-expression and modern streetwear energy.\t3621\twomen\tHoodies\t999\t[\"https://forge.manus.ai/v1/storage/download/Q9afk3c8cZDSkFvZXVvG4W/products/1762911275921-uocibd.jpg\", \"https://forge.manus.ai/v1/storage/download/bowihA6zLXgsPbA82arrDp/products/1762911278226-l97d7g.png\", \"https://forge.manus.ai/v1/storage/download/WcERUpVQUwSUampbHjUEqL/products/1762911279968-3sbzhr.png\", \"https://forge.manus.ai/v1/storage/download/8mcxkMuQy4X56yEqN2bgMg/products/1762911283315-m2omta.png\", \"https://forge.manus.ai/v1/storage/download/McLKfxrARGBCrKE7f8jb55/products/1762911285616-ix2aqb.png\", \"https://forge.manus.ai/v1/storage/download/Ueb9EU75rhvXyd8FvPwPus/products/1762911289416-tgzwr.png\", \"https://forge.manus.ai/v1/storage/download/Jmxo26z2wirDRa5PHqrDyR/products/1762911292418-etu1feb.png\", \"https://forge.manus.ai/v1/storage/download/U734gAdJLdo4GGthKYipww/products/1762911296215-ieynp.png\", \"https://forge.manus.ai/v1/storage/download/9fi4xdtXjxTyjgY6UGprkd/products/1762911300416-m736v.png\"]\t[]\t1\t1\t2025-11-12 01:35:01\t2025-11-12 01:35:01\t[\"Flower Gray\", \"Charcoal Gray\", \"Dark Reddish Purple\", \"Black\"]\t20\t[\"S\", \"M\", \"L\", \"XL\", \"2XL\"]\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}
