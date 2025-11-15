@@ -242,3 +242,43 @@ export const discountCodes = mysqlTable("discountCodes", {
 
 export type DiscountCode = typeof discountCodes.$inferSelect;
 export type InsertDiscountCode = typeof discountCodes.$inferInsert;
+
+/**
+ * Abandoned carts table for tracking and recovering lost sales
+ */
+export const abandonedCarts = mysqlTable("abandonedCarts", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 255 }).notNull().unique(),
+  customerEmail: varchar("customerEmail", { length: 320 }),
+  customerName: varchar("customerName", { length: 255 }),
+  cartData: json("cartData").$type<any[]>().notNull(),
+  cartTotal: int("cartTotal").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  lastUpdated: timestamp("lastUpdated").defaultNow().onUpdateNow().notNull(),
+  reminderSent: boolean("reminderSent").default(false).notNull(),
+  reminderSentAt: timestamp("reminderSentAt"),
+  recovered: boolean("recovered").default(false).notNull(),
+  recoveredAt: timestamp("recoveredAt"),
+});
+
+export type AbandonedCart = typeof abandonedCarts.$inferSelect;
+export type InsertAbandonedCart = typeof abandonedCarts.$inferInsert;
+
+/**
+ * Outfits table for "Shop the Look" feature
+ */
+export const outfits = mysqlTable("outfits", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  image: varchar("image", { length: 500 }),
+  productIds: json("productIds").$type<number[]>().notNull(),
+  totalPrice: int("totalPrice").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Outfit = typeof outfits.$inferSelect;
+export type InsertOutfit = typeof outfits.$inferInsert;

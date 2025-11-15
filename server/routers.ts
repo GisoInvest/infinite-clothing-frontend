@@ -711,6 +711,132 @@ export const appRouter = router({
         return await db.createDiscountCode(input);
       }),
   }),
+
+  // ========== Abandoned Cart Recovery ==========
+  abandonedCart: router({
+    // Save or update abandoned cart
+    save: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        customerEmail: z.string().optional(),
+        customerName: z.string().optional(),
+        cartData: z.array(z.any()),
+        cartTotal: z.number(),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.saveAbandonedCart(input);
+      }),
+
+    // Get abandoned cart by session ID
+    getBySession: publicProcedure
+      .input(z.object({ sessionId: z.string() }))
+      .query(async ({ input }) => {
+        return await db.getAbandonedCartBySession(input.sessionId);
+      }),
+
+    // Mark cart as recovered (called after successful checkout)
+    markRecovered: publicProcedure
+      .input(z.object({ sessionId: z.string() }))
+      .mutation(async ({ input }) => {
+        await db.markCartRecovered(input.sessionId);
+        return { success: true };
+      }),
+
+    // Admin: Get all abandoned carts
+    getAll: adminProcedure
+      .query(async () => {
+        return await db.getAllAbandonedCarts();
+      }),
+
+    // Admin: Send reminder emails manually
+    sendReminders: adminProcedure
+      .mutation(async () => {
+        const { sendAbandonedCartEmail } = await import('./abandonedCartEmail');
+        const carts = await db.getAbandonedCartsForReminder();
+        let sentCount = 0;
+
+        for (const cart of carts) {
+          if (cart.customerEmail && cart.customerName) {
+            const success = await sendAbandonedCartEmail(
+              cart.customerEmail,
+              cart.customerName,
+              cart.cartData,
+              cart.cartTotal,
+              cart.sessionId
+            );
+
+            if (success) {
+              await db.markReminderSent(cart.id);
+              sentCount++;
+            }
+          }
+        }
+
+        return { sentCount, totalCarts: carts.length };
+      }),
+  }),
+
+  // ========== Shop the Look (Outfits) ==========
+  outfits: router({
+    // Get all active outfits for public display
+    getActive: publicProcedure
+      .query(async () => {
+        return await db.getActiveOutfits();
+      }),
+
+    // Get outfit by ID
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getOutfitById(input.id);
+      }),
+
+    // Admin: Get all outfits
+    getAll: adminProcedure
+      .query(async () => {
+        return await db.getAllOutfits();
+      }),
+
+    // Admin: Create outfit
+    create: adminProcedure
+      .input(z.object({
+        name: z.string(),
+        description: z.string().optional(),
+        image: z.string().optional(),
+        productIds: z.array(z.number()),
+        totalPrice: z.number(),
+        isActive: z.boolean().optional(),
+        displayOrder: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createOutfit(input);
+      }),
+
+    // Admin: Update outfit
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().optional(),
+        description: z.string().optional(),
+        image: z.string().optional(),
+        productIds: z.array(z.number()).optional(),
+        totalPrice: z.number().optional(),
+        isActive: z.boolean().optional(),
+        displayOrder: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        return await db.updateOutfit(id, updates);
+      }),
+
+    // Admin: Delete outfit
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteOutfit(input.id);
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

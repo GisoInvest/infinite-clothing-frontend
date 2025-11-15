@@ -1,6 +1,6 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting, blogPosts, BlogPost, InsertBlogPost, productReviews, ProductReview, InsertProductReview, newsletterSubscribers, NewsletterSubscriber, InsertNewsletterSubscriber, emailCampaigns, EmailCampaign, InsertEmailCampaign, discountCodes, DiscountCode, InsertDiscountCode } from "../drizzle/schema";
+import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting, blogPosts, BlogPost, InsertBlogPost, productReviews, ProductReview, InsertProductReview, newsletterSubscribers, NewsletterSubscriber, InsertNewsletterSubscriber, emailCampaigns, EmailCampaign, InsertEmailCampaign, discountCodes, DiscountCode, InsertDiscountCode, abandonedCarts, AbandonedCart, InsertAbandonedCart, outfits, Outfit, InsertOutfit } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -641,4 +641,159 @@ export async function getAllDiscountCodes(): Promise<DiscountCode[]> {
   if (!db) return [];
   
   return db.select().from(discountCodes).orderBy(desc(discountCodes.createdAt));
+}
+
+// ========== Abandoned Carts ==========
+
+export async function saveAbandonedCart(cart: InsertAbandonedCart): Promise<AbandonedCart> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Check if cart already exists for this session
+  const existing = await db.select().from(abandonedCarts).where(eq(abandonedCarts.sessionId, cart.sessionId)).limit(1);
+  
+  if (existing[0]) {
+    // Update existing cart
+    await db.update(abandonedCarts)
+      .set({
+        cartData: cart.cartData,
+        cartTotal: cart.cartTotal,
+        customerEmail: cart.customerEmail,
+        customerName: cart.customerName,
+        lastUpdated: new Date(),
+      })
+      .where(eq(abandonedCarts.sessionId, cart.sessionId));
+    
+    const updated = await db.select().from(abandonedCarts).where(eq(abandonedCarts.sessionId, cart.sessionId)).limit(1);
+    return updated[0];
+  } else {
+    // Create new cart
+    const result = await db.insert(abandonedCarts).values(cart);
+    const insertedId = Number(result[0].insertId);
+    
+    const inserted = await db.select().from(abandonedCarts).where(eq(abandonedCarts.id, insertedId)).limit(1);
+    if (!inserted[0]) throw new Error("Failed to retrieve inserted abandoned cart");
+    
+    return inserted[0];
+  }
+}
+
+export async function getAbandonedCartsForReminder(): Promise<AbandonedCart[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // Get carts that are:
+  // 1. Not recovered
+  // 2. No reminder sent yet
+  // 3. Last updated more than 24 hours ago
+  // 4. Have customer email
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  
+  return db.select().from(abandonedCarts)
+    .where(
+      and(
+        eq(abandonedCarts.recovered, false),
+        eq(abandonedCarts.reminderSent, false),
+        sql`${abandonedCarts.lastUpdated} < ${twentyFourHoursAgo}`,
+        sql`${abandonedCarts.customerEmail} IS NOT NULL`
+      )
+    )
+    .orderBy(desc(abandonedCarts.lastUpdated));
+}
+
+export async function markReminderSent(cartId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(abandonedCarts)
+    .set({
+      reminderSent: true,
+      reminderSentAt: new Date(),
+    })
+    .where(eq(abandonedCarts.id, cartId));
+}
+
+export async function markCartRecovered(sessionId: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(abandonedCarts)
+    .set({
+      recovered: true,
+      recoveredAt: new Date(),
+    })
+    .where(eq(abandonedCarts.sessionId, sessionId));
+}
+
+export async function getAbandonedCartBySession(sessionId: string): Promise<AbandonedCart | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(abandonedCarts).where(eq(abandonedCarts.sessionId, sessionId)).limit(1);
+  return result[0];
+}
+
+export async function getAllAbandonedCarts(): Promise<AbandonedCart[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(abandonedCarts).orderBy(desc(abandonedCarts.lastUpdated));
+}
+
+// ========== Outfits (Shop the Look) ==========
+
+export async function createOutfit(outfit: InsertOutfit): Promise<Outfit> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(outfits).values(outfit);
+  const insertedId = Number(result[0].insertId);
+  
+  const inserted = await db.select().from(outfits).where(eq(outfits.id, insertedId)).limit(1);
+  if (!inserted[0]) throw new Error("Failed to retrieve inserted outfit");
+  
+  return inserted[0];
+}
+
+export async function getActiveOutfits(): Promise<Outfit[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(outfits)
+    .where(eq(outfits.isActive, true))
+    .orderBy(outfits.displayOrder, desc(outfits.createdAt));
+}
+
+export async function getAllOutfits(): Promise<Outfit[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(outfits).orderBy(outfits.displayOrder, desc(outfits.createdAt));
+}
+
+export async function getOutfitById(id: number): Promise<Outfit | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(outfits).where(eq(outfits.id, id)).limit(1);
+  return result[0];
+}
+
+export async function updateOutfit(id: number, updates: Partial<InsertOutfit>): Promise<Outfit> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(outfits).set(updates).where(eq(outfits.id, id));
+  
+  const updated = await db.select().from(outfits).where(eq(outfits.id, id)).limit(1);
+  if (!updated[0]) throw new Error("Failed to retrieve updated outfit");
+  
+  return updated[0];
+}
+
+export async function deleteOutfit(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.delete(outfits).where(eq(outfits.id, id));
 }

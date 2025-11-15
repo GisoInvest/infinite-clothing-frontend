@@ -30,18 +30,18 @@ export default function WelcomePopup() {
   });
 
   useEffect(() => {
-    // Check if popup has been shown before
-    const hasSeenPopup = localStorage.getItem('welcomePopupShown');
+    // Check if popup has been shown in this session
+    const hasSeenPopup = sessionStorage.getItem('welcomePopupShown');
     
     if (!hasSeenPopup) {
-      // Show popup after 8 seconds
+      // Show popup after 3 seconds
       const timer = setTimeout(() => {
         setIsVisible(true);
-      }, 8000);
+      }, 3000);
 
       // Show popup on exit intent (mouse leaving viewport)
       const handleMouseLeave = (e: MouseEvent) => {
-        if (e.clientY <= 0 && !hasSeenPopup) {
+        if (e.clientY <= 0 && !sessionStorage.getItem('welcomePopupShown')) {
           setIsVisible(true);
         }
       };
@@ -57,7 +57,7 @@ export default function WelcomePopup() {
 
   const handleClose = () => {
     setIsVisible(false);
-    localStorage.setItem('welcomePopupShown', 'true');
+    sessionStorage.setItem('welcomePopupShown', 'true');
   };
 
   const handleCopyCode = () => {
@@ -67,7 +67,7 @@ export default function WelcomePopup() {
 
   const handleCloseWithCode = () => {
     setIsVisible(false);
-    localStorage.setItem('welcomePopupShown', 'true');
+    sessionStorage.setItem('welcomePopupShown', 'true');
   };
 
   const handleSubmit = (e: React.FormEvent) => {

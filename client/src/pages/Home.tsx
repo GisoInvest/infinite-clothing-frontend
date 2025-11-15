@@ -11,6 +11,8 @@ import SEO from '@/components/SEO';
 import { OrganizationStructuredData } from '@/components/StructuredData';
 import NeonParticles from '@/components/NeonParticles';
 import WelcomePopup from '@/components/WelcomePopup';
+import ProductCardQuickSelector from '@/components/ProductCardQuickSelector';
+import ShopTheLook from '@/components/ShopTheLook';
 
 export default function Home() {
   const { data: featuredProducts, isLoading } = trpc.products.getFeatured.useQuery();
@@ -138,6 +140,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Shop the Look */}
+      <ShopTheLook />
+
       {/* Featured Products */}
       <section className="py-20">
         <div className="container">
@@ -191,20 +196,25 @@ export default function Home() {
                     <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                       {product.description}
                     </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold text-primary glow-text">
-                        £{(product.price / 100).toFixed(2)}
-                      </span>
-                      <Link href={`/product/${product.id}`}>
-                        <a>
-                          <Button
-                            size="sm"
-                            className="glow-box"
-                          >
-                            View Details
-                          </Button>
-                        </a>
-                      </Link>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl font-bold text-primary glow-text">
+                          £{(product.price / 100).toFixed(2)}
+                        </span>
+                        <Link href={`/product/${product.id}`}>
+                          <a>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              Details
+                            </Button>
+                          </a>
+                        </Link>
+                      </div>
+                      {/* Quick Add Selector */}
+                      <ProductCardQuickSelector product={product} />
                     </div>
                   </CardContent>
                 </Card>

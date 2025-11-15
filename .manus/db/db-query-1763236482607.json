@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS abandonedCarts (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  sessionId VARCHAR(255) UNIQUE NOT NULL,\n  customerEmail VARCHAR(320) NULL,\n  customerName VARCHAR(255) NULL,\n  cartData JSON NOT NULL,\n  cartTotal INT NOT NULL,\n  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  lastUpdated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,\n  reminderSent BOOLEAN DEFAULT FALSE NOT NULL,\n  reminderSentAt DATETIME NULL,\n  recovered BOOLEAN DEFAULT FALSE NOT NULL,\n  recoveredAt DATETIME NULL,\n  INDEX idx_session (sessionId),\n  INDEX idx_email (customerEmail),\n  INDEX idx_reminder_sent (reminderSent),\n  INDEX idx_last_updated (lastUpdated)\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2AMhEi8cqa88xW3.root --database 2ikumxMtkpq6y45BuCae8B --execute CREATE TABLE IF NOT EXISTS abandonedCarts (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  sessionId VARCHAR(255) UNIQUE NOT NULL,\n  customerEmail VARCHAR(320) NULL,\n  customerName VARCHAR(255) NULL,\n  cartData JSON NOT NULL,\n  cartTotal INT NOT NULL,\n  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  lastUpdated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,\n  reminderSent BOOLEAN DEFAULT FALSE NOT NULL,\n  reminderSentAt DATETIME NULL,\n  recovered BOOLEAN DEFAULT FALSE NOT NULL,\n  recoveredAt DATETIME NULL,\n  INDEX idx_session (sessionId),\n  INDEX idx_email (customerEmail),\n  INDEX idx_reminder_sent (reminderSent),\n  INDEX idx_last_updated (lastUpdated)\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 247
+}

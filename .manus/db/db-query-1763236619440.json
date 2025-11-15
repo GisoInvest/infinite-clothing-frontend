@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS outfits (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  name VARCHAR(255) NOT NULL,\n  description TEXT,\n  image VARCHAR(500),\n  productIds JSON NOT NULL,\n  totalPrice INT NOT NULL,\n  isActive BOOLEAN DEFAULT TRUE NOT NULL,\n  displayOrder INT DEFAULT 0 NOT NULL,\n  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,\n  INDEX idx_active (isActive),\n  INDEX idx_order (displayOrder)\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2AMhEi8cqa88xW3.root --database 2ikumxMtkpq6y45BuCae8B --execute CREATE TABLE IF NOT EXISTS outfits (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  name VARCHAR(255) NOT NULL,\n  description TEXT,\n  image VARCHAR(500),\n  productIds JSON NOT NULL,\n  totalPrice INT NOT NULL,\n  isActive BOOLEAN DEFAULT TRUE NOT NULL,\n  displayOrder INT DEFAULT 0 NOT NULL,\n  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,\n  INDEX idx_active (isActive),\n  INDEX idx_order (displayOrder)\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 171
+}
