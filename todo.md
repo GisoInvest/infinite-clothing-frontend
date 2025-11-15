@@ -264,3 +264,13 @@
   - [x] Add exit intent trigger
   - [x] Integrate with newsletter subscription API
   - [x] Style with cyberpunk theme
+
+
+## Homepage Hero Section Redesign
+
+- [x] Split hero section into two halves
+  - [x] Left half: Brand name, tagline, CTA buttons
+  - [x] Right half: Featured product showcase
+  - [x] Make both visible above the fold
+  - [x] Ensure responsive design for mobile
+  - [x] Maintain cyberpunk styling

@@ -36,31 +36,90 @@ export default function Home() {
       <WelcomePopup />
       <Navigation />
 
-      {/* Hero Section */}
-      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden cyber-grid">
+      {/* Hero Section - Split Layout */}
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden cyber-grid">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
-        <div className="container relative z-10 text-center">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 glow-text animate-fade-in">
-            INF!NITE C107HING
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto animate-fade-in-up">
-            Redefining modern streetwear with purpose-driven designs that inspire confidence, creativity, and individuality.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up">
-            <Link href="/men">
-              <a>
-                <Button size="lg" className="glow-box pulse-glow text-lg px-8">
-                  Shop Men
-                </Button>
-              </a>
-            </Link>
-            <Link href="/women">
-              <a>
-                <Button size="lg" variant="outline" className="text-lg px-8 glow-border">
-                  Shop Women
-                </Button>
-              </a>
-            </Link>
+        <div className="container relative z-10">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left Half - Brand Identity */}
+            <div className="text-center lg:text-left space-y-6 animate-fade-in">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold glow-text leading-tight">
+                INF!NITE C107HING
+              </h1>
+              <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed animate-fade-in-up">
+                Redefining modern streetwear with purpose-driven designs that inspire confidence, creativity, and individuality.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up">
+                <Link href="/men">
+                  <a>
+                    <Button size="lg" className="glow-box pulse-glow text-lg px-8 w-full sm:w-auto">
+                      Shop Men
+                    </Button>
+                  </a>
+                </Link>
+                <Link href="/women">
+                  <a>
+                    <Button size="lg" variant="outline" className="text-lg px-8 glow-border w-full sm:w-auto">
+                      Shop Women
+                    </Button>
+                  </a>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Half - Featured Product Showcase */}
+            <div className="relative animate-fade-in-up">
+              {isLoading ? (
+                <div className="flex items-center justify-center h-[500px]">
+                  <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                </div>
+              ) : featuredProducts && featuredProducts.length > 0 ? (
+                <div className="relative group">
+                  <Card className="overflow-hidden border-2 border-primary/30 hover:border-primary transition-all duration-300 glow-box">
+                    <CardContent className="p-0">
+                      {/* Product Image */}
+                      <div className="relative aspect-[3/4] overflow-hidden">
+                        <img
+                          src={featuredProducts[0].images?.[0] || '/placeholder-product.jpg'}
+                          alt={featuredProducts[0].name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        {/* NEW ARRIVAL Badge */}
+                        <div className="absolute top-4 left-4 bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
+                          NEW ARRIVAL
+                        </div>
+                      </div>
+                      
+                      {/* Product Info */}
+                      <div className="p-6 space-y-4 bg-gradient-to-b from-card to-card/50">
+                        <h3 className="text-2xl font-bold text-primary glow-text">
+                          {featuredProducts[0].name}
+                        </h3>
+                        <p className="text-muted-foreground line-clamp-2">
+                          {featuredProducts[0].description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-3xl font-bold text-cyan-400">
+                            £{featuredProducts[0].price.toFixed(2)}
+                          </span>
+                          <Button
+                            onClick={() => handleAddToCart(featuredProducts[0])}
+                            className="glow-box"
+                          >
+                            <ShoppingBag className="mr-2 h-5 w-5" />
+                            Add to Cart
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-[500px] text-muted-foreground">
+                  <p>No featured products available</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>
