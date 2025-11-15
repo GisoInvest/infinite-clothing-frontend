@@ -389,3 +389,11 @@
 - [x] Keep product image and title clickable for navigation
 - [x] Keep Quick Add button for fast purchases
 - [x] Fix welcome popup to appear on page reload (fixed localStorage inconsistency)
+
+
+## View Details Button Still Showing
+
+- [x] Find all instances of View Details button in code
+- [x] Remove all View Details buttons from product cards (hero section)
+- [x] Made hero product card fully clickable
+- [x] Fixed slug reference to use id instead

@@ -79,8 +79,9 @@ export default function Home() {
                   <Loader2 className="h-12 w-12 animate-spin text-primary" />
                 </div>
               ) : featuredProducts && featuredProducts.length > 0 ? (
-                <div className="relative group">
-                  <Card className="overflow-hidden border-2 border-primary/30 hover:border-primary transition-all duration-300 glow-box">
+                <Link href={`/product/${featuredProducts[0]?.id || ''}`}>
+                  <a className="relative group block cursor-pointer">
+                    <Card className="overflow-hidden border-2 border-primary/30 hover:border-primary transition-all duration-300 glow-box">
                     <CardContent className="p-0">
                       {/* Product Image */}
                       <div className="relative aspect-[3/4] overflow-hidden">
@@ -107,18 +108,12 @@ export default function Home() {
                           <span className="text-3xl font-bold text-cyan-400">
                             £{(featuredProducts[0].price / 100).toFixed(2)}
                           </span>
-                          <Link href={`/product/${featuredProducts[0].slug}`}>
-                            <a>
-                              <Button className="glow-box">
-                                View Details
-                              </Button>
-                            </a>
-                          </Link>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
-                </div>
+                  </a>
+                </Link>
               ) : (
                 <div className="flex items-center justify-center h-[500px] text-muted-foreground">
                   <p>No featured products available</p>
