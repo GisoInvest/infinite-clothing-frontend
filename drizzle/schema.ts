@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, json } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, json, decimal } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -221,3 +221,24 @@ export const emailCampaigns = mysqlTable("emailCampaigns", {
 
 export type EmailCampaign = typeof emailCampaigns.$inferSelect;
 export type InsertEmailCampaign = typeof emailCampaigns.$inferInsert;
+
+/**
+ * Discount codes table for promotional offers and newsletter incentives
+ */
+export const discountCodes = mysqlTable("discountCodes", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  discountType: mysqlEnum("discountType", ["percentage", "fixed"]).default("percentage").notNull(),
+  discountValue: decimal("discountValue", { precision: 10, scale: 2 }).notNull(),
+  minPurchaseAmount: decimal("minPurchaseAmount", { precision: 10, scale: 2 }).default("0").notNull(),
+  maxUses: int("maxUses").default(1).notNull(),
+  usedCount: int("usedCount").default(0).notNull(),
+  userId: int("userId"),
+  subscriberEmail: varchar("subscriberEmail", { length: 320 }),
+  expiresAt: timestamp("expiresAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+});
+
+export type DiscountCode = typeof discountCodes.$inferSelect;
+export type InsertDiscountCode = typeof discountCodes.$inferInsert;

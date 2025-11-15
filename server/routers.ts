@@ -591,11 +591,24 @@ export const appRouter = router({
           confirmedAt: new Date(),
         });
 
-        // Send welcome email
+        // Generate unique 10% discount code for new subscriber
+        const discountCode = await db.generateUniqueDiscountCode('WELCOME');
+        await db.createDiscountCode({
+          code: discountCode,
+          discountType: 'percentage',
+          discountValue: '10',
+          minPurchaseAmount: '0',
+          maxUses: 1,
+          subscriberEmail: input.email,
+          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+          isActive: true,
+        });
+
+        // Send welcome email with discount code
         const { sendWelcomeEmail } = await import('./sendgrid');
-        await sendWelcomeEmail(input.email, input.name);
+        await sendWelcomeEmail(input.email, input.name, discountCode);
         
-        return { success: true, message: 'Successfully subscribed to newsletter!' };
+        return { success: true, message: 'Successfully subscribed! Check your email for your discount code.', discountCode };
       }),
 
     unsubscribe: publicProcedure
@@ -664,6 +677,38 @@ export const appRouter = router({
         await db.markCampaignAsSent(input.id, subscribers.length);
         
         return { success: true, recipientCount: subscribers.length };
+      }),
+  }),
+
+  discountCodes: router({
+    // Public endpoint to validate discount code
+    validate: publicProcedure
+      .input(z.object({
+        code: z.string(),
+        purchaseAmount: z.number(),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.validateDiscountCode(input.code, input.purchaseAmount);
+      }),
+
+    // Admin endpoints
+    getAll: adminProcedure.query(async () => {
+      return await db.getAllDiscountCodes();
+    }),
+
+    create: adminProcedure
+      .input(z.object({
+        code: z.string(),
+        discountType: z.enum(["percentage", "fixed"]),
+        discountValue: z.string(),
+        minPurchaseAmount: z.string().optional(),
+        maxUses: z.number().optional(),
+        subscriberEmail: z.string().optional(),
+        expiresAt: z.date().optional(),
+        isActive: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return await db.createDiscountCode(input);
       }),
   }),
 });

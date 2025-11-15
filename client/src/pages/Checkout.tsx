@@ -89,6 +89,11 @@ export default function Checkout() {
   const [, setLocation] = useLocation();
   const [clientSecret, setClientSecret] = useState('');
   const [orderNumber, setOrderNumber] = useState('');
+  const [discountCode, setDiscountCode] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState<any>(null);
+  const [discountError, setDiscountError] = useState('');
+
+  const validateDiscount = trpc.discountCodes.validate.useMutation();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -118,9 +123,54 @@ export default function Checkout() {
     });
   };
 
+  const handleApplyDiscount = async () => {
+    if (!discountCode.trim()) {
+      setDiscountError('Please enter a discount code');
+      return;
+    }
+
+    setDiscountError('');
+    
+    try {
+      const result = await validateDiscount.mutateAsync({
+        code: discountCode.trim().toUpperCase(),
+        purchaseAmount: subtotal,
+      });
+
+      if (result.valid && result.discount) {
+        setAppliedDiscount(result);
+        toast.success(`Discount code applied! You saved £${(Math.round((subtotal * Number(result.discount.discountValue)) / 100) / 100).toFixed(2)}`);
+      } else {
+        setDiscountError(result.error || 'Invalid discount code');
+        setAppliedDiscount(null);
+      }
+    } catch (error) {
+      setDiscountError('Failed to validate discount code');
+      setAppliedDiscount(null);
+    }
+  };
+
+  const handleRemoveDiscount = () => {
+    setDiscountCode('');
+    setAppliedDiscount(null);
+    setDiscountError('');
+  };
+
   const shipping = 300; // £3.00 flat rate
   const tax = 0; // No VAT charged
-  const total = subtotal + shipping + tax;
+  
+  // Calculate discount amount
+  let discountAmount = 0;
+  if (appliedDiscount?.discount) {
+    const discount = appliedDiscount.discount;
+    if (discount.discountType === 'percentage') {
+      discountAmount = Math.round((subtotal * Number(discount.discountValue)) / 100);
+    } else {
+      discountAmount = Math.round(Number(discount.discountValue) * 100); // Convert to cents
+    }
+  }
+  
+  const total = Math.max(0, subtotal - discountAmount + shipping + tax);
 
   const handleCreatePayment = async () => {
     // Validate form
@@ -321,11 +371,65 @@ export default function Checkout() {
                       <span>£{((item.price * item.quantity) / 100).toFixed(2)}</span>
                     </div>
                   ))}
+                  
+                  {/* Discount Code Section */}
+                  <div className="border-t border-primary/20 pt-4">
+                    {!appliedDiscount ? (
+                      <div className="space-y-2">
+                        <Label htmlFor="discountCode">Discount Code</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            id="discountCode"
+                            value={discountCode}
+                            onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                            placeholder="Enter code"
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            onClick={handleApplyDiscount}
+                            disabled={validateDiscount.isPending}
+                            variant="outline"
+                          >
+                            {validateDiscount.isPending ? 'Checking...' : 'Apply'}
+                          </Button>
+                        </div>
+                        {discountError && (
+                          <p className="text-sm text-red-500">{discountError}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-green-500">Discount Applied</p>
+                            <p className="text-xs text-muted-foreground">{appliedDiscount.discount.code}</p>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleRemoveDiscount}
+                            className="text-red-500 hover:text-red-600"
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
                   <div className="border-t border-primary/20 pt-4 space-y-2">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
                       <span>£{(subtotal / 100).toFixed(2)}</span>
                     </div>
+                    {appliedDiscount && discountAmount > 0 && (
+                      <div className="flex justify-between text-green-500">
+                        <span>Discount ({appliedDiscount.discount.discountValue}% off)</span>
+                        <span>-£{(discountAmount / 100).toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <span>Shipping</span>
                       <span>£{(shipping / 100).toFixed(2)}</span>

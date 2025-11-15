@@ -9,12 +9,20 @@ export default function WelcomePopup() {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [discountCode, setDiscountCode] = useState('');
+  const [showCode, setShowCode] = useState(false);
 
   const subscribeMutation = trpc.newsletter.subscribe.useMutation({
-    onSuccess: () => {
-      toast.success('Welcome! Check your email for your 10% discount code.');
-      setIsVisible(false);
-      localStorage.setItem('welcomePopupShown', 'true');
+    onSuccess: (data) => {
+      if (data.discountCode) {
+        setDiscountCode(data.discountCode);
+        setShowCode(true);
+        toast.success('Welcome! Your discount code is ready!');
+      } else {
+        toast.success('Welcome! Check your email for your discount code.');
+        setIsVisible(false);
+        localStorage.setItem('welcomePopupShown', 'true');
+      }
     },
     onError: (error) => {
       toast.error(error.message || 'Failed to subscribe. Please try again.');
@@ -48,6 +56,16 @@ export default function WelcomePopup() {
   }, []);
 
   const handleClose = () => {
+    setIsVisible(false);
+    localStorage.setItem('welcomePopupShown', 'true');
+  };
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(discountCode);
+    toast.success('Discount code copied to clipboard!');
+  };
+
+  const handleCloseWithCode = () => {
     setIsVisible(false);
     localStorage.setItem('welcomePopupShown', 'true');
   };
@@ -89,52 +107,110 @@ export default function WelcomePopup() {
 
           {/* Content */}
           <div className="relative p-8 text-center">
-            {/* Icon */}
-            <div className="mb-4 flex justify-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center shadow-lg shadow-cyan-500/50">
-                <span className="text-3xl">🎁</span>
-              </div>
-            </div>
+            {!showCode ? (
+              <>
+                {/* Icon */}
+                <div className="mb-4 flex justify-center">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center shadow-lg shadow-cyan-500/50">
+                    <span className="text-3xl">🎁</span>
+                  </div>
+                </div>
 
-            {/* Heading */}
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 glow-text">
-              Welcome to INF!NITE C107HING!
-            </h2>
-            <p className="text-cyan-300 mb-6 text-sm md:text-base">
-              Get <span className="font-bold text-lg text-cyan-400">10% OFF</span> your first order
-            </p>
+                {/* Heading */}
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 glow-text">
+                  Welcome to INF!NITE C107HING!
+                </h2>
+                <p className="text-cyan-300 mb-6 text-sm md:text-base">
+                  Get <span className="font-bold text-lg text-cyan-400">10% OFF</span> your first order
+                </p>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <Input
-                type="text"
-                placeholder="Your Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="bg-slate-800/50 border-cyan-400/30 text-white placeholder:text-gray-400 focus:border-cyan-400"
-                required
-              />
-              <Input
-                type="email"
-                placeholder="Your Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-slate-800/50 border-cyan-400/30 text-white placeholder:text-gray-400 focus:border-cyan-400"
-                required
-              />
-              <Button
-                type="submit"
-                className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white font-bold py-3 rounded-lg shadow-lg shadow-cyan-500/30 transition-all duration-300"
-                disabled={subscribeMutation.isPending}
-              >
-                {subscribeMutation.isPending ? 'Subscribing...' : 'Get My 10% OFF'}
-              </Button>
-            </form>
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <Input
+                    type="text"
+                    placeholder="Your Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="bg-slate-800/50 border-cyan-400/30 text-white placeholder:text-gray-400 focus:border-cyan-400"
+                    required
+                  />
+                  <Input
+                    type="email"
+                    placeholder="Your Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-slate-800/50 border-cyan-400/30 text-white placeholder:text-gray-400 focus:border-cyan-400"
+                    required
+                  />
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white font-bold py-3 rounded-lg shadow-lg shadow-cyan-500/30 transition-all duration-300"
+                    disabled={subscribeMutation.isPending}
+                  >
+                    {subscribeMutation.isPending ? 'Subscribing...' : 'Get My 10% OFF'}
+                  </Button>
+                </form>
 
-            {/* Fine print */}
-            <p className="text-xs text-gray-400 mt-4">
-              By subscribing, you agree to receive marketing emails. Unsubscribe anytime.
-            </p>
+                {/* Fine print */}
+                <p className="text-xs text-gray-400 mt-4">
+                  By subscribing, you agree to receive marketing emails. Unsubscribe anytime.
+                </p>
+              </>
+            ) : (
+              <>
+                {/* Success Icon */}
+                <div className="mb-4 flex justify-center">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-green-500/50 animate-bounce">
+                    <span className="text-3xl">✅</span>
+                  </div>
+                </div>
+
+                {/* Success Heading */}
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 glow-text">
+                  Your Discount Code!
+                </h2>
+                <p className="text-cyan-300 mb-6 text-sm md:text-base">
+                  Use this code at checkout for <span className="font-bold text-lg text-green-400">10% OFF</span>
+                </p>
+
+                {/* Discount Code Display */}
+                <div className="bg-white/10 border-2 border-dashed border-cyan-400 rounded-lg p-6 mb-6">
+                  <p className="text-xs text-gray-400 mb-2">YOUR DISCOUNT CODE</p>
+                  <p className="text-3xl md:text-4xl font-bold text-cyan-400 tracking-wider mb-4 glow-text">
+                    {discountCode}
+                  </p>
+                  <Button
+                    onClick={handleCopyCode}
+                    variant="outline"
+                    className="border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black"
+                  >
+                    Copy Code
+                  </Button>
+                </div>
+
+                {/* Instructions */}
+                <div className="text-left bg-slate-800/50 rounded-lg p-4 mb-4 text-sm text-gray-300">
+                  <p className="mb-2">✨ <strong>How to use:</strong></p>
+                  <ol className="list-decimal list-inside space-y-1 text-xs">
+                    <li>Add items to your cart</li>
+                    <li>Go to checkout</li>
+                    <li>Enter your discount code</li>
+                    <li>Enjoy 10% off your order!</li>
+                  </ol>
+                </div>
+
+                <p className="text-xs text-gray-400 mb-4">
+                  📧 We've also sent this code to your email: <strong className="text-cyan-400">{email}</strong>
+                </p>
+
+                <Button
+                  onClick={handleCloseWithCode}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white font-bold py-3 rounded-lg shadow-lg shadow-cyan-500/30"
+                >
+                  Start Shopping
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Animated scanlines */}

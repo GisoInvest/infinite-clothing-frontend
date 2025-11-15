@@ -69,12 +69,12 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
   }
 }
 
-export async function sendWelcomeEmail(email: string, name?: string): Promise<boolean> {
+export async function sendWelcomeEmail(email: string, name?: string, discountCode?: string): Promise<boolean> {
   const displayName = name || 'there';
   
   return sendEmail({
     to: email,
-    subject: 'Welcome to INF!NITE C107HING Newsletter!',
+    subject: `Welcome to INF!NITE C107HING${discountCode ? ' - Your 10% Discount Inside!' : '!'}`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -86,6 +86,8 @@ export async function sendWelcomeEmail(email: string, name?: string): Promise<bo
           .content { padding: 30px; background: #f9f9f9; }
           .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; }
           .button { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+          .discount-code { background: #fff; border: 2px dashed #667eea; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px; }
+          .code { font-size: 24px; font-weight: bold; color: #667eea; letter-spacing: 2px; }
         </style>
       </head>
       <body>
@@ -96,6 +98,14 @@ export async function sendWelcomeEmail(email: string, name?: string): Promise<bo
           <div class="content">
             <p>Hey ${displayName},</p>
             <p>Thank you for subscribing to our newsletter! You're now part of the INF!NITE C107HING community.</p>
+            ${discountCode ? `
+            <div class="discount-code">
+              <p style="margin: 0 0 10px 0; font-size: 18px;">🎉 Your Exclusive Welcome Gift 🎉</p>
+              <p class="code">${discountCode}</p>
+              <p style="margin: 10px 0 0 0; font-size: 14px; color: #666;">Use this code at checkout for <strong>10% OFF</strong> your first order!</p>
+              <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;">Valid for 30 days • One-time use</p>
+            </div>
+            ` : ''}
             <p>Here's what you can expect:</p>
             <ul>
               <li>🎨 Exclusive early access to new collections</li>
@@ -120,6 +130,15 @@ export async function sendWelcomeEmail(email: string, name?: string): Promise<bo
       Hey ${displayName},
       
       Thank you for subscribing to our newsletter! You're now part of the INF!NITE C107HING community.
+      ${discountCode ? `
+      
+      🎉 YOUR EXCLUSIVE WELCOME GIFT 🎉
+      
+      Discount Code: ${discountCode}
+      
+      Use this code at checkout for 10% OFF your first order!
+      Valid for 30 days • One-time use
+      ` : ''}
       
       Here's what you can expect:
       - Exclusive early access to new collections

@@ -1,6 +1,6 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting, blogPosts, BlogPost, InsertBlogPost, productReviews, ProductReview, InsertProductReview, newsletterSubscribers, NewsletterSubscriber, InsertNewsletterSubscriber, emailCampaigns, EmailCampaign, InsertEmailCampaign } from "../drizzle/schema";
+import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting, blogPosts, BlogPost, InsertBlogPost, productReviews, ProductReview, InsertProductReview, newsletterSubscribers, NewsletterSubscriber, InsertNewsletterSubscriber, emailCampaigns, EmailCampaign, InsertEmailCampaign, discountCodes, DiscountCode, InsertDiscountCode } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -550,4 +550,95 @@ export async function markCampaignAsSent(id: number, recipientCount: number): Pr
   await db.update(emailCampaigns)
     .set({ status: "sent", sentAt: new Date(), recipientCount })
     .where(eq(emailCampaigns.id, id));
+}
+
+// ========== Discount Codes ==========
+
+export async function createDiscountCode(code: InsertDiscountCode): Promise<DiscountCode> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(discountCodes).values(code);
+  const insertedId = Number(result[0].insertId);
+  
+  const inserted = await db.select().from(discountCodes).where(eq(discountCodes.id, insertedId)).limit(1);
+  if (!inserted[0]) throw new Error("Failed to retrieve inserted discount code");
+  
+  return inserted[0];
+}
+
+export async function getDiscountCodeByCode(code: string): Promise<DiscountCode | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(discountCodes).where(eq(discountCodes.code, code)).limit(1);
+  return result[0];
+}
+
+export async function validateDiscountCode(code: string, purchaseAmount: number): Promise<{ valid: boolean; discount?: DiscountCode; error?: string }> {
+  const db = await getDb();
+  if (!db) return { valid: false, error: "Database not available" };
+  
+  const discount = await getDiscountCodeByCode(code);
+  
+  if (!discount) {
+    return { valid: false, error: "Invalid discount code" };
+  }
+  
+  if (!discount.isActive) {
+    return { valid: false, error: "This discount code is no longer active" };
+  }
+  
+  if (discount.expiresAt && new Date(discount.expiresAt) < new Date()) {
+    return { valid: false, error: "This discount code has expired" };
+  }
+  
+  if (discount.usedCount >= discount.maxUses) {
+    return { valid: false, error: "This discount code has reached its usage limit" };
+  }
+  
+  const minAmount = Number(discount.minPurchaseAmount);
+  if (purchaseAmount < minAmount) {
+    return { valid: false, error: `Minimum purchase amount of £${(minAmount / 100).toFixed(2)} required` };
+  }
+  
+  return { valid: true, discount };
+}
+
+export async function incrementDiscountCodeUsage(codeId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(discountCodes)
+    .set({ usedCount: sql`${discountCodes.usedCount} + 1` })
+    .where(eq(discountCodes.id, codeId));
+}
+
+export async function generateUniqueDiscountCode(prefix: string = "WELCOME"): Promise<string> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  let attempts = 0;
+  const maxAttempts = 10;
+  
+  while (attempts < maxAttempts) {
+    const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const code = `${prefix}${randomSuffix}`;
+    
+    const existing = await getDiscountCodeByCode(code);
+    if (!existing) {
+      return code;
+    }
+    
+    attempts++;
+  }
+  
+  throw new Error("Failed to generate unique discount code");
+}
+
+export async function getAllDiscountCodes(): Promise<DiscountCode[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(discountCodes).orderBy(desc(discountCodes.createdAt));
 }

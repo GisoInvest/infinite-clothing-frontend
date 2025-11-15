@@ -285,3 +285,59 @@
 - [x] Change button functionality
   - [x] Replace "Add to Cart" with "View Details"
   - [x] Link to product detail page for size/color selection
+
+
+## Discount Code System
+
+- [x] Database schema for discount codes
+  - [x] Create discountCodes table
+  - [x] Track code usage and redemption limits
+  - [x] Link codes to newsletter subscribers
+
+- [x] Backend API for discount codes
+  - [x] Generate unique codes for new subscribers
+  - [x] Validate discount codes at checkout
+  - [x] Apply discount to cart total
+  - [x] Track redemption analytics
+
+- [x] Frontend discount code UI
+  - [x] Add discount code input at checkout
+  - [x] Display discount amount in cart summary
+  - [x] Show success/error messages for code validation
+  - [x] Include code in welcome email
+  - [x] Display code in welcome popup after subscription
+
+## Size/Color Quick Selector
+
+- [ ] Add quick selector to product cards
+  - [ ] Size selector dropdown on hover
+  - [ ] Color swatches on product cards
+  - [ ] Update "Add to Cart" to include selected options
+  - [ ] Show stock availability per size/color
+
+## Shop the Look Section
+
+- [ ] Create Shop the Look component
+  - [ ] Design outfit combination layouts
+  - [ ] Add clickable product hotspots on images
+  - [ ] Show complete outfit price
+  - [ ] "Add All to Cart" button
+  - [ ] Responsive grid layout
+
+- [ ] Backend support for outfit collections
+  - [ ] Create outfits table linking multiple products
+  - [ ] API endpoint to fetch outfit combinations
+  - [ ] Admin panel to create/manage outfits
+
+## Abandoned Cart Recovery
+
+- [ ] Implement cart tracking system
+  - [ ] Save cart state to database for logged-in users
+  - [ ] Track cart creation and last update timestamps
+  - [ ] Identify abandoned carts (24+ hours inactive)
+
+- [ ] Automated email system
+  - [ ] Create abandoned cart email template
+  - [ ] Schedule automated emails 24 hours after abandonment
+  - [ ] Include cart items and direct checkout link
+  - [ ] Track email open and click rates
