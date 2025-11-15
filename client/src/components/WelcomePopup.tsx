@@ -21,7 +21,7 @@ export default function WelcomePopup() {
       } else {
         toast.success('Welcome! Check your email for your discount code.');
         setIsVisible(false);
-        localStorage.setItem('welcomePopupShown', 'true');
+        sessionStorage.setItem('welcomePopupShown', 'true');
       }
     },
     onError: (error) => {

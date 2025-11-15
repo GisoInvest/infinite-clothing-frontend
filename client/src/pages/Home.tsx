@@ -204,17 +204,6 @@ export default function Home() {
                         <span className="text-xl font-bold text-primary glow-text">
                           £{(product.price / 100).toFixed(2)}
                         </span>
-                        <Link href={`/product/${product.id}`}>
-                          <a>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              Details
-                            </Button>
-                          </a>
-                        </Link>
                       </div>
                       {/* Quick Add Selector */}
                       <ProductCardQuickSelector product={product} />

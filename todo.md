@@ -381,3 +381,11 @@
   - [x] Identified issue: products array initially undefined during loading
   - [x] Added filter to only render products with valid IDs
   - [x] Prevents navigation to /product/undefined
+
+
+## Remove View Details Button
+
+- [x] Remove "View Details" button from Featured Collection product cards
+- [x] Keep product image and title clickable for navigation
+- [x] Keep Quick Add button for fast purchases
+- [x] Fix welcome popup to appear on page reload (fixed localStorage inconsistency)
