@@ -17,6 +17,9 @@ import ShopTheLook from '@/components/ShopTheLook';
 export default function Home() {
   const { data: featuredProducts, isLoading } = trpc.products.getFeatured.useQuery();
   const { addItem } = useCart();
+  
+  console.log('[Home] Featured products:', featuredProducts);
+  console.log('[Home] First product:', featuredProducts?.[0]);
 
   const handleAddToCart = (product: any) => {
     addItem({

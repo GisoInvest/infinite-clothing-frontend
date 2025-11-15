@@ -373,3 +373,11 @@
   - [x] Added fallback to show code in popup if email fails
   - [x] SendGrid API key is configured correctly
   - [ ] Note: Email may be in spam folder or delayed by SendGrid
+
+
+## Product ID Undefined Bug
+
+- [ ] Fix product.id being undefined in Featured Collection
+  - [ ] Check if getFeaturedProducts is returning products with IDs
+  - [ ] Verify the product data structure from tRPC query
+  - [ ] Add null check before rendering product cards

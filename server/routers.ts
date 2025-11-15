@@ -48,7 +48,10 @@ export const appRouter = router({
       }),
 
     getFeatured: publicProcedure.query(async () => {
-      return await db.getFeaturedProducts();
+      const products = await db.getFeaturedProducts();
+      console.log('[API] getFeatured products count:', products.length);
+      console.log('[API] First product:', products[0]);
+      return products;
     }),
 
     getById: publicProcedure
