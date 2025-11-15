@@ -274,3 +274,14 @@
   - [x] Make both visible above the fold
   - [x] Ensure responsive design for mobile
   - [x] Maintain cyberpunk styling
+
+
+## Hero Section Product Card Fixes
+
+- [x] Fix price display formatting
+  - [x] Correct price from £3621.00 to £36.21 (divide by 100)
+  - [x] Ensure proper decimal point formatting
+
+- [x] Change button functionality
+  - [x] Replace "Add to Cart" with "View Details"
+  - [x] Link to product detail page for size/color selection

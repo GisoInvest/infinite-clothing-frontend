@@ -100,15 +100,15 @@ export default function Home() {
                         </p>
                         <div className="flex items-center justify-between">
                           <span className="text-3xl font-bold text-cyan-400">
-                            £{featuredProducts[0].price.toFixed(2)}
+                            £{(featuredProducts[0].price / 100).toFixed(2)}
                           </span>
-                          <Button
-                            onClick={() => handleAddToCart(featuredProducts[0])}
-                            className="glow-box"
-                          >
-                            <ShoppingBag className="mr-2 h-5 w-5" />
-                            Add to Cart
-                          </Button>
+                          <Link href={`/product/${featuredProducts[0].slug}`}>
+                            <a>
+                              <Button className="glow-box">
+                                View Details
+                              </Button>
+                            </a>
+                          </Link>
                         </div>
                       </div>
                     </CardContent>
