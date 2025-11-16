@@ -1,6 +1,6 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting, blogPosts, BlogPost, InsertBlogPost, productReviews, ProductReview, InsertProductReview, newsletterSubscribers, NewsletterSubscriber, InsertNewsletterSubscriber, emailCampaigns, EmailCampaign, InsertEmailCampaign, discountCodes, DiscountCode, InsertDiscountCode, abandonedCarts, AbandonedCart, InsertAbandonedCart, outfits, Outfit, InsertOutfit, testimonials, Testimonial, InsertTestimonial } from "../drizzle/schema";
+import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting, blogPosts, BlogPost, InsertBlogPost, productReviews, ProductReview, InsertProductReview, newsletterSubscribers, NewsletterSubscriber, InsertNewsletterSubscriber, emailCampaigns, EmailCampaign, InsertEmailCampaign, discountCodes, DiscountCode, InsertDiscountCode, abandonedCarts, AbandonedCart, InsertAbandonedCart, outfits, Outfit, InsertOutfit, testimonials, Testimonial, InsertTestimonial, wishlist, Wishlist, InsertWishlist } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -901,4 +901,52 @@ export async function getAbandonedCartStats() {
     remindersSent,
     mostAbandonedProducts,
   };
+}
+
+
+// Wishlist functions
+export async function addToWishlist(userId: string, productId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  await db.insert(wishlist).values({ userId, productId });
+  return true;
+}
+
+export async function removeFromWishlist(userId: string, productId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  await db.delete(wishlist).where(
+    and(
+      eq(wishlist.userId, userId),
+      eq(wishlist.productId, productId)
+    )
+  );
+  return true;
+}
+
+export async function getUserWishlist(userId: string) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(wishlist).where(eq(wishlist.userId, userId));
+}
+
+export async function getWishlistWithProducts(userId: string) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const wishlistItems = await db
+    .select({
+      wishlistId: wishlist.id,
+      productId: wishlist.productId,
+      createdAt: wishlist.createdAt,
+      product: products,
+    })
+    .from(wishlist)
+    .leftJoin(products, eq(wishlist.productId, products.id))
+    .where(eq(wishlist.userId, userId));
+  
+  return wishlistItems;
 }

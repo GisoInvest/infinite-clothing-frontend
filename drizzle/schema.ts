@@ -301,3 +301,16 @@ export const testimonials = mysqlTable("testimonials", {
 
 export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = typeof testimonials.$inferInsert;
+
+/**
+ * Wishlist table for tracking user favorite products
+ */
+export const wishlist = mysqlTable("wishlist", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: varchar("userId", { length: 64 }).notNull(),
+  productId: int("productId").notNull().references(() => products.id, { onDelete: 'cascade' }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Wishlist = typeof wishlist.$inferSelect;
+export type InsertWishlist = typeof wishlist.$inferInsert;

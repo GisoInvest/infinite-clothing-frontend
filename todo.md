@@ -446,3 +446,36 @@
 - [x] Add manual reminder email button
 - [x] Track recovery rates and statistics
 - [x] Add filters and search functionality
+
+
+## New Feature Implementation Batch 2
+
+### 1. Product Filtering & Sorting
+- [x] Create shop page with all products
+- [x] Add category filter dropdown
+- [x] Add price range filter slider
+- [x] Add size filter checkboxes
+- [x] Add color filter swatches
+- [x] Implement sorting (newest, price low-to-high, price high-to-low, popularity)
+- [x] Add filter reset button
+- [x] Show active filter count badge
+
+### 2. Wishlist Feature
+- [x] Create wishlist database table
+- [x] Add heart icon to product cards
+- [x] Toggle wishlist on/off with animation
+- [x] Create dedicated wishlist page
+- [x] Show saved items with "Move to Cart" button
+- [x] Add "Remove from Wishlist" functionality
+- [x] Show wishlist count in navigation (via WishlistContext)
+- [x] Persist wishlist for logged-in users
+- [x] Support for non-logged-in users (localStorage)
+
+### 3. Live Chat Support
+- [x] Choose chat widget provider (Tawk.to)
+- [x] Integrate chat widget script
+- [x] Position in bottom-right corner (automatic)
+- [x] Created TawkToChat component with setup instructions
+- [ ] User needs to sign up at tawk.to and add Property ID
+- [ ] Customize chat widget colors in Tawk.to dashboard
+- [ ] Set welcome message in Tawk.to dashboard

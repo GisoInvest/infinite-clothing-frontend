@@ -57,6 +57,13 @@
       "when": 1763258504388,
       "tag": "0007_fat_reavers",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1763262707479,
+      "tag": "0008_clever_cerise",
+      "breakpoints": true
     }
   ]
 }

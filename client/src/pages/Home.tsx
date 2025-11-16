@@ -14,6 +14,7 @@ import WelcomePopup from '@/components/WelcomePopup';
 import ProductCardQuickSelector from '@/components/ProductCardQuickSelector';
 import ShopTheLook from '@/components/ShopTheLook';
 import TestimonialsCarousel from '@/components/TestimonialsCarousel';
+import WishlistButton from '@/components/WishlistButton';
 
 export default function Home() {
   const { data: featuredProducts, isLoading } = trpc.products.getFeatured.useQuery();
@@ -196,6 +197,7 @@ export default function Home() {
                   <Link href={`/product/${product.id}`}>
                     <a>
                       <div className="aspect-square overflow-hidden bg-muted relative">
+                        <WishlistButton productId={product.id} />
                         {product.images && product.images.length > 0 ? (
                           <img
                             src={product.images[0]}

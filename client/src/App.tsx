@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
+import { WishlistProvider } from "./contexts/WishlistContext";
 import Home from "./pages/Home";
 import Men from "./pages/Men";
 import Women from "./pages/Women";
@@ -30,6 +31,9 @@ import AdminEmailCampaigns from "./pages/admin/EmailCampaigns";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import BlogCategories from "./pages/BlogCategories";
+import Shop from "./pages/Shop";
+import Wishlist from "./pages/Wishlist";
+import TawkToChat from "./components/TawkToChat";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -41,6 +45,8 @@ function Router() {
       <Route path="/unisex" component={Unisex} />
       <Route path="/kids-baby" component={KidsBaby} />
       <Route path="/about" component={About} />
+      <Route path="/shop" component={Shop} />
+      <Route path="/wishlist" component={Wishlist} />
       <Route path="/cart" component={Cart} />
       <Route path="/checkout" component={Checkout} />
       <Route path="/order-confirmation" component={OrderConfirmation} />
@@ -75,12 +81,15 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
         <CartProvider>
-          <TooltipProvider>
+          <WishlistProvider>
+            <TooltipProvider>
             <Toaster />
             <AudioPlayer />
             <AIAssistant />
+            <TawkToChat />
             <Router />
-          </TooltipProvider>
+            </TooltipProvider>
+          </WishlistProvider>
         </CartProvider>
       </ThemeProvider>
     </ErrorBoundary>

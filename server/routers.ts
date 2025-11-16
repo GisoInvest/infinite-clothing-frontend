@@ -925,6 +925,31 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+
+  wishlist: router({
+    // Get user's wishlist
+    getAll: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getUserWishlist(ctx.user.openId);
+    }),
+    // Get wishlist with full product details
+    getWithProducts: protectedProcedure.query(async ({ ctx }) => {
+      return await db.getWishlistWithProducts(ctx.user.openId);
+    }),
+    // Add product to wishlist
+    add: protectedProcedure
+      .input(z.object({ productId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.addToWishlist(ctx.user.openId, input.productId);
+        return { success: true };
+      }),
+    // Remove product from wishlist
+    remove: protectedProcedure
+      .input(z.object({ productId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.removeFromWishlist(ctx.user.openId, input.productId);
+        return { success: true };
+      }),
+  }),
 });
 export type AppRouter = typeof appRouter;;
 
