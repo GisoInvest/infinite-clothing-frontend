@@ -407,3 +407,42 @@
 - [x] Apply discounted price when adding to cart via Quick Add
 - [x] Update hero section to show discount
 - [x] Update Featured Collection cards to show discount
+
+
+## Feature Implementation Batch
+
+### 1. Product Stock Indicators
+- [x] Add "Low Stock" badge when inventory < 10 units
+- [x] Add "Out of Stock" overlay when stock = 0
+- [x] Display stock indicators on hero section
+- [x] Display stock indicators on Featured Collection cards
+- [x] Disable Quick Add button when out of stock
+
+### 2. Cart Tracking Integration
+- [x] Add abandoned cart save API call to CartContext
+- [x] Track cart creation timestamp (handled by database)
+- [x] Track cart last update timestamp (handled by database)
+- [x] Store cart items in database
+- [x] Link cart to user session (using sessionId)
+
+### 3. Customer Testimonials Section
+- [x] Create testimonials database table
+- [x] Create testimonials carousel component
+- [x] Add star ratings display
+- [x] Add customer photos
+- [x] Position below Featured Collection
+- [x] Add admin endpoints to manage testimonials
+
+### 4. Debug Logging Cleanup
+- [x] Remove console.log from Home.tsx
+- [x] Remove console.log from ProductDetail.tsx
+- [x] Remove console.log from routers.ts
+- [x] Keep only error logging
+
+### 5. Abandoned Cart Admin Dashboard
+- [x] Create admin page for abandoned carts
+- [x] Display all abandoned carts list
+- [x] Show most frequently abandoned products
+- [x] Add manual reminder email button
+- [x] Track recovery rates and statistics
+- [x] Add filters and search functionality

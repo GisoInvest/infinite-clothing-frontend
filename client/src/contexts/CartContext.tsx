@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { trpc } from '@/lib/trpc';
 
 export interface CartItem {
   productId: number;
@@ -31,9 +32,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return saved ? JSON.parse(saved) : [];
   });
 
+  // Save cart to abandoned carts database
+  const saveAbandonedCart = trpc.abandonedCarts.saveCart.useMutation();
+
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(items));
+    
+    // Save to abandoned carts if cart has items
+    if (items.length > 0) {
+      const sessionId = localStorage.getItem('sessionId') || generateSessionId();
+      saveAbandonedCart.mutate({
+        sessionId,
+        email: null, // Will be filled when user logs in or provides email
+        items: items.map(item => ({
+          productId: item.productId,
+          productName: item.productName,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image,
+          size: item.size,
+          color: item.color,
+        })),
+      });
+    }
   }, [items]);
+
+  // Generate unique session ID
+  const generateSessionId = () => {
+    const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem('sessionId', sessionId);
+    return sessionId;
+  };
 
   const addItem = (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
     setItems(current => {

@@ -50,6 +50,13 @@
       "when": 1763236772972,
       "tag": "0006_material_mister_sinister",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1763258504388,
+      "tag": "0007_fat_reavers",
+      "breakpoints": true
     }
   ]
 }

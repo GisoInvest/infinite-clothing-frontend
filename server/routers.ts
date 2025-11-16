@@ -49,8 +49,6 @@ export const appRouter = router({
 
     getFeatured: publicProcedure.query(async () => {
       const products = await db.getFeaturedProducts();
-      console.log('[API] getFeatured products count:', products.length);
-      console.log('[API] First product:', products[0]);
       return products;
     }),
 
@@ -617,7 +615,6 @@ export const appRouter = router({
           return { success: true, message: 'Successfully subscribed! Your discount code is: ' + discountCode, discountCode };
         }
         
-        console.log('[Newsletter] Welcome email sent successfully to:', input.email);
         return { success: true, message: 'Successfully subscribed! Check your email for your discount code.', discountCode };
       }),
 
@@ -758,7 +755,39 @@ export const appRouter = router({
         return await db.getAllAbandonedCarts();
       }),
 
-    // Admin: Send reminder emails manually
+    // Admin: Get statistics
+    getStats: adminProcedure
+      .query(async () => {
+        return await db.getAbandonedCartStats();
+      }),
+
+    // Admin: Send reminder email to specific cart
+    sendReminder: adminProcedure
+      .input(z.object({ cartId: z.number() }))
+      .mutation(async ({ input }) => {
+        const { sendAbandonedCartEmail } = await import('./abandonedCartEmail');
+        const cart = await db.getAbandonedCartById(input.cartId);
+        
+        if (!cart || !cart.customerEmail) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cart not found or no email' });
+        }
+
+        const success = await sendAbandonedCartEmail(
+          cart.customerEmail,
+          cart.customerName || 'Customer',
+          cart.cartData,
+          cart.cartTotal,
+          cart.sessionId
+        );
+
+        if (success) {
+          await db.markReminderSent(cart.id);
+        }
+
+        return { success };
+      }),
+
+    // Admin: Send reminder emails manually to all
     sendReminders: adminProcedure
       .mutation(async () => {
         const { sendAbandonedCartEmail } = await import('./abandonedCartEmail');
@@ -847,7 +876,55 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
-});
 
-export type AppRouter = typeof appRouter;
+  // Testimonials endpoints
+  testimonials: router({
+    // Public: Get featured testimonials
+    getFeatured: publicProcedure.query(async () => {
+      return await db.getFeaturedTestimonials();
+    }),
+    // Public: Get all testimonials
+    getAll: publicProcedure.query(async () => {
+      return await db.getAllTestimonials();
+    }),
+    // Admin: Create testimonial
+    create: adminProcedure
+      .input(z.object({
+        customerName: z.string(),
+        customerPhoto: z.string().optional(),
+        rating: z.number().min(1).max(5),
+        quote: z.string(),
+        productId: z.number().optional(),
+        featured: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.createTestimonial(input);
+        return { success: true };
+      }),
+    // Admin: Update testimonial
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        customerName: z.string().optional(),
+        customerPhoto: z.string().optional(),
+        rating: z.number().min(1).max(5).optional(),
+        quote: z.string().optional(),
+        productId: z.number().optional(),
+        featured: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updates } = input;
+        await db.updateTestimonial(id, updates);
+        return { success: true };
+      }),
+    // Admin: Delete testimonial
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteTestimonial(input.id);
+        return { success: true };
+      }),
+  }),
+});
+export type AppRouter = typeof appRouter;;
 

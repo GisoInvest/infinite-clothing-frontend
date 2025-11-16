@@ -282,3 +282,22 @@ export const outfits = mysqlTable("outfits", {
 
 export type Outfit = typeof outfits.$inferSelect;
 export type InsertOutfit = typeof outfits.$inferInsert;
+
+/**
+ * Testimonials table for customer reviews and social proof
+ */
+export const testimonials = mysqlTable("testimonials", {
+  id: int("id").autoincrement().primaryKey(),
+  customerName: varchar("customerName", { length: 255 }).notNull(),
+  customerPhoto: varchar("customerPhoto", { length: 500 }),
+  rating: int("rating").notNull(),
+  quote: text("quote").notNull(),
+  productId: int("productId"),
+  featured: boolean("featured").default(false).notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Testimonial = typeof testimonials.$inferSelect;
+export type InsertTestimonial = typeof testimonials.$inferInsert;

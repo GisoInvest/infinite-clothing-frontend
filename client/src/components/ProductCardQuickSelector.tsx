@@ -10,6 +10,7 @@ interface ProductCardQuickSelectorProps {
     name: string;
     price: number;
     discount?: number;
+    stock: number;
     images: string[];
     sizes: string[];
     colors: string[];
@@ -61,9 +62,14 @@ export default function ProductCardQuickSelector({ product }: ProductCardQuickSe
       <Button
         size="sm"
         className="glow-box w-full"
+        disabled={product.stock === 0}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
+          if (product.stock === 0) {
+            toast.error('This product is out of stock');
+            return;
+          }
           setShowSelectors(true);
         }}
       >

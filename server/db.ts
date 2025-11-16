@@ -1,6 +1,6 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting, blogPosts, BlogPost, InsertBlogPost, productReviews, ProductReview, InsertProductReview, newsletterSubscribers, NewsletterSubscriber, InsertNewsletterSubscriber, emailCampaigns, EmailCampaign, InsertEmailCampaign, discountCodes, DiscountCode, InsertDiscountCode, abandonedCarts, AbandonedCart, InsertAbandonedCart, outfits, Outfit, InsertOutfit } from "../drizzle/schema";
+import { InsertUser, users, products, Product, InsertProduct, orders, Order, InsertOrder, audioTracks, AudioTrack, InsertAudioTrack, siteSettings, SiteSetting, InsertSiteSetting, blogPosts, BlogPost, InsertBlogPost, productReviews, ProductReview, InsertProductReview, newsletterSubscribers, NewsletterSubscriber, InsertNewsletterSubscriber, emailCampaigns, EmailCampaign, InsertEmailCampaign, discountCodes, DiscountCode, InsertDiscountCode, abandonedCarts, AbandonedCart, InsertAbandonedCart, outfits, Outfit, InsertOutfit, testimonials, Testimonial, InsertTestimonial } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -796,4 +796,109 @@ export async function deleteOutfit(id: number): Promise<void> {
   if (!db) throw new Error("Database not available");
   
   await db.delete(outfits).where(eq(outfits.id, id));
+}
+
+
+// ===== Testimonials =====
+export async function getFeaturedTestimonials() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db
+    .select()
+    .from(testimonials)
+    .where(and(eq(testimonials.featured, true), eq(testimonials.active, true)))
+    .orderBy(desc(testimonials.createdAt));
+}
+
+export async function getAllTestimonials() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db
+    .select()
+    .from(testimonials)
+    .where(eq(testimonials.active, true))
+    .orderBy(desc(testimonials.createdAt));
+}
+
+export async function createTestimonial(data: InsertTestimonial) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(testimonials).values(data);
+}
+
+export async function updateTestimonial(id: number, data: Partial<InsertTestimonial>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(testimonials).set(data).where(eq(testimonials.id, id));
+}
+
+export async function deleteTestimonial(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(testimonials).set({ active: false }).where(eq(testimonials.id, id));
+}
+
+
+export async function getAbandonedCartById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const result = await db
+    .select()
+    .from(abandonedCarts)
+    .where(eq(abandonedCarts.id, id))
+    .limit(1);
+  
+  return result[0] || null;
+}
+
+export async function getAbandonedCartStats() {
+  const db = await getDb();
+  if (!db) return {
+    totalAbandoned: 0,
+    totalValue: 0,
+    recoveryRate: 0,
+    remindersSent: 0,
+    mostAbandonedProducts: [],
+  };
+  
+  const allCarts = await db.select().from(abandonedCarts);
+  const totalAbandoned = allCarts.length;
+  const totalValue = allCarts.reduce((sum, cart) => sum + cart.cartTotal, 0);
+  const recovered = allCarts.filter(cart => cart.recovered).length;
+  const recoveryRate = totalAbandoned > 0 ? (recovered / totalAbandoned) * 100 : 0;
+  const remindersSent = allCarts.filter(cart => cart.reminderSent).length;
+  
+  // Calculate most abandoned products
+  const productCounts: Record<number, { productId: number; productName: string; count: number }> = {};
+  
+  allCarts.forEach(cart => {
+    cart.cartData.forEach((item: any) => {
+      if (!productCounts[item.productId]) {
+        productCounts[item.productId] = {
+          productId: item.productId,
+          productName: item.productName,
+          count: 0,
+        };
+      }
+      productCounts[item.productId].count++;
+    });
+  });
+  
+  const mostAbandonedProducts = Object.values(productCounts)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+  
+  return {
+    totalAbandoned,
+    totalValue,
+    recoveryRate,
+    remindersSent,
+    mostAbandonedProducts,
+  };
 }

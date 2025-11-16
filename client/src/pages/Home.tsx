@@ -13,13 +13,13 @@ import NeonParticles from '@/components/NeonParticles';
 import WelcomePopup from '@/components/WelcomePopup';
 import ProductCardQuickSelector from '@/components/ProductCardQuickSelector';
 import ShopTheLook from '@/components/ShopTheLook';
+import TestimonialsCarousel from '@/components/TestimonialsCarousel';
 
 export default function Home() {
   const { data: featuredProducts, isLoading } = trpc.products.getFeatured.useQuery();
   const { addItem } = useCart();
   
-  console.log('[Home] Featured products:', featuredProducts);
-  console.log('[Home] First product:', featuredProducts?.[0]);
+
 
   const handleAddToCart = (product: any) => {
     addItem({
@@ -94,6 +94,19 @@ export default function Home() {
                         <div className="absolute top-4 left-4 bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
                           NEW ARRIVAL
                         </div>
+                        
+                        {/* Stock Indicators */}
+                        {featuredProducts[0].stock === 0 ? (
+                          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                            <span className="bg-red-500 text-white px-6 py-3 rounded-lg font-bold text-lg">
+                              OUT OF STOCK
+                            </span>
+                          </div>
+                        ) : featuredProducts[0].stock < 10 ? (
+                          <div className="absolute top-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-lg font-bold text-xs shadow-lg animate-pulse">
+                            LOW STOCK - Only {featuredProducts[0].stock} left!
+                          </div>
+                        ) : null}
                       </div>
                       
                       {/* Product Info */}
@@ -196,6 +209,19 @@ export default function Home() {
                         )}
                         {/* Hover overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        
+                        {/* Stock Indicators */}
+                        {product.stock === 0 ? (
+                          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                            <span className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-sm">
+                              OUT OF STOCK
+                            </span>
+                          </div>
+                        ) : product.stock < 10 ? (
+                          <div className="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold shadow-lg animate-pulse">
+                            {product.stock} left
+                          </div>
+                        ) : null}
                       </div>
                     </a>
                   </Link>
@@ -248,6 +274,9 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <TestimonialsCarousel />
 
       {/* Categories */}
       <section className="py-20 bg-card/50">
