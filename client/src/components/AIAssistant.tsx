@@ -232,16 +232,18 @@ export default function AIAssistant() {
         conversationHistory: messages,
       });
 
+      const messageContent = typeof response.message === 'string' ? response.message : JSON.stringify(response.message);
+      
       const assistantMessage: Message = {
         role: 'assistant',
-        content: response.message,
+        content: messageContent,
         timestamp: response.timestamp,
       };
 
       setMessages(prev => [...prev, assistantMessage]);
 
       if (voiceEnabled && voiceReady) {
-        speakMessage(response.message);
+        speakMessage(messageContent);
       }
     } catch (error) {
       // Error already handled by mutation onError

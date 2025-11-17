@@ -266,13 +266,13 @@ export default function AdminBlog() {
 
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">Blog Management</h1>
-            <p className="text-muted-foreground mt-2">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="w-full sm:w-auto">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight break-words">Blog Management</h1>
+            <p className="text-sm md:text-base text-muted-foreground mt-2">
               Create and manage blog posts for your website and social media
             </p>
           </div>
@@ -587,8 +587,8 @@ export default function AdminBlog() {
                         <span>Category: {post.category || "None"}</span>
                         <span>Views: {post.viewCount}</span>
                         <span>
-                          {post.status === 'scheduled' && post.scheduledFor
-                            ? `Scheduled: ${new Date(post.scheduledFor).toLocaleString()}`
+                          {post.status === 'scheduled' && (post as any).scheduledFor
+                            ? `Scheduled: ${new Date((post as any).scheduledFor).toLocaleString()}`
                             : post.publishedAt
                             ? new Date(post.publishedAt).toLocaleDateString()
                             : "Not published"}
@@ -597,7 +597,13 @@ export default function AdminBlog() {
                     </div>
                     <div className="flex gap-2">
                       {post.status === 'published' && (
-                        <SocialMediaCopy post={post} />
+                        <SocialMediaCopy post={{
+                          title: post.title,
+                          slug: post.slug,
+                          excerpt: post.excerpt ?? undefined,
+                          coverImage: post.coverImage ?? undefined,
+                          tags: post.tags ?? undefined,
+                        }} />
                       )}
                       <Button
                         variant="outline"

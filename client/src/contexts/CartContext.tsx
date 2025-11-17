@@ -33,7 +33,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   });
 
   // Save cart to abandoned carts database
-  const saveAbandonedCart = trpc.abandonedCarts.saveCart.useMutation();
+  const saveAbandonedCart = trpc.abandonedCart.save.useMutation();
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(items));
@@ -41,10 +41,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // Save to abandoned carts if cart has items
     if (items.length > 0) {
       const sessionId = localStorage.getItem('sessionId') || generateSessionId();
+      const cartTotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       saveAbandonedCart.mutate({
         sessionId,
-        email: null, // Will be filled when user logs in or provides email
-        items: items.map(item => ({
+        cartData: items.map(item => ({
           productId: item.productId,
           productName: item.productName,
           price: item.price,
@@ -53,6 +53,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
           size: item.size,
           color: item.color,
         })),
+        cartTotal,
+        customerEmail: undefined,
+        customerName: undefined,
       });
     }
   }, [items]);

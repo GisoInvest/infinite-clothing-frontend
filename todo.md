@@ -479,3 +479,15 @@
 - [ ] User needs to sign up at tawk.to and add Property ID
 - [ ] Customize chat widget colors in Tawk.to dashboard
 - [ ] Set welcome message in Tawk.to dashboard
+
+
+## Mobile Responsive Design Fixes
+
+- [ ] Analyze mobile display test video
+- [ ] Fix text overflow and truncation issues
+- [ ] Ensure all pages are mobile-responsive
+- [ ] Fix navigation menu for mobile
+- [ ] Fix product cards for mobile display
+- [ ] Fix checkout page for mobile
+- [ ] Fix admin pages for mobile
+- [ ] Test on various mobile screen sizes

@@ -1,7 +1,8 @@
 import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
-import { Package, ShoppingCart, Music, Home, LogOut, Loader2, FileText, Mail } from 'lucide-react';
+import { Package, ShoppingCart, Music, Home, LogOut, Loader2, FileText, Mail, Menu, X } from 'lucide-react';
+import { useState } from 'react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -10,6 +11,7 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [location] = useLocation();
   const { isAuthenticated, isLoading, logout } = useAdminAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -32,9 +34,31 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex relative">
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-card border border-primary/20 rounded-lg shadow-lg"
+        aria-label="Toggle menu"
+      >
+        {sidebarOpen ? <X className="h-6 w-6 text-primary" /> : <Menu className="h-6 w-6 text-primary" />}
+      </button>
+
+      {/* Sidebar Overlay for Mobile */}
+      {sidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-30"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-card border-r border-primary/20 flex flex-col">
+      <aside className={`
+        fixed lg:static inset-y-0 left-0 z-40
+        w-64 bg-card border-r border-primary/20 flex flex-col
+        transform transition-transform duration-300 ease-in-out
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
         <div className="p-6 border-b border-primary/20">
           <Link href="/">
             <a>
@@ -89,8 +113,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
-        <div className="p-8">
+      <main className="flex-1 overflow-auto w-full">
+        <div className="p-4 md:p-6 lg:p-8 pt-16 lg:pt-8">
           {children}
         </div>
       </main>

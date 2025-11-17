@@ -105,7 +105,7 @@ export default function ProductDetail() {
     <div className="min-h-screen flex flex-col">
       <SEO
         title={product.name}
-        description={product.description}
+        description={product.description || undefined}
         keywords={`${product.name}, ${product.category}, streetwear, ${product.subcategory || ''}`}
         image={product.images?.[0]}
         url={productUrl}

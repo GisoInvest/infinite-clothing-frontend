@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 interface Product {
   id: number;
   name: string;
-  description: string;
+  description: string | null;
   price: number;
   discount?: number;
   images: string[];

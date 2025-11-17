@@ -134,7 +134,7 @@ export default function ProductList({ category, title, subcategories }: ProductL
                         {product.description}
                       </p>
                       <div className="mb-3">
-                        <StarRating rating={product.averageRating || 0} size={16} />
+                        <StarRating rating={(product as any).averageRating || 0} size={16} />
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xl font-bold text-primary">

@@ -72,10 +72,10 @@ export default function EmailCampaigns() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Email Campaigns</h1>
-          <p className="text-muted-foreground mt-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="w-full sm:w-auto">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold break-words">Email Campaigns</h1>
+          <p className="text-sm md:text-base text-muted-foreground mt-2">
             Create and send email campaigns to your subscribers
           </p>
         </div>

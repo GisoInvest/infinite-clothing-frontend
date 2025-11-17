@@ -42,6 +42,8 @@ export default function Wishlist() {
       size: product.sizes[0], // Default to first size
       color: product.colors?.[0] || 'Default',
       image: product.images?.[0] || '',
+      category: product.category,
+      subcategory: product.subcategory,
     });
     
     toast.success('Added to cart');

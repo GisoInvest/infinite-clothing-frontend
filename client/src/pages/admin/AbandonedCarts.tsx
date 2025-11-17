@@ -17,9 +17,9 @@ import {
 
 export default function AbandonedCartsAdmin() {
   const [searchTerm, setSearchTerm] = useState('');
-  const { data: carts, isLoading, refetch } = trpc.abandonedCarts.getAll.useQuery();
-  const { data: stats } = trpc.abandonedCarts.getStats.useQuery();
-  const sendReminderMutation = trpc.abandonedCarts.sendReminder.useMutation();
+  const { data: carts, isLoading, refetch } = trpc.abandonedCart.getAll.useQuery();
+  const { data: stats } = trpc.abandonedCart.getStats.useQuery();
+  const sendReminderMutation = trpc.abandonedCart.sendReminder.useMutation();
 
   const handleSendReminder = async (cartId: number, email: string) => {
     try {
@@ -31,7 +31,7 @@ export default function AbandonedCartsAdmin() {
     }
   };
 
-  const filteredCarts = carts?.filter(cart =>
+  const filteredCarts = carts?.filter((cart: any) =>
     cart.customerEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     cart.sessionId.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -45,10 +45,10 @@ export default function AbandonedCartsAdmin() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-4 md:py-6 lg:py-8 px-4">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Abandoned Carts Dashboard</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 break-words">Abandoned Carts Dashboard</h1>
+        <p className="text-sm md:text-base text-muted-foreground">
           Track and recover abandoned shopping carts
         </p>
       </div>
@@ -133,7 +133,7 @@ export default function AbandonedCartsAdmin() {
             </TableHeader>
             <TableBody>
               {filteredCarts && filteredCarts.length > 0 ? (
-                filteredCarts.map((cart) => (
+                filteredCarts.map((cart: any) => (
                   <TableRow key={cart.id}>
                     <TableCell className="font-mono text-xs">
                       {cart.sessionId.substring(0, 16)}...
