@@ -18,7 +18,7 @@ import ProductReviews from '@/components/ProductReviews';
 
 export default function ProductDetail() {
   const [, params] = useRoute('/product/:id');
-  const productId = params?.id ? parseInt(params.id) : 0;
+  const productId = params?.id ? Number(params.id) : 0;
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
