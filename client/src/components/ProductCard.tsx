@@ -16,7 +16,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
       <Link to={`/product/${product.id}`} className="flex-grow">
         <div className="relative aspect-square overflow-hidden">
           <img
-            src={product.image || '/placeholder.jpg'}
+            src={product.images?.[0] || '/placeholder.jpg'}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
             loading="lazy"
@@ -35,10 +35,12 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between items-center">
         <PriceDisplay price={product.price} discount={product.discount} />
-        <Button size="sm" className="glow-box">
+        <Link href={`/product/${product.id}`}>
+          <Button size="sm" className="glow-box">
           <ShoppingCart className="w-4 h-4 mr-2" />
           View
-        </Button>
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   );
