@@ -121,7 +121,6 @@ export default function AdminProducts() {
         videos: formData.videos ? formData.videos.split(',').map(s => s.trim()) : [],
         featured: formData.featured,
         sizes: formData.sizes,
-        sizeGuide: {}, // Add empty sizeGuide object
         discount: parseInt(formData.discount) || 0,
         colors: formData.colors,
         active: true,
