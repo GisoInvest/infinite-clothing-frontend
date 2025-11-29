@@ -5,8 +5,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { trpc } from '@/lib/trpc';
-import { useAuth } from '@/_core/hooks/useAuth';
-import { getLoginUrl } from '@/const';
 import StarRating from '@/components/StarRating';
 import { ThumbsUp, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -16,10 +14,11 @@ interface ProductReviewsProps {
 }
 
 export default function ProductReviews({ productId }: ProductReviewsProps) {
-  const { user, isAuthenticated } = useAuth();
   const [rating, setRating] = useState(5);
   const [title, setTitle] = useState('');
   const [comment, setComment] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [showForm, setShowForm] = useState(false);
 
   const { data: reviews = [], isLoading, refetch } = trpc.reviews.getByProduct.useQuery({ productId });
@@ -30,6 +29,8 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
       toast.success('Review submitted successfully!');
       setTitle('');
       setComment('');
+      setName('');
+      setEmail('');
       setRating(5);
       setShowForm(false);
       refetch();
@@ -47,6 +48,16 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
   });
 
   const handleSubmitReview = () => {
+    if (!name.trim()) {
+      toast.error('Please enter your name');
+      return;
+    }
+
+    if (!email.trim() || !email.includes('@')) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
     if (!comment.trim()) {
       toast.error('Please write a review');
       return;
@@ -57,6 +68,8 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
       rating,
       title: title.trim() || undefined,
       comment: comment.trim(),
+      userName: name.trim(),
+      userEmail: email.trim(),
     });
   };
 
@@ -73,24 +86,43 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
           </div>
         </div>
 
-        {isAuthenticated && !showForm && (
+        {!showForm && (
           <Button onClick={() => setShowForm(true)} className="glow-box">
             Write a Review
-          </Button>
-        )}
-
-        {!isAuthenticated && (
-          <Button onClick={() => window.location.href = getLoginUrl()} className="glow-box">
-            Login to Review
           </Button>
         )}
       </div>
 
       {/* Review Form */}
-      {showForm && isAuthenticated && (
+      {showForm && (
         <Card className="p-6 border-primary/20 bg-card/50 space-y-4">
           <h3 className="text-xl font-semibold">Write Your Review</h3>
           
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="review-name">Your Name *</Label>
+              <Input
+                id="review-name"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                maxLength={100}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="review-email">Your Email *</Label>
+              <Input
+                id="review-email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                maxLength={255}
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label>Your Rating *</Label>
             <StarRating rating={rating} interactive onRatingChange={setRating} size={32} />
@@ -134,6 +166,8 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                 setShowForm(false);
                 setTitle('');
                 setComment('');
+                setName('');
+                setEmail('');
                 setRating(5);
               }}
             >
