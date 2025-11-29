@@ -114,17 +114,17 @@ export default function AdminProducts() {
         name: formData.name,
         description: formData.description,
         price: Math.round(parseFloat(formData.price) * 100), // Convert to cents
-        stock: Number(formData.stock),
+        stock: parseInt(formData.stock) || 0, // Default to 0 if empty or invalid
         category: formData.category as any,
         subcategory: formData.subcategory,
         images: imageUrls,
         videos: formData.videos ? formData.videos.split(',').map(s => s.trim()) : [],
         featured: formData.featured,
         sizes: formData.sizes,
+        sizeGuide: {}, // Add empty sizeGuide object
         discount: parseInt(formData.discount) || 0,
         colors: formData.colors,
         active: true,
-
       };
 
       if (editingProduct) {
