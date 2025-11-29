@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { trpc } from '@/lib/trpc';
 import { useDebouncedCallback } from '@/hooks/useDebounce';
 
@@ -71,7 +71,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return sessionId;
   };
 
-  const addItem = (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
+  const addItem = useCallback((item: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
     setItems(current => {
       // Check if same product with same size already exists
       const existingIndex = current.findIndex(i => 
@@ -84,15 +84,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...current, { ...item, quantity: item.quantity || 1 }];
     });
-  };
+  }, []);
 
-  const removeItem = (productId: number) => {
+  const removeItem = useCallback((productId: number) => {
     setItems(current => current.filter(i => i.productId !== productId));
-  };
+  }, []);
 
-  const updateQuantity = (productId: number, quantity: number) => {
+  const updateQuantity = useCallback((productId: number, quantity: number) => {
     if (quantity <= 0) {
-      removeItem(productId);
+      setItems(current => current.filter(i => i.productId !== productId));
       return;
     }
     setItems(current => {
@@ -103,14 +103,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return updated;
     });
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setItems([]);
-  };
+  }, []);
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalItems = useMemo(() => 
+    items.reduce((sum, item) => sum + item.quantity, 0), 
+    [items]
+  );
+  
+  const subtotal = useMemo(() => 
+    items.reduce((sum, item) => sum + item.price * item.quantity, 0), 
+    [items]
+  );
 
   const contextValue = useMemo(() => ({
     items,
@@ -136,4 +143,3 @@ export function useCart() {
   }
   return context;
 }
-
