@@ -16,6 +16,11 @@ export default function PaymentSuccess() {
   const [orderNumber, setOrderNumber] = useState('');
   const [error, setError] = useState('');
 
+  const getSession = trpc.stripeSession.getSession.useQuery(
+    { sessionId: new URLSearchParams(window.location.search).get('session_id') || '' },
+    { enabled: false }
+  );
+  
   const createOrder = trpc.simpleOrders.create.useMutation();
 
   useEffect(() => {
@@ -31,44 +36,44 @@ export default function PaymentSuccess() {
       }
 
       try {
-        // Get session metadata from Stripe (stored in session)
-        // For now, we'll use localStorage to get the order data
-        const orderDataStr = localStorage.getItem('pendingOrder');
-        if (!orderDataStr) {
-          throw new Error('Order data not found');
+        // Retrieve session data from Stripe
+        const sessionData = await getSession.refetch();
+        
+        if (!sessionData.data || !sessionData.data.metadata) {
+          throw new Error('Session metadata not found');
         }
 
-        const orderData = JSON.parse(orderDataStr);
+        const metadata = sessionData.data.metadata;
         
-        // Create order in database
+        // Create order in database using metadata from Stripe
         await createOrder.mutateAsync({
-          orderNumber: orderData.orderNumber,
-          customerEmail: orderData.customerEmail,
-          customerName: orderData.customerName,
-          customerPhone: orderData.customerPhone,
-          shippingAddress: orderData.shippingAddress,
-          items: orderData.items,
-          subtotal: orderData.subtotal,
-          shipping: orderData.shipping,
-          tax: orderData.tax,
-          total: orderData.total,
+          orderNumber: metadata.orderNumber,
+          customerEmail: metadata.customerEmail,
+          customerName: metadata.customerName,
+          customerPhone: metadata.customerPhone || '',
+          shippingAddress: metadata.shippingAddress,
+          items: metadata.items,
+          subtotal: parseInt(metadata.subtotal),
+          shipping: parseInt(metadata.shipping),
+          tax: parseInt(metadata.tax),
+          total: parseInt(metadata.total),
           paymentIntentId: sessionId,
         });
 
-        setOrderNumber(orderData.orderNumber);
+        setOrderNumber(metadata.orderNumber);
         clearCart();
-        localStorage.removeItem('pendingOrder');
+        localStorage.removeItem('pendingOrder'); // Clean up if it exists
         toast.success('Order placed successfully!');
         setIsProcessing(false);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Order creation error:', err);
-        setError('Failed to create order. Please contact support.');
+        setError(err.message || 'Failed to create order. Please contact support.');
         setIsProcessing(false);
       }
     };
 
     handlePaymentSuccess();
-  }, [createOrder, clearCart]);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -110,8 +115,8 @@ export default function PaymentSuccess() {
                 </p>
                 <div className="flex gap-4 pt-4">
                   <Button onClick={() => setLocation('/')}>Continue Shopping</Button>
-                  <Button variant="outline" onClick={() => setLocation(`/order-confirmation?order=${orderNumber}`)}>
-                    View Order
+                  <Button variant="outline" onClick={() => setLocation(`/track-order`)}>
+                    Track Order
                   </Button>
                 </div>
               </CardContent>
