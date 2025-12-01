@@ -43,16 +43,16 @@ export default function Home() {
       <Navigation />
 
       {/* Hero Section - Split Layout */}
-      <section className="relative min-h-[75vh] flex items-center overflow-hidden cyber-grid py-12">
+      <section className="relative min-h-[60vh] flex items-start overflow-hidden cyber-grid pt-8 pb-12">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
         <div className="container relative z-10">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
             {/* Left Half - Brand Identity */}
-            <div className="text-center lg:text-left space-y-4 animate-fade-in">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold glow-text leading-tight">
+            <div className="text-center lg:text-left space-y-3 animate-fade-in">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold glow-text leading-tight">
                 INF!NITE C107HING
               </h1>
-              <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed animate-fade-in-up">
+              <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed animate-fade-in-up">
                 Redefining modern streetwear with purpose-driven designs that inspire confidence, creativity, and individuality.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up">
