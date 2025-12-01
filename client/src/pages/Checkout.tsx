@@ -21,7 +21,7 @@ function CheckoutForm({ clientSecret, orderData }: { clientSecret: string; order
   const [, setLocation] = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
   const { clearCart } = useCart();
-  const createOrder = trpc.orders.create.useMutation();
+  const createOrder = trpc.simpleOrders.create.useMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,9 +45,18 @@ function CheckoutForm({ clientSecret, orderData }: { clientSecret: string; order
         toast.error(error.message || 'Payment failed');
         setIsProcessing(false);
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        // Create order in database
+        // Create order in database with simplified data
         await createOrder.mutateAsync({
-          ...orderData,
+          orderNumber: orderData.orderNumber,
+          customerEmail: orderData.customerEmail,
+          customerName: orderData.customerName,
+          customerPhone: orderData.customerPhone,
+          shippingAddress: JSON.stringify(orderData.shippingAddress),
+          items: JSON.stringify(orderData.items),
+          subtotal: orderData.subtotal,
+          shipping: orderData.shipping,
+          tax: orderData.tax,
+          total: orderData.total,
           paymentIntentId: paymentIntent.id,
         });
 
