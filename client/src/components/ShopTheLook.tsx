@@ -25,10 +25,15 @@ export default function ShopTheLook() {
     }
 
     outfitProducts.forEach(product => {
+      // Calculate discounted price if discount exists
+      const finalPrice = product.discount > 0 
+        ? Math.round(product.price * (1 - product.discount / 100))
+        : product.price;
+      
       addItem({
         productId: product.id,
         productName: product.name,
-        price: product.price,
+        price: finalPrice,
         image: product.images?.[0],
         category: product.category,
         subcategory: product.subcategory,
@@ -99,7 +104,15 @@ export default function ShopTheLook() {
                         <Link key={product.id} href={`/product/${product.id}`}>
                           <a className="block text-sm text-white hover:text-primary transition-colors">
                             <Plus className="inline h-3 w-3 mr-1" />
-                            {product.name} - £{(product.price / 100).toFixed(2)}
+                            {product.name} - {product.discount > 0 ? (
+                              <>
+                                <span className="line-through text-gray-400">£{(product.price / 100).toFixed(2)}</span>
+                                {' '}
+                                <span className="text-primary font-bold">£{(product.price * (1 - product.discount / 100) / 100).toFixed(2)}</span>
+                              </>
+                            ) : (
+                              `£${(product.price / 100).toFixed(2)}`
+                            )}
                           </a>
                         </Link>
                       ))}
