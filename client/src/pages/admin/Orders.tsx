@@ -43,21 +43,19 @@ export default function AdminOrders() {
 
   const { data: orders, isLoading, refetch } = trpc.orders.getAll.useQuery();
   const updateOrderStatus = trpc.orders.updateStatus.useMutation();
-  const addTracking = trpc.orders.addTracking.useMutation();
-  const sendStatusEmail = trpc.orders.sendStatusEmail.useMutation();
 
   const handleStatusChange = async (orderId: number, status: string, sendEmail: boolean = true) => {
     try {
-      await updateOrderStatus.mutateAsync({ id: orderId, status: status as any });
-      toast.success('Order status updated');
+      await updateOrderStatus.mutateAsync({ 
+        id: orderId, 
+        status: status as any,
+        sendEmail: sendEmail 
+      });
       
       if (sendEmail) {
-        try {
-          await sendStatusEmail.mutateAsync({ orderId });
-          toast.success('Status email sent to customer');
-        } catch (emailError) {
-          toast.error('Status updated but email failed to send');
-        }
+        toast.success('Order status updated and email sent to customer');
+      } else {
+        toast.success('Order status updated');
       }
       
       refetch();
@@ -80,29 +78,25 @@ export default function AdminOrders() {
     }
 
     try {
-      await addTracking.mutateAsync({
-        orderId: selectedOrder.id,
+      // Determine the new status - default to 'shipped' if not already shipped/delivered
+      const newStatus = (selectedOrder.status === 'shipped' || selectedOrder.status === 'delivered') 
+        ? selectedOrder.status 
+        : 'shipped';
+      
+      // Update order with tracking info and status
+      await updateOrderStatus.mutateAsync({
+        id: selectedOrder.id,
+        status: newStatus as any,
         trackingNumber,
         shippingCarrier,
         estimatedDelivery: estimatedDelivery || undefined,
         tapstitchOrderId: tapstitchOrderId || undefined,
         internalNotes: internalNotes || undefined,
+        sendEmail: true, // Always send email when adding tracking
       });
       
-      toast.success('Tracking information added');
+      toast.success('Tracking information added and email sent to customer');
       
-      // Update status to shipped if not already
-      if (selectedOrder.status !== 'shipped' && selectedOrder.status !== 'delivered') {
-        await handleStatusChange(selectedOrder.id, 'shipped');
-      } else {
-        // Send email for tracking update
-        try {
-          await sendStatusEmail.mutateAsync({ orderId: selectedOrder.id });
-          toast.success('Tracking email sent to customer');
-        } catch (emailError) {
-          toast.error('Tracking added but email failed to send');
-        }
-      }
       
       refetch();
       setIsTrackingDialogOpen(false);
