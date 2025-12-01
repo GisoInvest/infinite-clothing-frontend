@@ -188,10 +188,15 @@ export default function Checkout() {
         orderNumber: newOrderNumber,
       });
 
-      setClientSecret(result.clientSecret!);
+      if (!result.clientSecret) {
+        throw new Error('No client secret returned from payment intent');
+      }
+
+      console.log('Payment intent created successfully:', result.paymentIntentId);
+      setClientSecret(result.clientSecret);
     } catch (error) {
       toast.error('Failed to initialize payment');
-      console.error(error);
+      console.error('Payment initialization error:', error);
     }
   };
 
@@ -450,7 +455,18 @@ export default function Checkout() {
                     <CardTitle>Payment Details</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <Elements 
+                      stripe={stripePromise} 
+                      options={{ 
+                        clientSecret,
+                        appearance: {
+                          theme: 'night',
+                          variables: {
+                            colorPrimary: '#00d4ff',
+                          },
+                        },
+                      }}
+                    >
                       <CheckoutForm clientSecret={clientSecret} orderData={orderData} />
                     </Elements>
                   </CardContent>
