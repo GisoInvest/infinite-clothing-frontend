@@ -43,12 +43,12 @@ export default function Home() {
       <Navigation />
 
       {/* Hero Section - Split Layout */}
-      <section className="relative min-h-[85vh] flex items-center overflow-hidden cyber-grid">
+      <section className="relative min-h-[75vh] flex items-center overflow-hidden cyber-grid py-12">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
         <div className="container relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left Half - Brand Identity */}
-            <div className="text-center lg:text-left space-y-6 animate-fade-in">
+            <div className="text-center lg:text-left space-y-4 animate-fade-in">
               <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold glow-text leading-tight">
                 INF!NITE C107HING
               </h1>
