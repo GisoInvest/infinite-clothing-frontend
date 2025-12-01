@@ -13,7 +13,8 @@ import Unisex from "./pages/Unisex";
 import KidsBaby from "./pages/KidsBaby";
 import About from "./pages/About";
 import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
+import CheckoutSimple from "./pages/CheckoutSimple";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import ProductDetail from "./pages/ProductDetail";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -50,7 +51,8 @@ function Router() {
       <Route path="/shop" component={Shop} />
       <Route path="/wishlist" component={Wishlist} />
       <Route path="/cart" component={Cart} />
-      <Route path="/checkout" component={Checkout} />
+      <Route path="/checkout" component={CheckoutSimple} />
+      <Route path="/payment-success" component={PaymentSuccess} />
       <Route path="/order-confirmation" component={OrderConfirmation} />
       <Route path="/track-order" component={TrackOrder} />
       <Route path="/product/:id" component={ProductDetail} />
