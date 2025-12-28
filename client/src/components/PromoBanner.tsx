@@ -19,10 +19,10 @@ export default function PromoBanner() {
       {/* Main content */}
       <div className="relative container mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 py-3 px-4">
         <span className="text-sm md:text-base font-bold text-white tron-flicker">
-          🎄 20% OFF ALL ITEMS - CHRISTMAS SALE! 🎄
+          🎉 25% OFF ALL ITEMS - NEW YEAR SALE! 🎉
         </span>
         <CountdownTimer 
-          targetDate={new Date('2025-12-25T23:59:59')}
+          targetDate={new Date('2026-01-31T23:59:59')}
           onComplete={() => setIsVisible(false)}
         />
       </div>
