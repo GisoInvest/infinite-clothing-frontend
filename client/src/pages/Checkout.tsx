@@ -475,22 +475,22 @@ export default function Checkout() {
                 </CardContent>
               </Card>
 
-              {!clientSecret && (
-                <Button
-                  size="lg"
-                  className="w-full mt-6 glow-box"
+	              {!clientSecret && !cryptoPaymentDetails && (
+	                <Button
+	                  size="lg"
+	                  className="w-full mt-6 glow-box"
 	                  onClick={handleCreatePayment}
 	                  disabled={createPaymentIntent.isPending || createCryptoPayment.isPending}
 	                >
 	                  {createPaymentIntent.isPending || createCryptoPayment.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Loading...
-                    </>
-                  ) : (
-                    'Continue to Payment'
-                  )}
-                </Button>
+	                    <>
+	                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+	                      Loading...
+	                    </>
+	                  ) : (
+	                    'Continue to Payment'
+	                  )}
+	                </Button>
 	              )}
 
 	              {cryptoPaymentDetails && paymentMethod === 'crypto' && (
@@ -642,7 +642,7 @@ export default function Checkout() {
                   </div>
                 </CardContent>
               </Card>	              {/* Payment Form */}
-	              {clientSecret && paymentMethod === 'stripe' && (paymentMethod === 'stripe' && (
+	              {clientSecret && paymentMethod === 'stripe' && (
                 <Card className="border-primary/20">
                   <CardHeader>
                     <CardTitle>Payment Details</CardTitle>
