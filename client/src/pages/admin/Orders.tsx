@@ -487,10 +487,14 @@ export default function AdminOrders() {
                         className="flex justify-between items-center bg-card/50 p-3 rounded border border-primary/20"
                       >
                         <div>
-                          <p className="font-semibold">{item.productName}</p>
-                          <p className="text-sm text-muted-foreground">
-                            Quantity: {item.quantity} × £{(item.price / 100).toFixed(2)}
-                          </p>
+	                          <p className="font-semibold">{item.productName}</p>
+	                          <p className="text-xs text-muted-foreground space-x-4">
+	                            {item.size && <span>Size: {item.size}</span>}
+	                            {item.color && <span>Color: {item.color}</span>}
+	                          </p>
+	                          <p className="text-sm text-muted-foreground">
+	                            Quantity: {item.quantity} × £{(item.price / 100).toFixed(2)}
+	                          </p>
                         </div>
                         <p className="font-semibold">£{((item.price * item.quantity) / 100).toFixed(2)}</p>
                       </div>
