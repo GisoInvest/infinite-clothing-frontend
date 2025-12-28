@@ -87,7 +87,35 @@ function CheckoutForm({ clientSecret, orderData }: { clientSecret: string; order
           </>
         ) : (
           `Pay £${(orderData.total / 100).toFixed(2)}`
-        )}
+	              )}
+	
+	              {cryptoPaymentDetails && paymentMethod === 'crypto' && (
+	                <Card className="border-primary/20">
+	                  <CardHeader>
+	                    <CardTitle>Complete Crypto Payment</CardTitle>
+	                  </CardHeader>
+	                  <CardContent className="space-y-4">
+	                    <p>Please send **{cryptoPaymentDetails.payAmount.toFixed(8)} {cryptoPaymentDetails.payCurrency.toUpperCase()}** to the address below to complete your order.</p>
+	                    <div className="bg-gray-800 p-4 rounded-lg break-all">
+	                      <p className="text-sm text-muted-foreground">Payment Address:</p>
+	                      <p className="font-mono text-lg">{cryptoPaymentDetails.payAddress}</p>
+	                    </div>
+	                    <p className="text-sm text-muted-foreground">You can also complete the payment by visiting the payment page:</p>
+	                    <a href={cryptoPaymentDetails.paymentUrl} target="_blank" rel="noopener noreferrer">
+	                      <Button className="w-full glow-box">Go to Payment Page</Button>
+	                    </a>
+	                    <Button 
+	                      variant="outline" 
+	                      className="w-full"
+	                      onClick={() => checkCryptoStatus.mutate({ paymentId: cryptoPaymentDetails.paymentId })}
+	                      disabled={checkCryptoStatus.isPending}
+	                    >
+	                      {checkCryptoStatus.isPending ? 'Checking Status...' : 'Check Payment Status'}
+	                    </Button>
+	                    <p className="text-xs text-center text-yellow-500">Do not close this window until payment is confirmed.</p>
+	                  </CardContent>
+	                </Card>
+	              )}
       </Button>
     </form>
   );
@@ -97,6 +125,8 @@ export default function Checkout() {
   const { items, subtotal } = useCart();
   const [, setLocation] = useLocation();
   const [clientSecret, setClientSecret] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'crypto'>('stripe');
+  const [cryptoPaymentDetails, setCryptoPaymentDetails] = useState<any>(null);
   const [orderNumber, setOrderNumber] = useState('');
   const [discountCode, setDiscountCode] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState<any>(null);
@@ -118,6 +148,8 @@ export default function Checkout() {
   });
 
   const createPaymentIntent = trpc.payment.createIntent.useMutation();
+  const createCryptoPayment = trpc.cryptoCheckout.createPayment.useMutation();
+  const checkCryptoStatus = trpc.cryptoCheckout.checkPaymentStatus.useMutation();
 
   useEffect(() => {
     if (items.length === 0) {
@@ -191,21 +223,84 @@ export default function Checkout() {
     const newOrderNumber = `INF${Date.now()}`;
     setOrderNumber(newOrderNumber);
 
-    try {
-      const result = await createPaymentIntent.mutateAsync({
-        amount: total,
-        orderNumber: newOrderNumber,
-      });
+    if (paymentMethod === 'stripe') {
+      try {
+        const result = await createPaymentIntent.mutateAsync({
+          amount: total,
+          orderNumber: newOrderNumber,
+        });
 
-      if (!result.clientSecret) {
-        throw new Error('No client secret returned from payment intent');
+        if (!result.clientSecret) {
+          throw new Error('No client secret returned from payment intent');
+        }
+
+        console.log('Payment intent created successfully:', result.paymentIntentId);
+        setClientSecret(result.clientSecret);
+      } catch (error) {
+        toast.error('Failed to initialize Stripe payment');
+        console.error('Stripe payment initialization error:', error);
       }
+    } else if (paymentMethod === 'crypto') {
+      try {
+        const result = await createCryptoPayment.mutateAsync({
+          ...orderData,
+          orderNumber: newOrderNumber,
+          payCurrency: 'btc', // Default to BTC for simplicity, can be expanded later
+        });
 
-      console.log('Payment intent created successfully:', result.paymentIntentId);
-      setClientSecret(result.clientSecret);
-    } catch (error) {
-      toast.error('Failed to initialize payment');
-      console.error('Payment initialization error:', error);
+        if (!result.paymentId) {
+          throw new Error('No payment ID returned from NOWPayments');
+        }
+
+        setCryptoPaymentDetails(result);
+        toast.success('Crypto payment initiated. Please complete payment on the next screen.');
+      } catch (error) {
+        toast.error('Failed to initialize Crypto payment');
+        console.error('Crypto payment initial  const handleCreatePayment = async () => {
+    // Validate form
+    if (!formData.email || !formData.name || !formData.line1 || !formData.city || !formData.postalCode) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    const newOrderNumber = `INF${Date.now()}`;
+    setOrderNumber(newOrderNumber);
+
+    if (paymentMethod === 'stripe') {
+      try {
+        const result = await createPaymentIntent.mutateAsync({
+          amount: total,
+          orderNumber: newOrderNumber,
+        });
+
+        if (!result.clientSecret) {
+          throw new Error('No client secret returned from payment intent');
+        }
+
+        console.log('Payment intent created successfully:', result.paymentIntentId);
+        setClientSecret(result.clientSecret);
+      } catch (error) {
+        toast.error('Failed to initialize Stripe payment');
+        console.error('Stripe payment initialization error:', error);
+      }
+    } else if (paymentMethod === 'crypto') {
+      try {
+        const result = await createCryptoPayment.mutateAsync({
+          ...orderData,
+          orderNumber: newOrderNumber,
+          payCurrency: 'btc', // Default to BTC for simplicity, can be expanded later
+        });
+
+        if (!result.paymentId) {
+          throw new Error('No payment ID returned from NOWPayments');
+        }
+
+        setCryptoPaymentDetails(result);
+        toast.success('Crypto payment initiated. Please complete payment on the next screen.');
+      } catch (error) {
+        toast.error('Failed to initialize Crypto payment');
+        console.error('Crypto payment initialization error:', error);
+      }
     }
   };
 
@@ -249,7 +344,37 @@ export default function Checkout() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Shipping Information */}
             <div>
-              <Card className="border-primary/20">
+	              <Card className="border-primary/20">
+	                <CardHeader>
+	                  <CardTitle>Payment Method</CardTitle>
+	                </CardHeader>
+	                <CardContent className="space-y-4">
+	                  <div className="flex items-center space-x-2">
+	                    <input
+	                      type="radio"
+	                      id="stripe"
+	                      name="paymentMethod"
+	                      value="stripe"
+	                      checked={paymentMethod === 'stripe'}
+	                      onChange={() => setPaymentMethod('stripe')}
+	                      className="h-4 w-4 text-primary focus:ring-primary"
+	                    />
+	                    <Label htmlFor="stripe">Credit/Debit Card (Stripe)</Label>
+	                  </div>
+	                  <div className="flex items-center space-x-2">
+	                    <input
+	                      type="radio"
+	                      id="crypto"
+	                      name="paymentMethod"
+	                      value="crypto"
+	                      checked={paymentMethod === 'crypto'}
+	                      onChange={() => setPaymentMethod('crypto')}
+	                      className="h-4 w-4 text-primary focus:ring-primary"
+	                    />
+	                    <Label htmlFor="crypto">Cryptocurrency (NOWPayments)</Label>
+	                  </div>
+	                </CardContent>
+	              </Card>
                 <CardHeader>
                   <CardTitle>Shipping Information</CardTitle>
                 </CardHeader>
@@ -354,10 +479,10 @@ export default function Checkout() {
                 <Button
                   size="lg"
                   className="w-full mt-6 glow-box"
-                  onClick={handleCreatePayment}
-                  disabled={createPaymentIntent.isPending}
-                >
-                  {createPaymentIntent.isPending ? (
+	                  onClick={handleCreatePayment}
+	                  disabled={createPaymentIntent.isPending || createCryptoPayment.isPending}
+	                >
+	                  {createPaymentIntent.isPending || createCryptoPayment.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                       Loading...
@@ -366,13 +491,74 @@ export default function Checkout() {
                     'Continue to Payment'
                   )}
                 </Button>
-              )}
-            </div>
+	              )}
+
+	              {cryptoPaymentDetails && paymentMethod === 'crypto' && (
+	                <Card className="border-primary/20">
+	                  <CardHeader>
+	                    <CardTitle>Complete Crypto Payment</CardTitle>
+	                  </CardHeader>
+	                  <CardContent className="space-y-4">
+	                    <p>Please send **{cryptoPaymentDetails.payAmount.toFixed(8)} {cryptoPaymentDetails.payCurrency.toUpperCase()}** to the address below to complete your order.</p>
+	                    <div className="bg-gray-800 p-4 rounded-lg break-all">
+	                      <p className="text-sm text-muted-foreground">Payment Address:</p>
+	                      <p className="font-mono text-lg">{cryptoPaymentDetails.payAddress}</p>
+	                    </div>
+	                    <p className="text-sm text-muted-foreground">You can also complete the payment by visiting the payment page:</p>
+	                    <a href={cryptoPaymentDetails.paymentUrl} target="_blank" rel="noopener noreferrer">
+	                      <Button className="w-full glow-box">Go to Payment Page</Button>
+	                    </a>
+	                    <Button 
+	                      variant="outline" 
+	                      className="w-full"
+	                      onClick={() => checkCryptoStatus.mutate({ paymentId: cryptoPaymentDetails.paymentId })}
+	                      disabled={checkCryptoStatus.isPending}
+	                    >
+	                      {checkCryptoStatus.isPending ? 'Checking Status...' : 'Check Payment Status'}
+	                    </Button>
+	                    <p className="text-xs text-center text-yellow-500">Do not close this window until payment is confirmed.</p>
+	                  </CardContent>
+	                </Card>
+	              )}
+	            </div>
 
             {/* Order Summary & Payment */}
             <div className="space-y-6">
-              {/* Order Summary */}
-              <Card className="border-primary/20 glow-border">
+	              {/* Payment Method Selection */}
+	              <Card className="border-primary/20">
+	                <CardHeader>
+	                  <CardTitle>Payment Method</CardTitle>
+	                </CardHeader>
+	                <CardContent className="space-y-4">
+	                  <div className="flex items-center space-x-2">
+	                    <input
+	                      type="radio"
+	                      id="stripe"
+	                      name="paymentMethod"
+	                      value="stripe"
+	                      checked={paymentMethod === 'stripe'}
+	                      onChange={() => setPaymentMethod('stripe')}
+	                      className="h-4 w-4 text-primary focus:ring-primary"
+	                    />
+	                    <Label htmlFor="stripe">Credit/Debit Card (Stripe)</Label>
+	                  </div>
+	                  <div className="flex items-center space-x-2">
+	                    <input
+	                      type="radio"
+	                      id="crypto"
+	                      name="paymentMethod"
+	                      value="crypto"
+	                      checked={paymentMethod === 'crypto'}
+	                      onChange={() => setPaymentMethod('crypto')}
+	                      className="h-4 w-4 text-primary focus:ring-primary"
+	                    />
+	                    <Label htmlFor="crypto">Cryptocurrency (NOWPayments)</Label>
+	                  </div>
+	                </CardContent>
+	              </Card>
+
+	              {/* Order Summary */}
+	              <Card className="border-primary/20 glow-border">
                 <CardHeader>
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
@@ -455,10 +641,8 @@ export default function Checkout() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
-
-              {/* Payment Form */}
-              {clientSecret && (
+              </Card>	              {/* Payment Form */}
+	              {clientSecret && paymentMethod === 'stripe' && (paymentMethod === 'stripe' && (
                 <Card className="border-primary/20">
                   <CardHeader>
                     <CardTitle>Payment Details</CardTitle>
