@@ -8,15 +8,22 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { useCart } from '@/contexts/CartContext';
 import { trpc } from '@/lib/trpc';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Tag, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function CheckoutSimple() {
   const { items, subtotal } = useCart();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Discount code state
+  const [discountCode, setDiscountCode] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState<any>(null);
+  const [discountError, setDiscountError] = useState('');
+  const [isValidatingDiscount, setIsValidatingDiscount] = useState(false);
 
   const createCheckoutSession = trpc.payment.createCheckoutSession.useMutation();
+  const validateDiscount = trpc.discountCodes.validate.useMutation();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -30,6 +37,87 @@ export default function CheckoutSimple() {
     postalCode: '',
     country: 'United Kingdom',
   });
+
+  // Auto-apply discount code from URL parameter on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const codeFromUrl = urlParams.get('code') || urlParams.get('discount');
+    
+    if (codeFromUrl && !appliedDiscount) {
+      setDiscountCode(codeFromUrl.toUpperCase());
+      // Auto-validate the code from URL
+      handleApplyDiscountFromUrl(codeFromUrl.toUpperCase());
+    }
+  }, []);
+
+  // Handle auto-applying discount from URL
+  const handleApplyDiscountFromUrl = async (code: string) => {
+    if (!code.trim()) return;
+    
+    setIsValidatingDiscount(true);
+    setDiscountError('');
+    
+    try {
+      const result = await validateDiscount.mutateAsync({
+        code: code.trim().toUpperCase(),
+        purchaseAmount: subtotal,
+      });
+
+      if (result.valid && result.discount) {
+        setAppliedDiscount(result);
+        toast.success(`Discount code "${code}" applied! You're saving ${result.discount.discountValue}%`);
+      } else {
+        setDiscountError(result.error || 'Invalid discount code');
+        setAppliedDiscount(null);
+      }
+    } catch (error) {
+      console.error('Discount validation error:', error);
+      setDiscountError('Failed to validate discount code');
+      setAppliedDiscount(null);
+    } finally {
+      setIsValidatingDiscount(false);
+    }
+  };
+
+  // Handle manual discount code application
+  const handleApplyDiscount = async () => {
+    if (!discountCode.trim()) {
+      setDiscountError('Please enter a discount code');
+      return;
+    }
+
+    setIsValidatingDiscount(true);
+    setDiscountError('');
+    
+    try {
+      const result = await validateDiscount.mutateAsync({
+        code: discountCode.trim().toUpperCase(),
+        purchaseAmount: subtotal,
+      });
+
+      if (result.valid && result.discount) {
+        setAppliedDiscount(result);
+        toast.success(`Discount code applied! You saved £${(Math.round((subtotal * Number(result.discount.discountValue)) / 100) / 100).toFixed(2)}`);
+      } else {
+        setDiscountError(result.error || 'Invalid discount code');
+        setAppliedDiscount(null);
+      }
+    } catch (error) {
+      console.error('Discount validation error:', error);
+      setDiscountError('Failed to validate discount code');
+      setAppliedDiscount(null);
+    } finally {
+      setIsValidatingDiscount(false);
+    }
+  };
+
+  // Handle removing discount
+  const handleRemoveDiscount = () => {
+    setDiscountCode('');
+    setAppliedDiscount(null);
+    setDiscountError('');
+    toast.info('Discount code removed');
+  };
 
   useEffect(() => {
     if (items.length === 0) {
@@ -46,7 +134,19 @@ export default function CheckoutSimple() {
 
   const shipping = 300; // £3.00 flat rate
   const tax = 0; // No VAT charged
-  const total = subtotal + shipping + tax;
+  
+  // Calculate discount amount
+  let discountAmount = 0;
+  if (appliedDiscount?.discount) {
+    const discount = appliedDiscount.discount;
+    if (discount.discountType === 'percentage') {
+      discountAmount = Math.round((subtotal * Number(discount.discountValue)) / 100);
+    } else {
+      discountAmount = Math.round(Number(discount.discountValue) * 100); // Convert to cents
+    }
+  }
+  
+  const total = Math.max(0, subtotal - discountAmount + shipping + tax);
 
   const handleCheckout = async () => {
     // Validate form
@@ -76,7 +176,7 @@ export default function CheckoutSimple() {
         price: item.price,
       })));
 
-      // Store order data in localStorage for later retrieval
+      // Store order data in localStorage for later retrieval (including discount info)
       localStorage.setItem('pendingOrder', JSON.stringify({
         orderNumber,
         customerEmail: formData.email,
@@ -85,6 +185,8 @@ export default function CheckoutSimple() {
         shippingAddress,
         items: itemsData,
         subtotal,
+        discountCode: appliedDiscount?.discount?.code || null,
+        discountAmount,
         shipping,
         tax,
         total,
@@ -100,7 +202,7 @@ export default function CheckoutSimple() {
         subtotal,
         shipping,
         tax,
-        total,
+        total, // This now includes the discount
       });
 
       // Redirect to Stripe Checkout
@@ -249,11 +351,74 @@ export default function CheckoutSimple() {
                     </div>
                   ))}
                   
+                  {/* Discount Code Section */}
+                  <div className="border-t border-primary/20 pt-4">
+                    {!appliedDiscount ? (
+                      <div className="space-y-2">
+                        <Label htmlFor="discountCode" className="flex items-center gap-2">
+                          <Tag className="h-4 w-4" />
+                          Discount Code
+                        </Label>
+                        <div className="flex gap-2">
+                          <Input
+                            id="discountCode"
+                            value={discountCode}
+                            onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                            placeholder="Enter code"
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            onClick={handleApplyDiscount}
+                            disabled={isValidatingDiscount}
+                            variant="outline"
+                          >
+                            {isValidatingDiscount ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              'Apply'
+                            )}
+                          </Button>
+                        </div>
+                        {discountError && (
+                          <p className="text-sm text-red-500">{discountError}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Tag className="h-4 w-4 text-green-500" />
+                            <div>
+                              <p className="text-sm font-medium text-green-500">Discount Applied!</p>
+                              <p className="text-xs text-muted-foreground">{appliedDiscount.discount.code} - {appliedDiscount.discount.discountValue}% off</p>
+                            </div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleRemoveDiscount}
+                            className="text-red-500 hover:text-red-600 h-8 w-8 p-0"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
                   <div className="border-t border-primary/20 pt-4 space-y-2">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
                       <span>£{(subtotal / 100).toFixed(2)}</span>
                     </div>
+                    {appliedDiscount && discountAmount > 0 && (
+                      <div className="flex justify-between text-green-500">
+                        <span>Discount ({appliedDiscount.discount.discountValue}% off)</span>
+                        <span>-£{(discountAmount / 100).toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <span>Shipping</span>
                       <span>£{(shipping / 100).toFixed(2)}</span>
