@@ -4,10 +4,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { useCart } from '@/contexts/CartContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 
 export default function Cart() {
   const { items, updateQuantity, removeItem, subtotal } = useCart();
+  const { formatPrice } = useCurrency();
 
   if (items.length === 0) {
     return (
@@ -81,7 +83,7 @@ export default function Cart() {
                           </p>
                         )}
                         <p className="text-xl font-bold text-primary">
-                          £{(item.price / 100).toFixed(2)}
+                          {formatPrice(item.price)}
                         </p>
                       </div>
 
@@ -116,7 +118,7 @@ export default function Cart() {
                         </div>
 
                         <p className="text-sm text-muted-foreground">
-                          Total: £{((item.price * item.quantity) / 100).toFixed(2)}
+                          Total: {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
                     </div>
@@ -134,7 +136,7 @@ export default function Cart() {
                   <div className="space-y-4 mb-6">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span className="font-semibold">£{(subtotal / 100).toFixed(2)}</span>
+                      <span className="font-semibold">{formatPrice(subtotal)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>
@@ -144,7 +146,7 @@ export default function Cart() {
                       <div className="flex justify-between text-lg">
                         <span className="font-bold">Estimated Total</span>
                         <span className="font-bold text-primary text-xl">
-                          £{(subtotal / 100).toFixed(2)}
+                          {formatPrice(subtotal)}
                         </span>
                       </div>
                     </div>
@@ -176,4 +178,3 @@ export default function Cart() {
     </div>
   );
 }
-

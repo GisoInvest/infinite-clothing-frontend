@@ -1,3 +1,5 @@
+import { useCurrency } from '@/contexts/CurrencyContext';
+
 interface PriceDisplayProps {
   price: number;
   discount?: number;
@@ -5,6 +7,7 @@ interface PriceDisplayProps {
 }
 
 export default function PriceDisplay({ price, discount = 0, size = 'medium' }: PriceDisplayProps) {
+  const { formatPrice } = useCurrency();
   const hasDiscount = discount > 0;
   const discountedPrice = hasDiscount ? Math.round(price * (1 - discount / 100)) : price;
 
@@ -33,10 +36,10 @@ export default function PriceDisplay({ price, discount = 0, size = 'medium' }: P
       {hasDiscount ? (
         <>
           <span className={`${classes.discounted} font-bold text-primary`}>
-            £{(discountedPrice / 100).toFixed(2)}
+            {formatPrice(discountedPrice)}
           </span>
           <span className={`${classes.original} text-muted-foreground line-through`}>
-            £{(price / 100).toFixed(2)}
+            {formatPrice(price)}
           </span>
           <span className={`${classes.badge} bg-destructive text-destructive-foreground font-semibold rounded`}>
             -{discount}%
@@ -44,10 +47,9 @@ export default function PriceDisplay({ price, discount = 0, size = 'medium' }: P
         </>
       ) : (
         <span className={`${classes.discounted} font-bold text-primary`}>
-          £{(price / 100).toFixed(2)}
+          {formatPrice(price)}
         </span>
       )}
     </div>
   );
 }
-

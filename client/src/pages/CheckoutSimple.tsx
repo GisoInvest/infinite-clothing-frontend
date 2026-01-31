@@ -8,12 +8,14 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { useCart } from '@/contexts/CartContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { trpc } from '@/lib/trpc';
 import { Loader2, Tag, X, CreditCard, Bitcoin } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function CheckoutSimple() {
   const { items, subtotal } = useCart();
+  const { formatPrice } = useCurrency();
   const [location, setLocation] = useLocation();
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'crypto'>('stripe');
@@ -91,7 +93,7 @@ export default function CheckoutSimple() {
       });
       if (result.valid && result.discount) {
         setAppliedDiscount(result);
-        toast.success(`Discount code applied! You saved £${(Math.round((subtotal * Number(result.discount.discountValue)) / 100) / 100).toFixed(2)}`);
+        toast.success(`Discount code applied!`);
       } else {
         setDiscountError(result.error || 'Invalid discount code');
         setAppliedDiscount(null);
@@ -203,7 +205,6 @@ export default function CheckoutSimple() {
           throw new Error('No checkout URL returned');
         }
       } else {
-        // Crypto payment via NOWPayments
         const result = await createCryptoPayment.mutateAsync({
           orderNumber,
           customerEmail: formData.email,
@@ -324,7 +325,7 @@ export default function CheckoutSimple() {
             </div>
 
             <div>
-              <Card className="border-primary/20 glow-border">
+              <Card className="border-primary/20 glow-border sticky top-24">
                 <CardHeader>
                   <CardTitle>Order Summary</CardTitle>
                 </CardHeader>
@@ -332,7 +333,7 @@ export default function CheckoutSimple() {
                   {items.map((item, index) => (
                     <div key={`${item.productId}-${item.size || 'no-size'}-${index}`} className="flex justify-between text-sm">
                       <span>{item.productName} {item.size && `(${item.size})`} x {item.quantity}</span>
-                      <span>£{((item.price * item.quantity) / 100).toFixed(2)}</span>
+                      <span>{formatPrice(item.price * item.quantity)}</span>
                     </div>
                   ))}
                   
@@ -371,21 +372,21 @@ export default function CheckoutSimple() {
                   <div className="border-t border-primary/20 pt-4 space-y-2">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span>£{(subtotal / 100).toFixed(2)}</span>
+                      <span>{formatPrice(subtotal)}</span>
                     </div>
                     {appliedDiscount && discountAmount > 0 && (
                       <div className="flex justify-between text-green-500">
                         <span>Discount ({appliedDiscount.discount.discountValue}% off)</span>
-                        <span>-£{(discountAmount / 100).toFixed(2)}</span>
+                        <span>-{formatPrice(discountAmount)}</span>
                       </div>
                     )}
                     <div className="flex justify-between">
                       <span>Shipping</span>
-                      <span>£{(shipping / 100).toFixed(2)}</span>
+                      <span>{formatPrice(shipping)}</span>
                     </div>
                     <div className="flex justify-between text-lg font-bold text-primary border-t border-primary/20 pt-2">
                       <span>Total</span>
-                      <span>£{(total / 100).toFixed(2)}</span>
+                      <span>{formatPrice(total)}</span>
                     </div>
                   </div>
 
@@ -393,7 +394,7 @@ export default function CheckoutSimple() {
                     {isProcessing ? (
                       <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Redirecting...</>
                     ) : (
-                      `Proceed to Payment - £${(total / 100).toFixed(2)}`
+                      `Proceed to Payment - ${formatPrice(total)}`
                     )}
                   </Button>
                 </CardContent>

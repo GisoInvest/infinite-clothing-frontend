@@ -4,6 +4,7 @@ import { ShoppingCart, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import PromoBanner from './PromoBanner';
+import CurrencySelector from './CurrencySelector';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -67,6 +68,9 @@ export default function Navigation() {
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
+            <div className="hidden sm:block">
+              <CurrencySelector />
+            </div>
             {/* Cart */}
             <Link href="/cart">
               <a>
@@ -97,6 +101,10 @@ export default function Navigation() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-primary/20">
             <div className="flex flex-col space-y-4">
+              <div className="sm:hidden pb-2 border-b border-primary/10">
+                <p className="text-xs text-muted-foreground mb-2 px-1">Select Currency</p>
+                <CurrencySelector />
+              </div>
               {categories.map((category) => (
                 <Link key={category.path} href={category.path}>
                   <a

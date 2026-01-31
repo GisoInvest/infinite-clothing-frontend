@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
 import { WishlistProvider } from "./contexts/WishlistContext";
+import { CurrencyProvider } from "./contexts/CurrencyContext";
 import Home from "./pages/Home";
 import Men from "./pages/Men";
 import Women from "./pages/Women";
@@ -87,6 +88,7 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
         <CartProvider>
+          <CurrencyProvider>
           <WishlistProvider>
             <TooltipProvider>
             <Toaster />
@@ -96,6 +98,7 @@ function App() {
             <Router />
             </TooltipProvider>
           </WishlistProvider>
+          </CurrencyProvider>
         </CartProvider>
       </ThemeProvider>
     </ErrorBoundary>
