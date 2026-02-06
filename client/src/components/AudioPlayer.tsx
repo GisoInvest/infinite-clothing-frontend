@@ -73,17 +73,17 @@ export default function AudioPlayer() {
   }
 
   return (
-    <div className="fixed bottom-6 left-6 z-50">
+    <div className="fixed bottom-[100px] right-8 z-50">
       <Button
         size="icon"
         onClick={togglePlay}
-        className="h-14 w-14 rounded-full glow-box shadow-lg"
+        className="h-10 w-10 rounded-full glow-box shadow-lg bg-primary/80 hover:bg-primary"
         title={isPlaying ? 'Mute background music' : 'Play background music'}
       >
         {isPlaying ? (
-          <Volume2 className="h-6 w-6" />
+          <Volume2 className="h-5 w-5" />
         ) : (
-          <VolumeX className="h-6 w-6" />
+          <VolumeX className="h-5 w-5" />
         )}
       </Button>
       <audio
