@@ -98,9 +98,12 @@ export default function AIAssistant() {
           
           // Try to speak after popup is visible
           const speakTimer = setTimeout(() => {
+            // Automatic talking disabled as per user request
+            /*
             if (welcomeData.shouldSpeak && voiceEnabled) {
               speakMessage(welcomeData.message);
             }
+            */
           }, 800);
           
           sessionStorage.setItem('aria_greeted', 'true');

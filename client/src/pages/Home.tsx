@@ -1,10 +1,11 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { trpc } from '@/lib/trpc';
-import { Loader2, ShoppingBag } from 'lucide-react';
+import { Loader2, ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { toast } from 'sonner';
 import SEO from '@/components/SEO';
@@ -16,23 +17,47 @@ import ShopTheLook from '@/components/ShopTheLook';
 import TestimonialsCarousel from '@/components/TestimonialsCarousel';
 import WishlistButton from '@/components/WishlistButton';
 
+const HERO_SLIDES = [
+  {
+    image: '/hero-slides/hero_1.png',
+    title: 'INFINITE POTENTIAL',
+    subtitle: 'Unsettle the system with bold expression.',
+    link: '/men'
+  },
+  {
+    image: '/hero-slides/hero_2.png',
+    title: 'UNBOUND FREEDOM',
+    subtitle: 'Modern luxury meets urban heritage.',
+    link: '/women'
+  },
+  {
+    image: '/hero-slides/hero_3.png',
+    title: 'FUTURE IS HANDMADE',
+    subtitle: 'Crafted for the bold, the creative, and the unique.',
+    link: '/shop'
+  },
+  {
+    image: '/hero-slides/hero_4.png',
+    title: 'MODERN HERITAGE',
+    subtitle: 'Redefining streetwear with purpose-driven design.',
+    link: '/shop'
+  }
+];
+
 export default function Home() {
   const { data: featuredProducts, isLoading } = trpc.products.getFeatured.useQuery();
   const { addItem } = useCart();
-  
+  const [currentSlide, setCurrentSlide] = useState(0);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
-  const handleAddToCart = (product: any) => {
-    addItem({
-      productId: product.id,
-      productName: product.name,
-      price: product.price,
-      image: product.images?.[0],
-      category: product.category,
-      subcategory: product.subcategory,
-    });
-    toast.success(`${product.name} added to cart!`);
-  };
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -42,115 +67,74 @@ export default function Home() {
       <WelcomePopup />
       <Navigation />
 
-      {/* Hero Section - Split Layout */}
-      <section className="relative min-h-[60vh] flex items-start overflow-hidden cyber-grid pt-8 pb-12">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
-        <div className="container relative z-10">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-            {/* Left Half - Brand Identity */}
-            <div className="text-center lg:text-left space-y-3 animate-fade-in">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold glow-text leading-tight">
-                INF!NITE C107HING
-              </h1>
-              <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed animate-fade-in-up">
-                Redefining modern streetwear with purpose-driven designs that inspire confidence, creativity, and individuality.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up">
-                <Link href="/men">
-                  <a>
-                    <Button size="lg" className="glow-box pulse-glow text-lg px-8 w-full sm:w-auto">
-                      Shop Men
-                    </Button>
-                  </a>
-                </Link>
-                <Link href="/women">
-                  <a>
-                    <Button size="lg" variant="outline" className="text-lg px-8 glow-border w-full sm:w-auto">
-                      Shop Women
-                    </Button>
-                  </a>
-                </Link>
+      {/* Hero Section - Luxury Slider */}
+      <section className="relative h-[85vh] flex items-center overflow-hidden bg-black">
+        {HERO_SLIDES.map((slide, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-20" />
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="w-full h-full object-cover object-center scale-105 animate-slow-zoom"
+            />
+            <div className="container relative z-30 h-full flex flex-col justify-center items-start space-y-6">
+              <div className="max-w-2xl space-y-4 animate-fade-in-up">
+                <h2 className="text-cyan-400 font-bold tracking-[0.3em] text-sm md:text-base uppercase">
+                  New Collection 2026
+                </h2>
+                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold glow-text leading-tight">
+                  {slide.title}
+                </h1>
+                <p className="text-lg md:text-xl text-gray-300 max-w-lg leading-relaxed">
+                  {slide.subtitle}
+                </p>
+                <div className="flex gap-4 pt-4">
+                  <Link href={slide.link}>
+                    <a>
+                      <Button size="lg" className="glow-box pulse-glow text-lg px-10">
+                        Shop Now
+                      </Button>
+                    </a>
+                  </Link>
+                </div>
               </div>
             </div>
-
-            {/* Right Half - Featured Product Showcase */}
-            <div className="relative animate-fade-in-up">
-              {isLoading ? (
-                <div className="flex items-center justify-center h-[500px]">
-                  <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                </div>
-              ) : featuredProducts && featuredProducts.length > 0 ? (
-                <Link href={`/product/${featuredProducts[0]?.id || ''}`}>
-                  <a className="relative group block cursor-pointer">
-                    <Card className="overflow-hidden border-2 border-primary/30 hover:border-primary transition-all duration-300 glow-box">
-                    <CardContent className="p-0">
-                      {/* Product Image */}
-                      <div className="relative aspect-[3/4] overflow-hidden">
-                        <img
-                          src={featuredProducts[0].images?.[0] || '/placeholder-product.jpg'}
-                          alt={featuredProducts[0].name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        {/* NEW ARRIVAL Badge */}
-                        <div className="absolute top-4 left-4 bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg">
-                          NEW ARRIVAL
-                        </div>
-                        
-                        {/* Stock Indicators */}
-                        {featuredProducts[0].stock === 0 ? (
-                          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
-                            <span className="bg-red-500 text-white px-6 py-3 rounded-lg font-bold text-lg">
-                              OUT OF STOCK
-                            </span>
-                          </div>
-                        ) : featuredProducts[0].stock < 10 ? (
-                          <div className="absolute top-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-lg font-bold text-xs shadow-lg animate-pulse">
-                            LOW STOCK - Only {featuredProducts[0].stock} left!
-                          </div>
-                        ) : null}
-                      </div>
-                      
-                      {/* Product Info */}
-                      <div className="p-6 space-y-4 bg-gradient-to-b from-card to-card/50">
-                        <h3 className="text-2xl font-bold text-primary glow-text">
-                          {featuredProducts[0].name}
-                        </h3>
-                        <p className="text-muted-foreground line-clamp-2">
-                          {featuredProducts[0].description}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            {featuredProducts[0].discount ? (
-                              <>
-                                <span className="text-2xl font-bold text-muted-foreground line-through">
-                                  £{(featuredProducts[0].price / 100).toFixed(2)}
-                                </span>
-                                <span className="text-3xl font-bold text-cyan-400">
-                                  £{((featuredProducts[0].price * (1 - featuredProducts[0].discount / 100)) / 100).toFixed(2)}
-                                </span>
-                                <span className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                                  -{featuredProducts[0].discount}%
-                                </span>
-                              </>
-                            ) : (
-                              <span className="text-3xl font-bold text-cyan-400">
-                                £{(featuredProducts[0].price / 100).toFixed(2)}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  </a>
-                </Link>
-              ) : (
-                <div className="flex items-center justify-center h-[500px] text-muted-foreground">
-                  <p>No featured products available</p>
-                </div>
-              )}
-            </div>
           </div>
+        ))}
+
+        {/* Slider Controls */}
+        <div className="absolute bottom-10 right-10 z-40 flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={prevSlide}
+            className="rounded-full border-primary/30 hover:bg-primary/20 glow-border h-12 w-12"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
+          <div className="flex gap-2">
+            {HERO_SLIDES.map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 transition-all duration-300 rounded-full ${
+                  i === currentSlide ? 'w-8 bg-primary shadow-[0_0_10px_rgba(0,255,255,0.8)]' : 'w-2 bg-gray-600'
+                }`}
+              />
+            ))}
+          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={nextSlide}
+            className="rounded-full border-primary/30 hover:bg-primary/20 glow-border h-12 w-12"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </Button>
         </div>
       </section>
 
@@ -238,29 +222,23 @@ export default function Home() {
                     <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                       {product.description}
                     </p>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          {product.discount ? (
-                            <>
-                              <span className="text-sm font-semibold text-muted-foreground line-through">
-                                £{(product.price / 100).toFixed(2)}
-                              </span>
-                              <span className="text-xl font-bold text-primary glow-text">
-                                £{((product.price * (1 - product.discount / 100)) / 100).toFixed(2)}
-                              </span>
-                              <span className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
-                                -{product.discount}%
-                              </span>
-                            </>
-                          ) : (
-                            <span className="text-xl font-bold text-primary glow-text">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {product.discount ? (
+                          <>
+                            <span className="text-sm text-muted-foreground line-through">
                               £{(product.price / 100).toFixed(2)}
                             </span>
-                          )}
-                        </div>
+                            <span className="font-bold text-primary">
+                              £{((product.price * (1 - product.discount / 100)) / 100).toFixed(2)}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="font-bold text-primary">
+                            £{(product.price / 100).toFixed(2)}
+                          </span>
+                        )}
                       </div>
-                      {/* Quick Add Selector */}
                       <ProductCardQuickSelector product={product} />
                     </div>
                   </CardContent>
@@ -268,46 +246,10 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20">
-              <p className="text-muted-foreground text-lg">
-                No featured products available at the moment.
-              </p>
+            <div className="text-center py-20 text-muted-foreground">
+              <p>No products found in this collection.</p>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <TestimonialsCarousel />
-
-      {/* Categories */}
-      <section className="py-20 bg-card/50">
-        <div className="container">
-          <h2 className="text-3xl md:text-5xl font-bold text-center mb-12">
-            Shop by <span className="text-primary glow-text">Category</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { name: 'Men', path: '/men', desc: 'Bold & Confident' },
-              { name: 'Women', path: '/women', desc: 'Fierce & Fearless' },
-              { name: 'Unisex', path: '/unisex', desc: 'For Everyone' },
-              { name: 'Kids & Baby', path: '/kids-baby', desc: 'Future Icons' },
-            ].map((category) => (
-              <Link key={category.path} href={category.path}>
-                <a>
-                  <Card className="group overflow-hidden border-primary/20 hover:border-primary/50 transition-all duration-300 interactive-card h-48 flex items-center justify-center relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="relative z-10 text-center">
-                      <h3 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors glow-text">
-                        {category.name}
-                      </h3>
-                      <p className="text-muted-foreground">{category.desc}</p>
-                    </div>
-                  </Card>
-                </a>
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
 
