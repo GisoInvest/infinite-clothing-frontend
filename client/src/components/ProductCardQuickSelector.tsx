@@ -61,7 +61,7 @@ export default function ProductCardQuickSelector({ product }: ProductCardQuickSe
     return (
       <Button
         size="sm"
-        className="glow-box w-full"
+        className="glow-box w-full py-5 text-sm font-bold uppercase tracking-wider"
         disabled={product.stock === 0}
         onClick={(e) => {
           e.preventDefault();

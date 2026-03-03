@@ -222,22 +222,24 @@ export default function Home() {
                     <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                       {product.description}
                     </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {product.discount ? (
-                          <>
-                            <span className="text-sm text-muted-foreground line-through">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {product.discount ? (
+                            <>
+                              <span className="text-sm text-muted-foreground line-through">
+                                £{(product.price / 100).toFixed(2)}
+                              </span>
+                              <span className="font-bold text-primary">
+                                £{((product.price * (1 - product.discount / 100)) / 100).toFixed(2)}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="font-bold text-primary">
                               £{(product.price / 100).toFixed(2)}
                             </span>
-                            <span className="font-bold text-primary">
-                              £{((product.price * (1 - product.discount / 100)) / 100).toFixed(2)}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="font-bold text-primary">
-                            £{(product.price / 100).toFixed(2)}
-                          </span>
-                        )}
+                          )}
+                        </div>
                       </div>
                       <ProductCardQuickSelector product={product} />
                     </div>
