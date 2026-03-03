@@ -80,7 +80,7 @@ export default function Home() {
             <img
               src={slide.image}
               alt={slide.title}
-              className="w-full h-full object-cover object-center scale-105 animate-slow-zoom"
+              className="w-full h-full object-contain md:object-cover object-center scale-105 animate-slow-zoom"
             />
             <div className="container relative z-30 h-full flex flex-col justify-center items-start space-y-6">
               <div className="max-w-2xl space-y-4 animate-fade-in-up">
