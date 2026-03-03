@@ -31,6 +31,7 @@ export default function AdminProducts() {
     description: '',
     price: '',
     stock: '',
+    collection: 'regular',
     category: 'men',
     subcategory: '',
     images: '',
@@ -115,6 +116,7 @@ export default function AdminProducts() {
         description: formData.description,
         price: Math.round(parseFloat(formData.price) * 100), // Convert to cents
         stock: parseInt(formData.stock) || 0, // Default to 0 if empty or invalid
+        collection: formData.collection as any,
         category: formData.category as any,
         subcategory: formData.subcategory,
         images: imageUrls,
@@ -152,6 +154,7 @@ export default function AdminProducts() {
       description: product.description,
       price: (product.price / 100).toString(),
       stock: product.stock.toString(),
+      collection: product.collection || 'regular',
       category: product.category,
       subcategory: product.subcategory,
       images: product.images?.join(', ') || '',
@@ -185,6 +188,7 @@ export default function AdminProducts() {
       description: '',
       price: '',
       stock: '',
+      collection: 'regular',
       category: 'men',
       subcategory: '',
       images: '',
@@ -266,6 +270,18 @@ export default function AdminProducts() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
+                    <Label htmlFor="collection">Collection *</Label>
+                    <Select value={formData.collection} onValueChange={(value) => setFormData({ ...formData, collection: value })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="regular">Regular Collection</SelectItem>
+                        <SelectItem value="premium">Premium Collection</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
                     <Label htmlFor="category">Category *</Label>
                     <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                       <SelectTrigger>
@@ -279,16 +295,17 @@ export default function AdminProducts() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
-                    <Label htmlFor="subcategory">Subcategory *</Label>
-                    <Input
-                      id="subcategory"
-                      value={formData.subcategory}
-                      onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
-                      placeholder="e.g., T-shirt, Hoodies"
-                      required
-                    />
-                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="subcategory">Subcategory *</Label>
+                  <Input
+                    id="subcategory"
+                    value={formData.subcategory}
+                    onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                    placeholder="e.g., T-shirt, Hoodies"
+                    required
+                  />
                 </div>
 
                 <div>

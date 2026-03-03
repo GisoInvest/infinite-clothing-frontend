@@ -3,6 +3,7 @@ import ProductList from './ProductList';
 export default function Unisex() {
   return (
     <ProductList
+      collection="regular"
       category="unisex"
       title="Unisex Collection"
       subcategories={[

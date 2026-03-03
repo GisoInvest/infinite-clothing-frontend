@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import PromoBanner from './PromoBanner';
@@ -8,10 +8,12 @@ import CurrencySelector from './CurrencySelector';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [regularCollectionOpen, setRegularCollectionOpen] = useState(false);
+  const [premiumCollectionOpen, setPremiumCollectionOpen] = useState(false);
   const { totalItems } = useCart();
   const [location] = useLocation();
 
-  const categories = [
+  const subcategories = [
     { name: 'Men', path: '/men' },
     { name: 'Women', path: '/women' },
     { name: 'Unisex', path: '/unisex' },
@@ -35,17 +37,48 @@ export default function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {categories.map((category) => (
-              <Link key={category.path} href={category.path}>
-                <a
-                  className={`text-sm font-medium transition-all hover:text-primary ${
-                    isActive(category.path) ? 'text-primary glow-text' : 'text-foreground'
-                  }`}
-                >
-                  {category.name}
-                </a>
-              </Link>
-            ))}
+            {/* Regular Collection Dropdown */}
+            <div className="relative group">
+              <button className="text-sm font-medium transition-all hover:text-primary text-foreground flex items-center space-x-1">
+                <span>Regular Collection</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+              <div className="absolute left-0 mt-0 w-48 bg-card border border-primary/20 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                {subcategories.map((subcategory) => (
+                  <Link key={subcategory.path} href={subcategory.path}>
+                    <a
+                      className={`block px-4 py-2 text-sm font-medium transition-all hover:text-primary hover:bg-primary/10 ${
+                        isActive(subcategory.path) ? 'text-primary glow-text bg-primary/5' : 'text-foreground'
+                      }`}
+                    >
+                      {subcategory.name}
+                    </a>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Premium Collection Dropdown */}
+            <div className="relative group">
+              <button className="text-sm font-medium transition-all hover:text-primary text-foreground flex items-center space-x-1">
+                <span>Premium Collection</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+              <div className="absolute left-0 mt-0 w-48 bg-card border border-primary/20 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                {subcategories.map((subcategory) => (
+                  <Link key={`premium-${subcategory.path}`} href={`/premium${subcategory.path}`}>
+                    <a
+                      className={`block px-4 py-2 text-sm font-medium transition-all hover:text-primary hover:bg-primary/10 ${
+                        isActive(`/premium${subcategory.path}`) ? 'text-primary glow-text bg-primary/5' : 'text-foreground'
+                      }`}
+                    >
+                      {subcategory.name}
+                    </a>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
             <Link href="/about">
               <a
                 className={`text-sm font-medium transition-all hover:text-primary ${
@@ -105,18 +138,67 @@ export default function Navigation() {
                 <p className="text-xs text-muted-foreground mb-2 px-1">Select Currency</p>
                 <CurrencySelector />
               </div>
-              {categories.map((category) => (
-                <Link key={category.path} href={category.path}>
-                  <a
-                    className={`text-sm font-medium transition-all hover:text-primary ${
-                      isActive(category.path) ? 'text-primary glow-text' : 'text-foreground'
-                    }`}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {category.name}
-                  </a>
-                </Link>
-              ))}
+
+              {/* Regular Collection Mobile */}
+              <div>
+                <button
+                  onClick={() => setRegularCollectionOpen(!regularCollectionOpen)}
+                  className="w-full text-sm font-medium transition-all hover:text-primary text-foreground flex items-center justify-between px-1"
+                >
+                  <span>Regular Collection</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${regularCollectionOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {regularCollectionOpen && (
+                  <div className="pl-4 mt-2 space-y-2">
+                    {subcategories.map((subcategory) => (
+                      <Link key={subcategory.path} href={subcategory.path}>
+                        <a
+                          className={`text-sm font-medium transition-all hover:text-primary ${
+                            isActive(subcategory.path) ? 'text-primary glow-text' : 'text-foreground'
+                          }`}
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setRegularCollectionOpen(false);
+                          }}
+                        >
+                          {subcategory.name}
+                        </a>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Premium Collection Mobile */}
+              <div>
+                <button
+                  onClick={() => setPremiumCollectionOpen(!premiumCollectionOpen)}
+                  className="w-full text-sm font-medium transition-all hover:text-primary text-foreground flex items-center justify-between px-1"
+                >
+                  <span>Premium Collection</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${premiumCollectionOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {premiumCollectionOpen && (
+                  <div className="pl-4 mt-2 space-y-2">
+                    {subcategories.map((subcategory) => (
+                      <Link key={`premium-${subcategory.path}`} href={`/premium${subcategory.path}`}>
+                        <a
+                          className={`text-sm font-medium transition-all hover:text-primary ${
+                            isActive(`/premium${subcategory.path}`) ? 'text-primary glow-text' : 'text-foreground'
+                          }`}
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setPremiumCollectionOpen(false);
+                          }}
+                        >
+                          {subcategory.name}
+                        </a>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <Link href="/about">
                 <a
                   className={`text-sm font-medium transition-all hover:text-primary ${
@@ -145,4 +227,3 @@ export default function Navigation() {
     </>
   );
 }
-

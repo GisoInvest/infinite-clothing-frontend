@@ -17,16 +17,18 @@ import {
 } from '@/components/ui/select';
 
 interface ProductListProps {
+  collection?: 'regular' | 'premium';
   category: 'men' | 'women' | 'unisex' | 'kids-baby';
   title: string;
   subcategories: string[];
 }
 
-export default function ProductList({ category, title, subcategories }: ProductListProps) {
+export default function ProductList({ collection, category, title, subcategories }: ProductListProps) {
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all');
   // Removed addItem as it's not used in this component anymore
   // const { addItem } = useCart();
   const { data: products, isLoading } = trpc.products.getAll.useQuery({
+    collection,
     category,
     subcategory: selectedSubcategory === 'all' ? undefined : selectedSubcategory,
   });
@@ -52,7 +54,7 @@ export default function ProductList({ category, title, subcategories }: ProductL
         {/* Header */}
         <section className="py-12 bg-card/50 border-b border-primary/20">
           <div className="container">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 glow-text">{title}</h1>
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 glow-text">{collection === 'premium' ? 'Premium ' : ''}{title}</h1>
             <p className="text-muted-foreground text-lg">
               Explore our collection of premium streetwear
             </p>

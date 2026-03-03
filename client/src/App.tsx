@@ -12,6 +12,10 @@ import Men from "./pages/Men";
 import Women from "./pages/Women";
 import Unisex from "./pages/Unisex";
 import KidsBaby from "./pages/KidsBaby";
+import PremiumMen from "./pages/PremiumMen";
+import PremiumWomen from "./pages/PremiumWomen";
+import PremiumUnisex from "./pages/PremiumUnisex";
+import PremiumKidsBaby from "./pages/PremiumKidsBaby";
 import About from "./pages/About";
 import Cart from "./pages/Cart";
 import CheckoutSimple from "./pages/CheckoutSimple";
@@ -48,6 +52,10 @@ function Router() {
       <Route path="/women" component={Women} />
       <Route path="/unisex" component={Unisex} />
       <Route path="/kids-baby" component={KidsBaby} />
+      <Route path="/premium/men" component={PremiumMen} />
+      <Route path="/premium/women" component={PremiumWomen} />
+      <Route path="/premium/unisex" component={PremiumUnisex} />
+      <Route path="/premium/kids-baby" component={PremiumKidsBaby} />
       <Route path="/about" component={About} />
       <Route path="/shop" component={Shop} />
       <Route path="/wishlist" component={Wishlist} />

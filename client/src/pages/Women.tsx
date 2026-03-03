@@ -3,6 +3,7 @@ import ProductList from './ProductList';
 export default function Women() {
   return (
     <ProductList
+      collection="regular"
       category="women"
       title="Women's Collection"
       subcategories={[

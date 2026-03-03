@@ -1,9 +1,9 @@
 import ProductList from './ProductList';
 
-export default function Men() {
+export default function PremiumMen() {
   return (
     <ProductList
-      collection="regular"
+      collection="premium"
       category="men"
       title="Men's Collection"
       subcategories={[
@@ -17,4 +17,3 @@ export default function Men() {
     />
   );
 }
-

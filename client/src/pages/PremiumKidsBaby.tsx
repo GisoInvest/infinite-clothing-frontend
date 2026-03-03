@@ -1,11 +1,11 @@
 import ProductList from './ProductList';
 
-export default function Men() {
+export default function PremiumKidsBaby() {
   return (
     <ProductList
-      collection="regular"
-      category="men"
-      title="Men's Collection"
+      collection="premium"
+      category="kids-baby"
+      title="Kids & Baby Collection"
       subcategories={[
         'T-shirt',
         'Tank Tops',
@@ -17,4 +17,3 @@ export default function Men() {
     />
   );
 }
-

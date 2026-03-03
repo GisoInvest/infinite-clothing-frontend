@@ -1,11 +1,11 @@
 import ProductList from './ProductList';
 
-export default function Men() {
+export default function PremiumUnisex() {
   return (
     <ProductList
-      collection="regular"
-      category="men"
-      title="Men's Collection"
+      collection="premium"
+      category="unisex"
+      title="Unisex Collection"
       subcategories={[
         'T-shirt',
         'Tank Tops',
@@ -17,4 +17,3 @@ export default function Men() {
     />
   );
 }
-
