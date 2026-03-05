@@ -273,7 +273,7 @@ export default function AdminProducts() {
                     <Label htmlFor="collection">Collection *</Label>
                     <Select value={formData.collection} onValueChange={(value) => setFormData({ ...formData, collection: value })}>
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder="Select a collection" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="regular">Regular Collection</SelectItem>
@@ -298,13 +298,12 @@ export default function AdminProducts() {
                 </div>
 
                 <div>
-                  <Label htmlFor="subcategory">Subcategory *</Label>
+                  <Label htmlFor="subcategory">Subcategory</Label>
                   <Input
                     id="subcategory"
                     value={formData.subcategory}
                     onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
-                    placeholder="e.g., T-shirt, Hoodies"
-                    required
+                    placeholder="e.g., T-shirt, Hoodies (optional)"
                   />
                 </div>
 
@@ -370,11 +369,11 @@ export default function AdminProducts() {
                 <div>
                   <Label htmlFor="images">Image URLs (comma-separated)</Label>
                   <Textarea
-                    id="videos"
-                    value={formData.videos}
-                    onChange={(e) => setFormData({ ...formData, videos: e.target.value })}
+                    id="images"
+                    value={formData.images}
+                    onChange={(e) => setFormData({ ...formData, images: e.target.value })}
                     rows={2}
-                    placeholder="e.g., https://youtube.com/video1, https://vimeo.com/video2"
+                    placeholder="e.g., https://example.com/image1.jpg, https://example.com/image2.jpg"
                   />
                 </div>
 
