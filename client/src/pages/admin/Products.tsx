@@ -80,6 +80,32 @@ export default function AdminProducts() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate required fields
+    if (!formData.name.trim()) {
+      toast.error('Product name is required');
+      return;
+    }
+    if (!formData.description.trim()) {
+      toast.error('Product description is required');
+      return;
+    }
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      toast.error('Product price must be greater than 0');
+      return;
+    }
+    if (!formData.stock || parseInt(formData.stock) < 0) {
+      toast.error('Product stock is required');
+      return;
+    }
+    if (!formData.collection) {
+      toast.error('Please select a collection');
+      return;
+    }
+    if (!formData.category) {
+      toast.error('Please select a category');
+      return;
+    }
+
     try {
       setIsUploading(true);
       let imageUrls: string[] = [];
@@ -111,15 +137,15 @@ export default function AdminProducts() {
       }
 
       const productData = {
-        name: formData.name,
-        description: formData.description,
+        name: formData.name.trim(),
+        description: formData.description.trim(),
         price: Math.round(parseFloat(formData.price) * 100), // Convert to cents
-        stock: parseInt(formData.stock) || 0, // Default to 0 if empty or invalid
-        collection: formData.collection as any,
-        category: formData.category as any,
-        subcategory: formData.subcategory,
+        stock: parseInt(formData.stock),
+        collection: formData.collection,
+        category: formData.category,
+        subcategory: formData.subcategory.trim() || undefined,
         images: imageUrls,
-        videos: formData.videos ? formData.videos.split(',').map(s => s.trim()) : [],
+        videos: formData.videos ? formData.videos.split(',').map(s => s.trim()).filter(Boolean) : [],
         featured: formData.featured,
         sizes: formData.sizes,
         discount: parseInt(formData.discount) || 0,
@@ -139,8 +165,9 @@ export default function AdminProducts() {
       resetForm();
       refetch();
     } catch (error) {
-      toast.error('Failed to save product');
-      console.error(error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save product';
+      toast.error(errorMessage);
+      console.error('Product save error:', error);
     } finally {
       setIsUploading(false);
     }
