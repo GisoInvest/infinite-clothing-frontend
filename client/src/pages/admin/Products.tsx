@@ -285,7 +285,7 @@ export default function AdminProducts() {
                     <Label htmlFor="category">Category *</Label>
                     <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder="Select a category" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="men">Men</SelectItem>
