@@ -31,16 +31,15 @@ export default function AdminProducts() {
     description: '',
     price: '',
     stock: '',
-    collection: 'regular',
-    category: 'men',
+    collection: '',
+    category: '',
     subcategory: '',
     images: '',
     videos: '',
     featured: false,
     sizes: [] as string[],
     discount: '0',
-      colors: [] as string[],
-
+    colors: [] as string[],
   });
   const [colorInput, setColorInput] = useState('');
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -188,8 +187,8 @@ export default function AdminProducts() {
       description: '',
       price: '',
       stock: '',
-      collection: 'regular',
-      category: 'men',
+      collection: '',
+      category: '',
       subcategory: '',
       images: '',
       videos: '',
@@ -197,7 +196,6 @@ export default function AdminProducts() {
       sizes: [],
       discount: '0',
       colors: [],
-
     });
     setSelectedImages([]);
     setColorInput('');
@@ -271,7 +269,7 @@ export default function AdminProducts() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="collection">Collection *</Label>
-                    <Select value={formData.collection} onValueChange={(value) => setFormData({ ...formData, collection: value })}>
+                    <Select value={formData.collection || ''} onValueChange={(value) => setFormData({ ...formData, collection: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a collection" />
                       </SelectTrigger>
@@ -283,7 +281,7 @@ export default function AdminProducts() {
                   </div>
                   <div>
                     <Label htmlFor="category">Category *</Label>
-                    <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                    <Select value={formData.category || ''} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a category" />
                       </SelectTrigger>
