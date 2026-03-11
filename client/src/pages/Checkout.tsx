@@ -155,7 +155,39 @@ export default function Checkout() {
     if (items.length === 0) {
       setLocation('/cart');
     }
-  }, [items, setLocation]);
+    
+    // Auto-apply discount code from URL parameters (for QR codes)
+    const params = new URLSearchParams(window.location.search);
+    const codeFromUrl = params.get('code');
+    if (codeFromUrl && !appliedDiscount) {
+      setDiscountCode(codeFromUrl);
+    }
+  }, [items, setLocation, appliedDiscount]);
+  
+  // Auto-validate discount code when it's set from URL
+  useEffect(() => {
+    if (discountCode && !appliedDiscount && subtotal > 0) {
+      const autoValidateDiscount = async () => {
+        try {
+          const result = await validateDiscount.mutateAsync({
+            code: discountCode.trim().toUpperCase(),
+            purchaseAmount: subtotal,
+          });
+          
+          if (result.valid && result.discount) {
+            setAppliedDiscount(result);
+            toast.success(`Discount code applied! You saved £${(Math.round((subtotal * Number(result.discount.discountValue)) / 100) / 100).toFixed(2)}`);
+          } else {
+            setDiscountError(result.error || 'Invalid discount code');
+          }
+        } catch (error) {
+          console.error('Failed to auto-validate discount code:', error);
+        }
+      };
+      
+      autoValidateDiscount();
+    }
+  }, [discountCode, appliedDiscount, subtotal, validateDiscount]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -197,7 +229,7 @@ export default function Checkout() {
     setDiscountError('');
   };
 
-  const shipping = 300; // £3.00 flat rate
+  const shipping = 0; // Free shipping
   const tax = 0; // No VAT charged
   
   // Calculate discount amount

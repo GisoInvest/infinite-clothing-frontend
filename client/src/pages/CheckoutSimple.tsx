@@ -127,7 +127,7 @@ export default function CheckoutSimple() {
     });
   };
 
-  const shipping = 300; // £3.00 flat rate
+  const shipping = 0; // Free shipping
   const tax = 0;
   
   let discountAmount = 0;
