@@ -64,6 +64,24 @@ export default function Navigation() {
                 Track Order
               </a>
             </Link>
+            <Link href="/customize">
+              <a
+                className={`text-sm font-medium transition-all hover:text-primary ${
+                  isActive('/customize') ? 'text-primary glow-text' : 'text-foreground'
+                }`}
+              >
+                Customize
+              </a>
+            </Link>
+            <Link href="/business-enquiries">
+              <a
+                className={`text-sm font-medium transition-all hover:text-primary ${
+                  isActive('/business-enquiries') ? 'text-primary glow-text' : 'text-foreground'
+                }`}
+              >
+                B2B
+              </a>
+            </Link>
           </div>
 
           {/* Right side actions */}
@@ -135,6 +153,26 @@ export default function Navigation() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Track Order
+                </a>
+              </Link>
+              <Link href="/customize">
+                <a
+                  className={`text-sm font-medium transition-all hover:text-primary ${
+                    isActive('/customize') ? 'text-primary glow-text' : 'text-foreground'
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Customize
+                </a>
+              </Link>
+              <Link href="/business-enquiries">
+                <a
+                  className={`text-sm font-medium transition-all hover:text-primary ${
+                    isActive('/business-enquiries') ? 'text-primary glow-text' : 'text-foreground'
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  B2B
                 </a>
               </Link>
             </div>

@@ -37,6 +37,8 @@ import BlogCategories from "./pages/BlogCategories";
 import Shop from "./pages/Shop";
 import Wishlist from "./pages/Wishlist";
 import TrackOrder from "./pages/TrackOrder";
+import Customize from "./pages/Customize";
+import BusinessEnquiries from "./pages/BusinessEnquiries";
 import TawkToChat from "./components/TawkToChat";
 
 function Router() {
@@ -56,6 +58,8 @@ function Router() {
       <Route path="/payment-success" component={PaymentSuccess} />
       <Route path="/order-confirmation" component={OrderConfirmation} />
       <Route path="/track-order" component={TrackOrder} />
+      <Route path="/customize" component={Customize} />
+      <Route path="/business-enquiries" component={BusinessEnquiries} />
       <Route path="/product/:id" component={ProductDetail} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/return-policy" component={ReturnPolicy} />
