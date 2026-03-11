@@ -19,43 +19,43 @@ import WishlistButton from '@/components/WishlistButton';
 
 const HERO_SLIDES = [
   {
-    image: '/hero-slides/hero_1.png',
+    image: '/hero-slides/hero_1.webp',
     title: 'INFINITE POTENTIAL',
     subtitle: 'Unsettle the system with bold expression.',
     link: '/men'
   },
   {
-    image: '/hero-slides/hero_2.png',
+    image: '/hero-slides/hero_2.webp',
     title: 'UNBOUND FREEDOM',
     subtitle: 'Modern luxury meets urban heritage.',
     link: '/women'
   },
   {
-    image: '/hero-slides/hero_3.png',
+    image: '/hero-slides/hero_3.webp',
     title: 'FUTURE IS HANDMADE',
     subtitle: 'Crafted for the bold, the creative, and the unique.',
     link: '/shop'
   },
   {
-    image: '/hero-slides/hero_4.png',
+    image: '/hero-slides/hero_4.webp',
     title: 'MODERN HERITAGE',
     subtitle: 'Redefining streetwear with purpose-driven design.',
     link: '/shop'
   },
   {
-    image: '/hero-slides/hero_5.png',
+    image: '/hero-slides/hero_5.webp',
     title: 'BOLD EXPRESSION',
     subtitle: 'Urban style meets authentic craftsmanship.',
     link: '/unisex'
   },
   {
-    image: '/hero-slides/hero_6.png',
+    image: '/hero-slides/hero_6.webp',
     title: 'CREATIVE VISION',
     subtitle: 'Where art and fashion collide.',
     link: '/shop'
   },
   {
-    image: '/hero-slides/hero_7.png',
+    image: '/hero-slides/hero_7.webp',
     title: 'INFINITE JOURNEY',
     subtitle: 'Embrace your unique path.',
     link: '/shop'
