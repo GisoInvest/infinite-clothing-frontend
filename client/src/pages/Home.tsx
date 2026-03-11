@@ -41,6 +41,24 @@ const HERO_SLIDES = [
     title: 'MODERN HERITAGE',
     subtitle: 'Redefining streetwear with purpose-driven design.',
     link: '/shop'
+  },
+  {
+    image: '/hero-slides/hero_5.png',
+    title: 'BOLD EXPRESSION',
+    subtitle: 'Urban style meets authentic craftsmanship.',
+    link: '/unisex'
+  },
+  {
+    image: '/hero-slides/hero_6.png',
+    title: 'CREATIVE VISION',
+    subtitle: 'Where art and fashion collide.',
+    link: '/shop'
+  },
+  {
+    image: '/hero-slides/hero_7.png',
+    title: 'INFINITE JOURNEY',
+    subtitle: 'Embrace your unique path.',
+    link: '/shop'
   }
 ];
 
