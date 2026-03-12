@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Briefcase, TrendingUp, Globe, Send } from 'lucide-react';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import { trpc } from '@/lib/trpc';
 
 export default function BusinessEnquiries() {
   const [formData, setFormData] = useState({
@@ -62,11 +64,33 @@ export default function BusinessEnquiries() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.companyName || !formData.contactName || !formData.email || !formData.phone || !formData.businessType || !formData.country || !formData.productInterest || !formData.businessBackground) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
-      toast.success('Business enquiry submitted successfully! Our partnership team will contact you within 48 hours.');
+    try {
+      // Submit business enquiry
+      const result = await trpc.businessEnquiries.submit.mutate({
+        companyName: formData.companyName,
+        businessType: formData.businessType,
+        website: formData.website,
+        country: formData.country,
+        annualRevenue: formData.annualRevenue,
+        contactName: formData.contactName,
+        email: formData.email,
+        phone: formData.phone,
+        productInterest: formData.productInterest,
+        businessBackground: formData.businessBackground,
+        marketingStrategy: formData.marketingStrategy,
+      });
+
+      toast.success(`Business enquiry submitted successfully! Enquiry #${result.enquiryNumber}. Our partnership team will contact you within 2-3 business days.`);
+      
+      // Reset form
       setFormData({
         companyName: '',
         contactName: '',
@@ -80,8 +104,12 @@ export default function BusinessEnquiries() {
         businessBackground: '',
         marketingStrategy: '',
       });
+    } catch (error) {
+      console.error('Error submitting enquiry:', error);
+      toast.error('Failed to submit enquiry. Please try again.');
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (

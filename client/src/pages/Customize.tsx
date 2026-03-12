@@ -7,6 +7,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, Send, Shirt } from 'lucide-react';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import { trpc } from '@/lib/trpc';
+import PricingCalculator from '@/components/PricingCalculator';
 
 export default function Customize() {
   const [formData, setFormData] = useState({
@@ -87,6 +90,11 @@ export default function Customize() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!formData.name || !formData.email || !formData.phone || !formData.productType || !formData.quantity) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
     if (!uploadedFile) {
       toast.error('Please upload your graphic file');
       return;
@@ -94,9 +102,39 @@ export default function Customize() {
 
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
-      toast.success('Customization request submitted! We\'ll review your design and contact you within 24 hours.');
+    try {
+      // Upload file to storage and get URL
+      const fileFormData = new FormData();
+      fileFormData.append('file', uploadedFile);
+      
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        body: fileFormData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('File upload failed');
+      }
+
+      const uploadedData = await uploadResponse.json();
+      const designFileUrl = uploadedData.url;
+
+      // Submit customization enquiry
+      const result = await trpc.customizationEnquiries.submit.mutate({
+        fullName: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        productType: formData.productType,
+        quantity: parseInt(formData.quantity),
+        fabricQuality: parseInt(formData.fabricQuality),
+        designDescription: formData.description,
+        specialRequests: formData.specialRequests,
+        designFileUrl,
+      });
+
+      toast.success(`Customization request submitted! Enquiry #${result.enquiryNumber}. We'll review your design and contact you within 24 hours.`);
+      
+      // Reset form
       setFormData({
         name: '',
         email: '',
@@ -109,8 +147,12 @@ export default function Customize() {
       });
       setUploadedFile(null);
       setFilePreview(null);
+    } catch (error) {
+      console.error('Error submitting enquiry:', error);
+      toast.error('Failed to submit enquiry. Please try again.');
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -393,6 +435,15 @@ export default function Customize() {
 
             {/* Sidebar Info */}
             <div className="space-y-6">
+              {/* Pricing Calculator */}
+              {formData.productType && formData.quantity && (
+                <PricingCalculator
+                  productType={formData.productType}
+                  quantity={parseInt(formData.quantity) || 0}
+                  fabricQuality={parseInt(formData.fabricQuality)}
+                />
+              )}
+
               <Card className="border-primary/20 sticky top-4">
                 <CardHeader>
                   <CardTitle>Fabric Guide</CardTitle>
