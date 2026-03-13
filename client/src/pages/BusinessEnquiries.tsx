@@ -514,8 +514,8 @@ export default function BusinessEnquiries() {
                 <CardContent className="space-y-2 text-sm">
                   <div>
                     <p className="font-semibold">Partnerships Email:</p>
-                    <a href="mailto:partnerships@infiniteclothingstore.co.uk" className="text-primary hover:underline">
-                      partnerships@infiniteclothingstore.co.uk
+                    <a href="mailto:info@infiniteclothingstore.co.uk" className="text-primary hover:underline">
+                      info@infiniteclothingstore.co.uk
                     </a>
                   </div>
                   <div>
