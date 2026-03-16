@@ -39,6 +39,7 @@ import Wishlist from "./pages/Wishlist";
 import TrackOrder from "./pages/TrackOrder";
 import Customize from "./pages/Customize";
 import BusinessEnquiries from "./pages/BusinessEnquiries";
+import AdminDashboard from "./pages/AdminDashboard";
 import TawkToChat from "./components/TawkToChat";
 
 function Router() {
@@ -75,6 +76,7 @@ function Router() {
       <Route path="/admin/blog" component={AdminBlog} />
       <Route path="/admin/email-campaigns" component={AdminEmailCampaigns} />
       <Route path="/admin/outfits" component={AdminOutfits} />
+      <Route path="/admin/dashboard" component={AdminDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
