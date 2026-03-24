@@ -16,6 +16,7 @@ import ProductCardQuickSelector from '@/components/ProductCardQuickSelector';
 import ShopTheLook from '@/components/ShopTheLook';
 import TestimonialsCarousel from '@/components/TestimonialsCarousel';
 import WishlistButton from '@/components/WishlistButton';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const HERO_SLIDES = [
   {
@@ -66,6 +67,7 @@ export default function Home() {
   const { data: featuredProducts, isLoading } = trpc.products.getFeatured.useQuery();
   const { addItem } = useCart();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { trackEvent } = useAnalytics();
 
   useEffect(() => {
     const timer = setInterval(() => {

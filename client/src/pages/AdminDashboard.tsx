@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { FileText, MessageSquare, TrendingUp, Download } from 'lucide-react';
+import LiveAnalytics from './admin/LiveAnalytics';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('customization');
@@ -113,9 +114,10 @@ export default function AdminDashboard() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="customization">Customization Enquiries</TabsTrigger>
             <TabsTrigger value="business">Business Enquiries</TabsTrigger>
+            <TabsTrigger value="analytics">Live Analytics</TabsTrigger>
           </TabsList>
 
           {/* Customization Enquiries Tab */}
@@ -446,6 +448,11 @@ export default function AdminDashboard() {
                 )}
               </div>
             )}
+          </TabsContent>
+
+          {/* Live Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-6">
+            <LiveAnalytics />
           </TabsContent>
         </Tabs>
       </div>
