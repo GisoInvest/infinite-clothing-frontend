@@ -40,13 +40,20 @@ import TrackOrder from "./pages/TrackOrder";
 import Customize from "./pages/Customize";
 import BusinessEnquiries from "./pages/BusinessEnquiries";
 import AdminDashboard from "./pages/AdminDashboard";
+import EntryPortal from "./pages/EntryPortal";
+import ProtectedRoute from "./components/ProtectedRoute";
 import TawkToChat from "./components/TawkToChat";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
+      <Route path="/entry" component={EntryPortal} />
+      <Route path="/">
+        <ProtectedRoute>
+          <Home />
+        </ProtectedRoute>
+      </Route>
       <Route path="/men" component={Men} />
       <Route path="/women" component={Women} />
       <Route path="/unisex" component={Unisex} />
