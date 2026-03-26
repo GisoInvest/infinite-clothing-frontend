@@ -119,25 +119,60 @@ export default function EntryPortal() {
       {/* Content Container */}
       <div className="relative z-10 w-full min-h-screen flex flex-col items-center justify-center px-4 py-8">
         {step === 'welcome' ? (
-          // Welcome Screen - Minimalist with just logo and button
-          <div className="max-w-2xl w-full text-center space-y-8 animate-fade-in flex flex-col items-center justify-center">
+          // Welcome Screen
+          <div className="max-w-2xl w-full text-center space-y-8 animate-fade-in">
             {/* Logo */}
-            <div className="flex justify-center">
+            <div className="flex justify-center mb-8">
               <img
                 src="/branding-logo.png"
                 alt="INF!NITE Clothing"
-                className="h-40 object-contain"
+                className="h-32 object-contain"
               />
             </div>
 
-            {/* CTA Button */}
-            <Button
-              onClick={() => setStep('form')}
-              className="h-14 px-12 text-lg font-semibold bg-gradient-to-r from-cyan-400 to-blue-400 hover:from-cyan-500 hover:to-blue-500 text-black rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/50"
-            >
-              Join the Movement
-              <ChevronDown className="ml-2 h-5 w-5" />
-            </Button>
+            {/* Main Content */}
+            <div className="space-y-6">
+              <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-300 leading-tight">
+                Enter the System
+              </h1>
+
+              <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed">
+                Join an exclusive community of bold thinkers and style innovators. Experience luxury streetwear redefined.
+              </p>
+
+              {/* Features */}
+              <div className="grid md:grid-cols-2 gap-6 py-8">
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0" />
+                  <p className="text-gray-300">Exclusive access to limited collections</p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0" />
+                  <p className="text-gray-300">Early access to new releases</p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0" />
+                  <p className="text-gray-300">Personalized style recommendations</p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0" />
+                  <p className="text-gray-300">VIP member benefits and rewards</p>
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <Button
+                onClick={() => setStep('form')}
+                className="w-full md:w-96 h-14 text-lg font-semibold bg-gradient-to-r from-cyan-400 to-blue-400 hover:from-cyan-500 hover:to-blue-500 text-black rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/50"
+              >
+                Join the Movement
+                <ChevronDown className="ml-2 h-5 w-5" />
+              </Button>
+
+              <p className="text-sm text-gray-400 pt-4">
+                Unsettle the system. Express yourself. Be infinite.
+              </p>
+            </div>
           </div>
         ) : (
           // Registration Form
