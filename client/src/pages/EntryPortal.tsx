@@ -7,6 +7,37 @@ import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 import { Loader2, ChevronDown, ArrowLeft } from 'lucide-react';
 
+// Glitch effect styles
+const glitchStyles = `
+  @keyframes glitch {
+    0% {
+      text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.03em 0.04em 0 #ffff00;
+    }
+    14% {
+      text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.03em 0.04em 0 #ffff00;
+    }
+    15% {
+      text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.025em 0 #fc00ff, -0.05em -0.05em 0 #ffff00;
+    }
+    49% {
+      text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.025em 0 #fc00ff, -0.05em -0.05em 0 #ffff00;
+    }
+    50% {
+      text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.03em 0.04em 0 #ffff00;
+    }
+    100% {
+      text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.03em 0.04em 0 #ffff00;
+    }
+  }
+  
+  .glitch-text {
+    animation: glitch 2s infinite;
+    font-family: 'Courier New', monospace;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+  }
+`;
+
 const STYLE_PREFERENCES = [
   'Streetwear',
   'Luxury',
@@ -35,6 +66,13 @@ const COUNTRIES = [
 ];
 
 export default function EntryPortal() {
+  // Inject glitch styles
+  if (typeof document !== 'undefined' && !document.getElementById('glitch-styles')) {
+    const style = document.createElement('style');
+    style.id = 'glitch-styles';
+    style.innerHTML = glitchStyles;
+    document.head.appendChild(style);
+  }
   const [step, setStep] = useState<'welcome' | 'form'>('welcome');
   const [formData, setFormData] = useState({
     firstName: '',
@@ -132,8 +170,8 @@ export default function EntryPortal() {
 
             {/* Main Content */}
             <div className="space-y-6">
-              <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-300 leading-tight">
-                Enter the System
+              <h1 className="glitch-text text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-300 leading-tight tracking-wider" style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.15em' }}>
+                ENTER THE SYSTEM
               </h1>
 
               <p className="text-lg md:text-xl text-gray-300 font-light leading-relaxed">
