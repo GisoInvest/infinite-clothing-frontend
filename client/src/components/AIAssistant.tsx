@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -13,6 +14,13 @@ interface Message {
 }
 
 export default function AIAssistant() {
+  const [location] = useLocation();
+  
+  // Hide Aria on Entry Portal page
+  if (location === '/entry') {
+    return null;
+  }
+  
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useLocation } from 'wouter';
 
 /**
  * Tawk.to Live Chat Widget Component
@@ -11,6 +12,13 @@ import { useEffect } from 'react';
  */
 
 export default function TawkToChat() {
+  const [location] = useLocation();
+  
+  // Hide Tawk.to chat on Entry Portal page
+  if (location === '/entry') {
+    return null;
+  }
+  
   useEffect(() => {
     // Tawk.to IDs from dashboard
     const PROPERTY_ID = '69224e34430d9c1961f49b23';
@@ -58,7 +66,7 @@ export default function TawkToChat() {
         tawkWidget.remove();
       }
     };
-  }, []);
+  }, [location]);
 
   return null; // This component doesn't render anything visible
 }
