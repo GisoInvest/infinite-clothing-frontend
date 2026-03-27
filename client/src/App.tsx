@@ -43,6 +43,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import EntryPortal from "./pages/EntryPortal";
 import ProtectedRoute from "./components/ProtectedRoute";
 import TawkToChat from "./components/TawkToChat";
+import AnalyticsTracker from "./components/AnalyticsTracker";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -108,6 +109,7 @@ function App() {
             <AudioPlayer />
             <AIAssistant />
             <TawkToChat />
+            <AnalyticsTracker />
             <Router />
             </TooltipProvider>
           </WishlistProvider>
