@@ -15,12 +15,6 @@ interface Message {
 
 export default function AIAssistant() {
   const [location] = useLocation();
-  
-  // Hide Aria on Entry Portal page
-  if (location === '/entry') {
-    return null;
-  }
-  
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -29,6 +23,11 @@ export default function AIAssistant() {
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [hasShownWelcome, setHasShownWelcome] = useState(false);
   const [voiceReady, setVoiceReady] = useState(false);
+
+  // Hide Aria on Entry Portal page
+  if (location === '/entry') {
+    return null;
+  }
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
