@@ -24,11 +24,6 @@ export default function AIAssistant() {
   const [hasShownWelcome, setHasShownWelcome] = useState(false);
   const [voiceReady, setVoiceReady] = useState(false);
 
-  // Hide Aria on Entry Portal page
-  if (location === '/entry') {
-    return null;
-  }
-  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const [voicesLoaded, setVoicesLoaded] = useState(false);
@@ -272,6 +267,10 @@ export default function AIAssistant() {
     setIsOpen(true);
     setVoiceReady(true); // User clicked, voice is now ready
   };
+
+  if (location === '/entry') {
+    return null;
+  }
 
   if (!isOpen) {
     return (
