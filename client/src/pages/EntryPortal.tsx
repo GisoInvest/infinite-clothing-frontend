@@ -88,7 +88,7 @@ export default function EntryPortal() {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const registerCustomer = trpc.registerCustomer.useMutation({
+  const registerCustomer = trpc.customers.register.useMutation({
     onSuccess: () => {
       localStorage.setItem('isRegistered', 'true');
       localStorage.setItem('customerEmail', formData.email);
