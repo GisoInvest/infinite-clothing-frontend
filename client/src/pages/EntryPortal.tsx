@@ -110,7 +110,12 @@ export default function EntryPortal() {
 
     setIsLoading(true);
     try {
-      await registerMutation.mutateAsync(formData);
+      // Convert style preferences to lowercase for backend compatibility
+      const normalizedData = {
+        ...formData,
+        stylePreferences: formData.stylePreferences.map(s => s.toLowerCase()),
+      };
+      await registerMutation.mutateAsync(normalizedData);
     } catch (error) {
       console.error('Mutation error:', error);
     }
