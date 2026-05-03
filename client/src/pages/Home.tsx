@@ -60,6 +60,24 @@ const HERO_SLIDES = [
     title: 'INFINITE JOURNEY',
     subtitle: 'Embrace your unique path.',
     link: '/shop'
+  },
+  {
+    image: '/hero-slides/hero_8.jpg',
+    title: 'UNBOUND STYLE',
+    subtitle: 'Premium streetwear for the fearless.',
+    link: '/women'
+  },
+  {
+    image: '/hero-slides/hero_9.png',
+    title: 'FEARLESS AUTHENTIC',
+    subtitle: 'Embrace your infinite potential.',
+    link: '/shop'
+  },
+  {
+    image: '/hero-slides/hero_10.webp',
+    title: 'INFINITE ESSENCE',
+    subtitle: 'Where authenticity meets style.',
+    link: '/shop'
   }
 ];
 
