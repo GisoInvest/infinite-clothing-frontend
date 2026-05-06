@@ -25,11 +25,11 @@ export default function Navigation() {
       <PromoBanner />
       <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-primary/20 glow-border">
       <div className="container">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-24">
           {/* Logo */}
           <Link href="/">
             <a className="flex items-center space-x-2">
-              <img src="/logo.png" alt="INF!NITE C107HING" className="h-12 w-auto" />
+              <img src="/logo.png" alt="INF!NITE C107HING" className="h-16 w-auto" />
             </a>
           </Link>
 
