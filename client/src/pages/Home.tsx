@@ -20,64 +20,58 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 
 const HERO_SLIDES = [
   {
-    image: '/hero-slides/hero_1.webp',
-    title: 'INFINITE POTENTIAL',
-    subtitle: 'Unsettle the system with bold expression.',
-    link: '/men'
-  },
-  {
-    image: '/hero-slides/hero_2.webp',
-    title: 'UNBOUND FREEDOM',
-    subtitle: 'Modern luxury meets urban heritage.',
-    link: '/women'
-  },
-  {
-    image: '/hero-slides/hero_3.webp',
-    title: 'FUTURE IS HANDMADE',
-    subtitle: 'Crafted for the bold, the creative, and the unique.',
-    link: '/shop'
-  },
-  {
-    image: '/hero-slides/hero_4.webp',
-    title: 'MODERN HERITAGE',
-    subtitle: 'Redefining streetwear with purpose-driven design.',
-    link: '/shop'
-  },
-  {
-    image: '/hero-slides/hero_5.webp',
-    title: 'BOLD EXPRESSION',
-    subtitle: 'Urban style meets authentic craftsmanship.',
+    image: '/hero-slides/campaign_banner_v2.jpg',
+    title: 'BEYOND BOUNDARIES',
+    subtitle: 'CY-2026 Collection — Wear the future.',
     link: '/unisex'
   },
   {
-    image: '/hero-slides/hero_6.webp',
-    title: 'CREATIVE VISION',
-    subtitle: 'Where art and fashion collide.',
-    link: '/shop'
+    image: '/hero-slides/campaign_ig2.jpg',
+    title: 'FEARLESS · AUTHENTIC',
+    subtitle: 'Built different. Standing different.',
+    link: '/men'
   },
   {
-    image: '/hero-slides/hero_7.webp',
-    title: 'INFINITE JOURNEY',
-    subtitle: 'Embrace your unique path.',
-    link: '/shop'
-  },
-  {
-    image: '/hero-slides/hero_8.jpg',
-    title: 'UNBOUND STYLE',
-    subtitle: 'Premium streetwear for the fearless.',
+    image: '/hero-slides/campaign_ig3.jpg',
+    title: 'THE FUTURE IS INF!NITE',
+    subtitle: 'SS2026 Collection — Now Available.',
     link: '/women'
   },
   {
-    image: '/hero-slides/hero_9.png',
-    title: 'FEARLESS AUTHENTIC',
-    subtitle: 'Embrace your infinite potential.',
-    link: '/shop'
+    image: '/hero-slides/campaign_ig4.jpg',
+    title: 'WE DON\'T SLOW DOWN',
+    subtitle: 'INF!NITE C107HING — For those who keep moving.',
+    link: '/men'
   },
   {
-    image: '/hero-slides/hero_10.webp',
-    title: 'INFINITE ESSENCE',
-    subtitle: 'Where authenticity meets style.',
-    link: '/shop'
+    image: '/hero-slides/campaign_ig5.jpg',
+    title: 'THE ESSENTIAL COLLECTION',
+    subtitle: 'EST. 2024 — Timeless streetwear.',
+    link: '/women'
+  },
+  {
+    image: '/hero-slides/campaign_ig6.jpg',
+    title: 'FEARLESSLY AUTHENTIC',
+    subtitle: 'She was never meant to blend in.',
+    link: '/women'
+  },
+  {
+    image: '/hero-slides/campaign_ig1.jpg',
+    title: 'UNBOUND',
+    subtitle: 'No rules were made for her.',
+    link: '/women'
+  },
+  {
+    image: '/hero-slides/campaign_post_v2.jpg',
+    title: 'BEYOND · BOUNDARIES',
+    subtitle: 'INF!NITE C107HING — CY-2026.',
+    link: '/unisex'
+  },
+  {
+    image: '/hero-slides/campaign_story_v2.jpg',
+    title: 'BEYOND BOUNDARIES',
+    subtitle: 'The new collection has arrived.',
+    link: '/unisex'
   }
 ];
 
