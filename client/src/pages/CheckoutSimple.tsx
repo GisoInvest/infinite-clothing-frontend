@@ -166,7 +166,7 @@ export default function CheckoutSimple() {
         productId: item.productId,
         productName: item.productName,
         quantity: item.quantity,
-        price: item.price,
+        price: Math.round(item.price),
       }));
       const itemsData = JSON.stringify(itemsDataArray);
 
@@ -193,10 +193,10 @@ export default function CheckoutSimple() {
           customerPhone: formData.phone,
           shippingAddress,
           items: itemsData,
-          subtotal,
-          shipping,
-          tax,
-          total,
+          subtotal: Math.round(subtotal),
+          shipping: Math.round(shipping),
+          tax: Math.round(tax),
+          total: Math.round(total),
         });
 
         if (result.url) {
