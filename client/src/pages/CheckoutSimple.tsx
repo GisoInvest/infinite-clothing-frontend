@@ -13,21 +13,7 @@ import { trpc } from '@/lib/trpc';
 import { Loader2, Tag, X, CreditCard, Bitcoin } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Retry a function up to maxRetries times with delay between attempts (optimized for fast checkout)
-async function withRetry<T>(fn: () => Promise<T>, maxRetries = 2, delayMs = 500): Promise<T> {
-  let lastError: unknown;
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error;
-      if (attempt < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, delayMs));
-      }
-    }
-  }
-  throw lastError;
-}
+
 
 export default function CheckoutSimple() {
   const { items, subtotal } = useCart();
@@ -165,7 +151,6 @@ export default function CheckoutSimple() {
     }
 
     setIsProcessing(true);
-    toast.info('Processing payment...', { duration: 1000 });
 
     try {
       const orderNumber = `INF${Date.now()}`;
@@ -203,7 +188,7 @@ export default function CheckoutSimple() {
       }));
 
       if (paymentMethod === 'stripe') {
-        const result = await withRetry(() => createCheckoutSession.mutateAsync({
+        const result = await createCheckoutSession.mutateAsync({
           orderNumber,
           customerEmail: formData.email,
           customerName: formData.name,
@@ -214,10 +199,9 @@ export default function CheckoutSimple() {
           shipping: Math.round(shipping),
           tax: Math.round(tax),
           total: Math.round(total),
-        }), 2, 500);
+        });
 
         if (result.url) {
-          toast.success('Redirecting to secure payment...');
           window.location.href = result.url;
         } else {
           throw new Error('No checkout URL returned');
