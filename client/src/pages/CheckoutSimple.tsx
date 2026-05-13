@@ -13,6 +13,31 @@ import { trpc } from '@/lib/trpc';
 import { Loader2, Tag, X, CreditCard, Bitcoin } from 'lucide-react';
 import { toast } from 'sonner';
 
+// Wake up the backend if it's sleeping (Render free tier cold start)
+async function wakeUpBackend() {
+  try {
+    await fetch('/api/health', { method: 'GET', signal: AbortSignal.timeout(8000) });
+  } catch {
+    // Ignore errors - this is just a warm-up ping
+  }
+}
+
+// Retry a function up to maxRetries times with delay between attempts
+async function withRetry<T>(fn: () => Promise<T>, maxRetries = 3, delayMs = 2000): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      }
+    }
+  }
+  throw lastError;
+}
+
 export default function CheckoutSimple() {
   const { items, subtotal } = useCart();
   const { formatPrice } = useCurrency();
@@ -149,6 +174,10 @@ export default function CheckoutSimple() {
     }
 
     setIsProcessing(true);
+    toast.info('Connecting to payment system...', { duration: 3000 });
+
+    // Wake up backend before attempting checkout (prevents cold-start failures)
+    await wakeUpBackend();
 
     try {
       const orderNumber = `INF${Date.now()}`;
@@ -186,7 +215,7 @@ export default function CheckoutSimple() {
       }));
 
       if (paymentMethod === 'stripe') {
-        const result = await createCheckoutSession.mutateAsync({
+        const result = await withRetry(() => createCheckoutSession.mutateAsync({
           orderNumber,
           customerEmail: formData.email,
           customerName: formData.name,
@@ -197,9 +226,10 @@ export default function CheckoutSimple() {
           shipping: Math.round(shipping),
           tax: Math.round(tax),
           total: Math.round(total),
-        });
+        }), 3, 3000);
 
         if (result.url) {
+          toast.success('Redirecting to secure payment...');
           window.location.href = result.url;
         } else {
           throw new Error('No checkout URL returned');
@@ -224,9 +254,16 @@ export default function CheckoutSimple() {
           throw new Error('No crypto payment URL returned');
         }
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Checkout error:', error);
-      toast.error('Failed to start checkout');
+      const errMsg = error instanceof Error ? error.message : String(error);
+      if (errMsg.includes('network') || errMsg.includes('fetch') || errMsg.includes('Failed to fetch')) {
+        toast.error('Connection error. Please check your internet and try again.');
+      } else if (errMsg.includes('email')) {
+        toast.error('Please enter a valid email address.');
+      } else {
+        toast.error('Payment system temporarily unavailable. Please try again in a moment.');
+      }
       setIsProcessing(false);
     }
   };
