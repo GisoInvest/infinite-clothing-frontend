@@ -100,7 +100,7 @@ export default function Home() {
       <Navigation />
 
       {/* Hero Section - Luxury Slider */}
-      <section className="relative h-[85vh] flex items-center overflow-hidden bg-black">
+      <section className="relative h-[60vh] md:h-[85vh] flex items-center overflow-hidden bg-black">
         {HERO_SLIDES.map((slide, index) => (
           <div
             key={index}
@@ -112,7 +112,7 @@ export default function Home() {
             <img
               src={slide.image}
               alt={slide.title}
-              className="w-full h-full object-contain md:object-contain object-top scale-105 animate-slow-zoom"
+              className="w-full h-full object-cover md:object-contain object-top scale-105 animate-slow-zoom"
             />
             <div className="container relative z-30 h-full flex flex-col justify-center items-start space-y-6">
               <div className="max-w-2xl space-y-4 animate-fade-in-up">
