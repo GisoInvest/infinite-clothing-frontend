@@ -19,12 +19,24 @@ export default function Customers() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
   
-  const customersQuery = trpc.customers.getAll.useQuery();
-  const statsQuery = trpc.customers.getStats.useQuery();
-  const deleteMutation = trpc.customers.delete.useMutation();
+  const customersQuery = trpc.customers.getAllCustomers.useQuery();
+  const [selectedCustomer, setSelectedCustomer] = useState<number | null>(null);
+  const { data: customerDetails } = selectedCustomer
+    ? trpc.customers.getCustomerDetails.useQuery({ customerId: selectedCustomer })
+    : { data: null };
 
   const customers = customersQuery.data || [];
-  const stats = statsQuery.data;
+  const stats = customers.length > 0 ? {
+    totalCustomers: customers.length,
+    newsletterSubscribers: customers.filter(c => c.newsletter).length,
+    marketingConsent: customers.filter(c => c.marketingConsent).length,
+    topCountries: Object.entries(
+      customers.reduce((acc: Record<string, number>, c) => {
+        if (c.country) acc[c.country] = (acc[c.country] || 0) + 1;
+        return acc;
+      }, {})
+    ).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([country]) => ({ country })),
+  } : null;
 
   const filteredCustomers = customers.filter(customer =>
     customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||

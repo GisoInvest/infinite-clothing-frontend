@@ -40,7 +40,10 @@ import TrackOrder from "./pages/TrackOrder";
 import Customize from "./pages/Customize";
 import BusinessEnquiries from "./pages/BusinessEnquiries";
 import AdminDashboard from "./pages/AdminDashboard";
-import TawkToChat from "./components/TawkToChat";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import Account from "./pages/Account";
+
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -77,6 +80,9 @@ function Router() {
       <Route path="/admin/email-campaigns" component={AdminEmailCampaigns} />
       <Route path="/admin/outfits" component={AdminOutfits} />
       <Route path="/admin/dashboard" component={AdminDashboard} />
+      <Route path="/register" component={Register} />
+      <Route path="/login" component={Login} />
+      <Route path="/account" component={Account} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -100,7 +106,7 @@ function App() {
             <Toaster />
             <AudioPlayer />
             <AIAssistant />
-            <TawkToChat />
+
             <Router />
             </TooltipProvider>
           </WishlistProvider>
