@@ -13,17 +13,8 @@ import { trpc } from '@/lib/trpc';
 import { Loader2, Tag, X, CreditCard, Bitcoin } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Wake up the backend if it's sleeping (Render free tier cold start)
-async function wakeUpBackend() {
-  try {
-    await fetch('/api/health', { method: 'GET', signal: AbortSignal.timeout(8000) });
-  } catch {
-    // Ignore errors - this is just a warm-up ping
-  }
-}
-
-// Retry a function up to maxRetries times with delay between attempts
-async function withRetry<T>(fn: () => Promise<T>, maxRetries = 3, delayMs = 2000): Promise<T> {
+// Retry a function up to maxRetries times with delay between attempts (optimized for fast checkout)
+async function withRetry<T>(fn: () => Promise<T>, maxRetries = 2, delayMs = 500): Promise<T> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -174,10 +165,7 @@ export default function CheckoutSimple() {
     }
 
     setIsProcessing(true);
-    toast.info('Connecting to payment system...', { duration: 3000 });
-
-    // Wake up backend before attempting checkout (prevents cold-start failures)
-    await wakeUpBackend();
+    toast.info('Processing payment...', { duration: 1000 });
 
     try {
       const orderNumber = `INF${Date.now()}`;
@@ -226,7 +214,7 @@ export default function CheckoutSimple() {
           shipping: Math.round(shipping),
           tax: Math.round(tax),
           total: Math.round(total),
-        }), 3, 3000);
+        }), 2, 500);
 
         if (result.url) {
           toast.success('Redirecting to secure payment...');
