@@ -13,8 +13,6 @@ import { trpc } from '@/lib/trpc';
 import { Loader2, Tag, X, CreditCard, Bitcoin } from 'lucide-react';
 import { toast } from 'sonner';
 
-
-
 export default function CheckoutSimple() {
   const { items, subtotal } = useCart();
   const { formatPrice } = useCurrency();
@@ -168,7 +166,7 @@ export default function CheckoutSimple() {
         productId: item.productId,
         productName: item.productName,
         quantity: item.quantity,
-        price: Math.round(item.price),
+        price: item.price,
       }));
       const itemsData = JSON.stringify(itemsDataArray);
 
@@ -195,10 +193,10 @@ export default function CheckoutSimple() {
           customerPhone: formData.phone,
           shippingAddress,
           items: itemsData,
-          subtotal: Math.round(subtotal),
-          shipping: Math.round(shipping),
-          tax: Math.round(tax),
-          total: Math.round(total),
+          subtotal,
+          shipping,
+          tax,
+          total,
         });
 
         if (result.url) {
@@ -226,16 +224,9 @@ export default function CheckoutSimple() {
           throw new Error('No crypto payment URL returned');
         }
       }
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('Checkout error:', error);
-      const errMsg = error instanceof Error ? error.message : String(error);
-      if (errMsg.includes('network') || errMsg.includes('fetch') || errMsg.includes('Failed to fetch')) {
-        toast.error('Connection error. Please check your internet and try again.');
-      } else if (errMsg.includes('email')) {
-        toast.error('Please enter a valid email address.');
-      } else {
-        toast.error('Payment system temporarily unavailable. Please try again in a moment.');
-      }
+      toast.error('Failed to start checkout');
       setIsProcessing(false);
     }
   };

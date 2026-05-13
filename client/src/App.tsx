@@ -40,19 +40,13 @@ import TrackOrder from "./pages/TrackOrder";
 import Customize from "./pages/Customize";
 import BusinessEnquiries from "./pages/BusinessEnquiries";
 import AdminDashboard from "./pages/AdminDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 import TawkToChat from "./components/TawkToChat";
-import AnalyticsTracker from "./components/AnalyticsTracker";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path="/">
-        <ProtectedRoute requiresRegistration={false}>
-          <Home />
-        </ProtectedRoute>
-      </Route>
+      <Route path={"/"} component={Home} />
       <Route path="/men" component={Men} />
       <Route path="/women" component={Women} />
       <Route path="/unisex" component={Unisex} />
@@ -107,7 +101,6 @@ function App() {
             <AudioPlayer />
             <AIAssistant />
             <TawkToChat />
-            <AnalyticsTracker />
             <Router />
             </TooltipProvider>
           </WishlistProvider>
