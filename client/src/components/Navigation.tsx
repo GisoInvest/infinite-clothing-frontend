@@ -89,22 +89,6 @@ export default function Navigation() {
             <div className="hidden sm:block">
               <CurrencySelector />
             </div>
-            {/* Register/Login buttons */}
-            <Link href="/register">
-              <a>
-                <Button variant="outline" size="sm" className="hidden sm:inline-flex text-xs md:text-sm">
-                  Sign Up
-                </Button>
-              </a>
-            </Link>
-            <Link href="/login">
-              <a>
-                <Button variant="default" size="sm" className="hidden sm:inline-flex text-xs md:text-sm">
-                  Login
-                </Button>
-              </a>
-            </Link>
-
             {/* Cart */}
             <Link href="/cart">
               <a>
@@ -191,22 +175,7 @@ export default function Navigation() {
                   B2B
                 </a>
               </Link>
-              <div className="pt-4 border-t border-primary/10 space-y-2">
-                <Link href="/register">
-                  <a onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full text-xs">
-                      Sign Up
-                    </Button>
-                  </a>
-                </Link>
-                <Link href="/login">
-                  <a onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="default" size="sm" className="w-full text-xs">
-                      Login
-                    </Button>
-                  </a>
-                </Link>
-              </div>
+
             </div>
           </div>
         )}
