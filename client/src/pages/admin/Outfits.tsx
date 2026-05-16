@@ -341,13 +341,18 @@ export default function AdminOutfits() {
                   <Label htmlFor="totalPrice">Total Price (£) *</Label>
                   <Input
                     id="totalPrice"
-                    type="text"
+                    type="number"
+                    step="0.01"
+                    min="0"
                     value={formData.totalPrice}
-                    placeholder="Calculated automatically"
-                    readOnly
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      totalPrice: e.target.value,
+                    }))}
+                    placeholder="Enter total price"
                     required
-                    className="bg-muted/50 cursor-not-allowed"
                   />
+                  <p className="text-xs text-muted-foreground mt-1">Auto-calculated from products, but can be manually adjusted</p>
                 </div>
 
                 <div className="flex items-center gap-4">
